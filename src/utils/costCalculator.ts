@@ -1,0 +1,192 @@
+/**
+ * Funções puras de cálculo de custos para padaria artesanal
+ */
+
+export type UnitType = 'kg' | 'g' | 'L' | 'ml' | 'un';
+export type CategoriaInsumo = 'ingrediente' | 'embalagem' | 'outro';
+
+export interface Insumo {
+  id?: string;
+  nome: string;
+  fornecedor: string;
+  quantidade: number;
+  unidade: UnitType;
+  preco: number;
+  custoUnitario?: number;
+  categoria?: CategoriaInsumo;
+  createdAt?: unknown;
+  createdBy?: string;
+  createdByName?: string;
+}
+
+export interface ItemReceita {
+  insumoId: string;
+  insumoNome: string;
+  categoria: CategoriaInsumo;
+  quantidadeUsada: number;
+  unidadeUsada: UnitType;
+  custoUnitarioBase: number;
+  unidadeBase: UnitType;
+  custoItem: number;
+}
+
+export interface Receita {
+  id?: string;
+  nome: string;
+  descricao?: string;
+  rendimento: number;
+  rendimentoUnidade: string;
+  itens: ItemReceita[];
+  custoIngredientes: number;
+  custoEmbalagens: number;
+  custoTotal: number;
+  custoUnitario: number;
+  margemLucroDesejada: number; // Porcentagem (ex: 100 para 100%)
+  precoVendaSugerido: number;
+  precoVendaPraticado: number;
+  lucroPorUnidade: number;
+  margemRealPorcentagem: number;
+  createdAt?: unknown;
+  updatedAt?: unknown;
+  createdBy?: string;
+  createdByName?: string;
+}
+
+/**
+ * Calcula o custo unitário (Preço / Quantidade da Embalagem)
+ * Retorna o valor por unidade base (ex: R$ por kg, por L, ou por un)
+ */
+export function calcularCustoUnitario(preco: number, quantidade: number): number {
+  if (!quantidade || quantidade <= 0 || isNaN(quantidade)) {
+    return 0;
+  }
+  if (!preco || preco < 0 || isNaN(preco)) {
+    return 0;
+  }
+  const custo = preco / quantidade;
+  return Math.round(custo * 10000) / 10000; // precisão de 4 casas decimais
+}
+
+/**
+ * Converte o custo unitário para a menor unidade comum de receita (ex: kg -> g, L -> ml)
+ */
+export function calcularCustoPorGramaOuMl(custoUnitario: number, unidade: UnitType): number {
+  if (unidade === 'kg' || unidade === 'L') {
+    return custoUnitario / 1000;
+  }
+  return custoUnitario;
+}
+
+/**
+ * Calcula o custo exato de um item de receita normalizando as unidades
+ * (kg <-> g, L <-> ml, ou un <-> un)
+ */
+export function calcularCustoItemReceita(
+  custoUnitarioInsumo: number,
+  unidadeInsumo: UnitType,
+  quantidadeUsada: number,
+  unidadeUsada: UnitType
+): number {
+  if (custoUnitarioInsumo <= 0 || quantidadeUsada <= 0 || isNaN(custoUnitarioInsumo) || isNaN(quantidadeUsada)) {
+    return 0;
+  }
+
+  let fatorConversao = 1;
+
+  if (unidadeInsumo === 'kg' && unidadeUsada === 'g') {
+    fatorConversao = 1 / 1000;
+  } else if (unidadeInsumo === 'g' && unidadeUsada === 'kg') {
+    fatorConversao = 1000;
+  } else if (unidadeInsumo === 'L' && unidadeUsada === 'ml') {
+    fatorConversao = 1 / 1000;
+  } else if (unidadeInsumo === 'ml' && unidadeUsada === 'L') {
+    fatorConversao = 1000;
+  }
+
+  const custoTotal = custoUnitarioInsumo * fatorConversao * quantidadeUsada;
+  return Math.round(custoTotal * 10000) / 10000;
+}
+
+/**
+ * Consolida os custos de uma receita discriminando ingredientes e embalagens descartáveis
+ */
+export function calcularTotaisReceita(itens: ItemReceita[], rendimento = 1) {
+  const rendimentoValido = rendimento > 0 ? rendimento : 1;
+
+  let custoIngredientes = 0;
+  let custoEmbalagens = 0;
+
+  for (const item of itens) {
+    const custo = Number(item.custoItem) || 0;
+    if (item.categoria === 'embalagem') {
+      custoEmbalagens += custo;
+    } else {
+      custoIngredientes += custo;
+    }
+  }
+
+  const custoTotal = Math.round((custoIngredientes + custoEmbalagens) * 100) / 100;
+  const custoUnitario = Math.round((custoTotal / rendimentoValido) * 100) / 100;
+
+  return {
+    custoIngredientes: Math.round(custoIngredientes * 100) / 100,
+    custoEmbalagens: Math.round(custoEmbalagens * 100) / 100,
+    custoTotal,
+    custoUnitario
+  };
+}
+
+/**
+ * Calcula preço sugerido, lucro e margem real da receita
+ */
+export function calcularLucroEPrecificacao(
+  custoPorUnidade: number,
+  margemDesejadaPorcentagem = 100,
+  precoVendaPraticado?: number
+) {
+  const custo = Number(custoPorUnidade) || 0;
+  const margem = Number(margemDesejadaPorcentagem) || 0;
+
+  // Preço sugerido baseado em markup sobre custo
+  const precoSugerido = Math.round(custo * (1 + margem / 100) * 100) / 100;
+
+  // Preço efetivo (se o padeiro definiu um preço de venda real, usa ele)
+  const precoFinal = precoVendaPraticado && precoVendaPraticado > 0 
+    ? Math.round(precoVendaPraticado * 100) / 100 
+    : precoSugerido;
+
+  const lucroPorUnidade = Math.round((precoFinal - custo) * 100) / 100;
+
+  // Margem real sobre o custo
+  const margemReal = custo > 0 ? Math.round(((precoFinal - custo) / custo) * 1000) / 10 : 0;
+
+  return {
+    precoSugerido,
+    precoFinal,
+    lucroPorUnidade,
+    margemReal
+  };
+}
+
+/**
+ * Formata um número para moeda Real Brasileiro (R$)
+ */
+export function formatarMoeda(valor: number, casasDecimais = 2): string {
+  if (isNaN(valor)) return 'R$ 0,00';
+  return valor.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL',
+    minimumFractionDigits: casasDecimais,
+    maximumFractionDigits: casasDecimais,
+  });
+}
+
+/**
+ * Formata o texto descritivo do custo unitário
+ */
+export function formatarTextoCustoUnitario(custoUnitario: number, unidade: UnitType): string {
+  const casas = custoUnitario < 1 && custoUnitario > 0 ? 4 : 2;
+  const valorFormatado = formatarMoeda(custoUnitario, casas);
+  return `${valorFormatado} / ${unidade}`;
+}
+

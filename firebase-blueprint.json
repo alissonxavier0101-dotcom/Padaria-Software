@@ -1,0 +1,158 @@
+{
+  "entities": {
+    "insumo": {
+      "title": "Insumo",
+      "description": "Matéria-prima cadastrada para cálculo de custos de pães caseiros e confeitaria",
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "description": "Nome do insumo ou ingrediente",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "fornecedor": {
+          "type": "string",
+          "description": "Nome do fornecedor ou mercado",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "quantidade": {
+          "type": "number",
+          "description": "Quantidade da embalagem"
+        },
+        "unidade": {
+          "type": "string",
+          "enum": ["kg", "g", "L", "ml", "un"],
+          "description": "Unidade de medida da embalagem"
+        },
+        "preco": {
+          "type": "number",
+          "description": "Preço pago pela embalagem em Reais"
+        },
+        "custoUnitario": {
+          "type": "number",
+          "description": "Custo calculado por unidade base"
+        },
+        "categoria": {
+          "type": "string",
+          "enum": ["ingrediente", "embalagem", "outro"],
+          "description": "Grupo ou categoria do insumo (Ingrediente, Embalagem descartável, Outro)"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": "string",
+          "description": "UID do padeiro que cadastrou"
+        },
+        "createdByName": {
+          "type": "string",
+          "description": "Nome do padeiro"
+        }
+      },
+      "required": [
+        "nome",
+        "fornecedor",
+        "quantidade",
+        "unidade",
+        "preco",
+        "custoUnitario"
+      ]
+    },
+    "receita": {
+      "title": "Receita",
+      "description": "Receita de panificação caseira com ingredientes, embalagens e cálculo de custos e lucro",
+      "type": "object",
+      "properties": {
+        "nome": {
+          "type": "string",
+          "description": "Nome da receita de pão ou produto",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "descricao": {
+          "type": "string",
+          "description": "Observações ou modo de preparo rápido"
+        },
+        "rendimento": {
+          "type": "number",
+          "description": "Quantidade de unidades ou porções produzidas"
+        },
+        "rendimentoUnidade": {
+          "type": "string",
+          "description": "Nome da unidade de rendimento (ex: pães, unidades, fatias)"
+        },
+        "itens": {
+          "type": "array",
+          "description": "Lista de ingredientes e embalagens utilizados na receita"
+        },
+        "custoIngredientes": {
+          "type": "number",
+          "description": "Custo total dos ingredientes em Reais"
+        },
+        "custoEmbalagens": {
+          "type": "number",
+          "description": "Custo total de sacolas e formas descartáveis em Reais"
+        },
+        "custoTotal": {
+          "type": "number",
+          "description": "Custo total da receita (ingredientes + embalagens)"
+        },
+        "custoUnitario": {
+          "type": "number",
+          "description": "Custo de produção por unidade produzida"
+        },
+        "margemLucroDesejada": {
+          "type": "number",
+          "description": "Margem de lucro desejada em porcentagem (ex: 100%)"
+        },
+        "precoVendaSugerido": {
+          "type": "number",
+          "description": "Preço de venda sugerido por unidade em Reais"
+        },
+        "precoVendaPraticado": {
+          "type": "number",
+          "description": "Preço de venda efetivamente praticado pelo padeiro"
+        },
+        "lucroPorUnidade": {
+          "type": "number",
+          "description": "Lucro líquido unitário em Reais"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "createdBy": {
+          "type": "string"
+        },
+        "createdByName": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "nome",
+        "rendimento",
+        "rendimentoUnidade",
+        "itens",
+        "custoTotal",
+        "custoUnitario"
+      ]
+    }
+  },
+  "firestore": {
+    "/insumos/{insumoId}": {
+      "schema": "insumo",
+      "description": "Coleção de insumos da padaria artesanal compartilhada entre padeiros autenticados"
+    },
+    "/receitas/{receitaId}": {
+      "schema": "receita",
+      "description": "Coleção de receitas de pães com cálculo automático de custos e precificação"
+    }
+  }
+}

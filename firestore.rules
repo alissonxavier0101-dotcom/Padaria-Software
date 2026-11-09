@@ -1,0 +1,57 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Bloqueio padrão para todas as outras coleções
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidInsumo(data) {
+      return data.keys().hasAll(['nome', 'fornecedor', 'quantidade', 'unidade', 'preco', 'custoUnitario']) &&
+        data.nome is string && data.nome.size() >= 1 && data.nome.size() <= 100 &&
+        data.fornecedor is string && data.fornecedor.size() >= 1 && data.fornecedor.size() <= 100 &&
+        data.quantidade is number && data.quantidade > 0 &&
+        data.unidade is string && data.unidade in ['kg', 'g', 'L', 'ml', 'un'] &&
+        data.preco is number && data.preco >= 0 &&
+        data.custoUnitario is number && data.custoUnitario >= 0;
+    }
+
+    function isValidReceita(data) {
+      return data.keys().hasAll(['nome', 'rendimento', 'rendimentoUnidade', 'itens', 'custoTotal', 'custoUnitario']) &&
+        data.nome is string && data.nome.size() >= 1 && data.nome.size() <= 100 &&
+        data.rendimento is number && data.rendimento > 0 &&
+        data.rendimentoUnidade is string && data.rendimentoUnidade.size() <= 50 &&
+        data.itens is list && data.itens.size() <= 100 &&
+        data.custoTotal is number && data.custoTotal >= 0 &&
+        data.custoUnitario is number && data.custoUnitario >= 0;
+    }
+
+    // Coleção de insumos para os 2 padeiros da padaria artesanal
+    match /insumos/{insumoId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(insumoId) && isValidInsumo(incoming());
+      allow update: if isSignedIn() && isValidId(insumoId) && isValidInsumo(incoming());
+      allow delete: if isSignedIn() && isValidId(insumoId);
+    }
+
+    // Coleção de receitas de pães e produtos da padaria
+    match /receitas/{receitaId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(receitaId) && isValidReceita(incoming());
+      allow update: if isSignedIn() && isValidId(receitaId) && isValidReceita(incoming());
+      allow delete: if isSignedIn() && isValidId(receitaId);
+    }
+  }
+}

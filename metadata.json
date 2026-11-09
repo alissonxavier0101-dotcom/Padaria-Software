@@ -1,0 +1,6 @@
+{
+  "name": "PanisCustos - Gestão de Custos de Padaria",
+  "description": "Gerenciador mobile-first de custos e insumos para padaria caseira com cálculo automático de custo unitário, autenticação Google e sincronização em tempo real.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
