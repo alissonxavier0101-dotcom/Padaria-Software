@@ -621,6 +621,32 @@
         border-color: #FECACA;
       }
 
+      .item-card-actions {
+        display: flex;
+        gap: 4px;
+        flex-shrink: 0;
+      }
+
+      .btn-edit-item {
+        background-color: transparent;
+        border: 1px solid transparent;
+        color: var(--text-muted);
+        width: 36px;
+        height: 36px;
+        border-radius: var(--radius-sm);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .btn-edit-item:hover, .btn-edit-item:active {
+        background-color: #ECFDF5;
+        color: var(--success);
+        border-color: #A7F3D0;
+      }
+
       /* Seção de Valores do Card */
       .insumo-values {
         display: grid;
@@ -1562,7 +1588,7 @@
             <!-- Formulário de Cadastro de Matéria-Prima & Embalagem -->
             <form id="form-insumo" class="card-form" autocomplete="off">
               <div class="card-header">
-                <h2 class="card-title">🌾 Novo Insumo ou Embalagem</h2>
+                <h2 id="form-insumo-title" class="card-title">🌾 Novo Insumo ou Embalagem</h2>
                 <span style="font-size: 12px; color: var(--text-muted);">Campos obrigatórios <span style="color:var(--wheat-accent);">*</span></span>
               </div>
 
@@ -1688,6 +1714,7 @@
               <button id="btn-submit-insumo" class="btn-primary" type="submit">
                 <span>Salvar no Firestore</span>
               </button>
+              <button id="btn-cancel-edit-insumo" class="btn-secondary hidden" type="button">Cancelar edição</button>
             </form>
 
             <!-- Grupos para Filtrar Diferentes Insumos e Ingredientes -->
@@ -1778,7 +1805,7 @@
             <!-- Formulário Completo de Receita com Ingredientes, Embalagens e Lucro -->
             <form id="form-receita" class="card-form hidden" autocomplete="off">
               <div class="card-header">
-                <h2 class="card-title">📖 Nova Receita com Custos e Lucro</h2>
+                <h2 id="form-receita-title" class="card-title">📖 Nova Receita com Custos e Lucro</h2>
                 <span style="font-size: 12px; color: var(--text-muted);">Cálculo automático de custos e precificação</span>
               </div>
 
@@ -2025,6 +2052,7 @@
               <button id="btn-submit-receita" class="btn-primary" type="submit" style="margin-top: 4px;">
                 <span>Salvar Receita no Firestore</span>
               </button>
+              <button id="btn-cancel-edit-receita" class="btn-secondary hidden" type="button">Cancelar edição</button>
             </form>
 
             <!-- Barra de Busca de Receitas -->
@@ -2325,6 +2353,8 @@ service cloud.firestore {
       let pendingDeleteId = null;
       let pendingDeleteReceitaId = null;
       let pendingAddItemReceitaId = null;
+      let editingInsumoId = null;
+      let editingReceitaId = null;
       let activeGroupFilter = 'todos';
       let activeTab = 'insumos';
       let itensReceitaEmElaboracao = [];
@@ -2508,6 +2538,8 @@ service cloud.firestore {
         toggleFormText: document.getElementById('toggle-form-text'),
         toggleFormIcon: document.getElementById('toggle-form-icon'),
         formInsumo: document.getElementById('form-insumo'),
+        formInsumoTitle: document.getElementById('form-insumo-title'),
+        btnCancelEditInsumo: document.getElementById('btn-cancel-edit-insumo'),
         selectCategoriaInsumo: document.getElementById('select-categoria-insumo'),
         inputNome: document.getElementById('input-nome'),
         inputFornecedor: document.getElementById('input-fornecedor'),
@@ -2538,6 +2570,8 @@ service cloud.firestore {
         toggleFormReceitaIcon: document.getElementById('toggle-form-receita-icon'),
         toggleFormReceitaText: document.getElementById('toggle-form-receita-text'),
         formReceita: document.getElementById('form-receita'),
+        formReceitaTitle: document.getElementById('form-receita-title'),
+        btnCancelEditReceita: document.getElementById('btn-cancel-edit-receita'),
         inputReceitaNome: document.getElementById('input-receita-nome'),
         inputReceitaRendimento: document.getElementById('input-receita-rendimento'),
         inputReceitaRendimentoUn: document.getElementById('input-receita-rendimento-un'),
@@ -3103,6 +3137,90 @@ service cloud.firestore {
         }
       }
 
+      function prepararNovoInsumo() {
+        editingInsumoId = null;
+        dom.formInsumo.reset();
+        dom.selectCategoriaInsumo.value = 'ingrediente';
+        dom.selectUnidade.value = 'kg';
+        dom.formInsumoTitle.textContent = '🌾 Novo Insumo ou Embalagem';
+        dom.btnSubmitInsumo.innerHTML = '<span>Salvar no Firestore</span>';
+        dom.btnCancelEditInsumo.classList.add('hidden');
+        atualizarPreviewCalculo();
+      }
+
+      function abrirEdicaoInsumo(id) {
+        const insumo = cachedInsumos.find(item => item.id === id);
+        if (!insumo) return;
+
+        editingInsumoId = id;
+        dom.selectCategoriaInsumo.value = insumo.categoria || 'ingrediente';
+        dom.inputNome.value = insumo.nome || '';
+        dom.inputFornecedor.value = insumo.fornecedor || '';
+        dom.inputQuantidade.value = insumo.quantidade ?? '';
+        dom.selectUnidade.value = insumo.unidade || 'kg';
+        dom.inputPreco.value = insumo.preco ?? '';
+        dom.formInsumoTitle.textContent = '✏️ Editar Insumo ou Material';
+        dom.btnSubmitInsumo.innerHTML = '<span>Salvar alterações</span>';
+        dom.btnCancelEditInsumo.classList.remove('hidden');
+        dom.formInsumo.classList.remove('hidden');
+        dom.toggleFormText.textContent = 'Recolher Formulário';
+        dom.toggleFormIcon.textContent = '▲';
+        dom.btnToggleForm.setAttribute('aria-expanded', 'true');
+        atualizarPreviewCalculo();
+        dom.formInsumo.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      async function atualizarReceitasDoInsumo(insumo) {
+        let falhas = 0;
+
+        for (const receita of cachedReceitas) {
+          if (!(receita.itens || []).some(item => item.insumoId === insumo.id)) continue;
+
+          const itens = receita.itens.map(item => {
+            if (item.insumoId !== insumo.id) return item;
+            return {
+              ...item,
+              insumoNome: insumo.nome,
+              categoria: insumo.categoria || 'ingrediente',
+              custoUnitarioBase: insumo.custoUnitario,
+              unidadeBase: insumo.unidade,
+              custoItem: calcularCustoItemReceita(
+                insumo.custoUnitario,
+                insumo.unidade,
+                item.quantidadeUsada,
+                item.unidadeUsada
+              )
+            };
+          });
+          const totais = calcularTotaisReceita(itens, receita.rendimento);
+          const lucro = calcularLucroEPrecificacao(
+            totais.custoUnitario,
+            receita.margemLucroDesejada,
+            receita.precoVendaPraticado
+          );
+          const atualizacoes = {
+            itens,
+            ...totais,
+            precoVendaSugerido: lucro.precoSugerido,
+            lucroPorUnidade: lucro.lucroPorUnidade,
+            updatedAt: serverTimestamp()
+          };
+
+          try {
+            if (firestoreDb && !receita.id.startsWith('local-') && !receita.id.startsWith('demo-')) {
+              await updateDoc(doc(firestoreDb, 'receitas', receita.id), atualizacoes);
+            }
+            Object.assign(receita, atualizacoes);
+          } catch (err) {
+            falhas++;
+            console.error(`Erro ao recalcular a receita ${receita.id}:`, err);
+          }
+        }
+
+        renderizarReceitas();
+        return falhas;
+      }
+
       async function handleFormSubmit(e) {
         e.preventDefault();
 
@@ -3127,38 +3245,55 @@ service cloud.firestore {
           unidade,
           preco,
           custoUnitario,
-          categoria,
-          createdBy: currentUser?.uid || 'anon',
-          createdByName: currentUser?.displayName || 'Padeiro',
-          createdAt: serverTimestamp()
+          categoria
         };
+        const insumoExistente = editingInsumoId
+          ? cachedInsumos.find(item => item.id === editingInsumoId)
+          : null;
 
         try {
           dom.btnSubmitInsumo.disabled = true;
-          dom.btnSubmitInsumo.innerHTML = '<span class="loading-spinner"></span> Gravando no Firestore...';
+          dom.btnSubmitInsumo.innerHTML = '<span class="loading-spinner"></span> Salvando...';
 
           if (!firestoreDb) {
             initFirebase();
           }
 
-          if (firestoreDb) {
-            await addDoc(collection(firestoreDb, 'insumos'), novoInsumo);
-            showToast(`"${nome}" gravado no Firestore com sucesso!`);
-          } else {
-            const itemComId = {
-              id: 'local-' + Date.now(),
-              ...novoInsumo,
-              createdAt: new Date().toISOString()
-            };
-            cachedInsumos.unshift(itemComId);
+          if (editingInsumoId) {
+            const atualizacoes = { ...novoInsumo, updatedAt: serverTimestamp() };
+            if (firestoreDb && !editingInsumoId.startsWith('local-') && !editingInsumoId.startsWith('demo-')) {
+              await updateDoc(doc(firestoreDb, 'insumos', editingInsumoId), atualizacoes);
+            }
+            const insumoAtualizado = { ...insumoExistente, ...novoInsumo, id: editingInsumoId };
+            const index = cachedInsumos.findIndex(item => item.id === editingInsumoId);
+            if (index >= 0) cachedInsumos[index] = insumoAtualizado;
             renderizarInsumos();
-            showToast(`"${nome}" cadastrado localmente.`);
+            const falhas = await atualizarReceitasDoInsumo(insumoAtualizado);
+            showToast(falhas
+              ? `Insumo atualizado; não foi possível recalcular ${falhas} receita(s).`
+              : `"${nome}" atualizado com sucesso!`);
+          } else {
+            const novoInsumoComMetadados = {
+              ...novoInsumo,
+              createdBy: currentUser?.uid || 'anon',
+              createdByName: currentUser?.displayName || 'Padeiro',
+              createdAt: serverTimestamp()
+            };
+            if (firestoreDb) {
+              await addDoc(collection(firestoreDb, 'insumos'), novoInsumoComMetadados);
+              showToast(`"${nome}" gravado no Firestore com sucesso!`);
+            } else {
+              cachedInsumos.unshift({
+                id: 'local-' + Date.now(),
+                ...novoInsumoComMetadados,
+                createdAt: new Date().toISOString()
+              });
+              renderizarInsumos();
+              showToast(`"${nome}" cadastrado localmente.`);
+            }
           }
 
-          dom.formInsumo.reset();
-          dom.selectCategoriaInsumo.value = 'ingrediente';
-          dom.selectUnidade.value = 'kg';
-          atualizarPreviewCalculo();
+          prepararNovoInsumo();
           dom.inputNome.focus();
         } catch (err) {
           console.error('Erro ao salvar insumo:', err);
@@ -3171,7 +3306,9 @@ service cloud.firestore {
           }
         } finally {
           dom.btnSubmitInsumo.disabled = false;
-          dom.btnSubmitInsumo.innerHTML = '<span>Salvar no Firestore</span>';
+          dom.btnSubmitInsumo.innerHTML = editingInsumoId
+            ? '<span>Salvar alterações</span>'
+            : '<span>Salvar no Firestore</span>';
         }
       }
 
@@ -3318,19 +3455,33 @@ service cloud.firestore {
                     </span>
                   </div>
                 </div>
-                <button
-                  type="button"
-                  class="btn-delete-item"
-                  data-delete-id="${item.id}"
-                  data-delete-name="${escapeHtml(item.nome)}"
-                  aria-label="Excluir insumo ${escapeHtml(item.nome)}"
-                  title="Excluir insumo"
-                >
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </button>
+                <div class="item-card-actions">
+                  <button
+                    type="button"
+                    class="btn-edit-item"
+                    data-edit-id="${item.id}"
+                    aria-label="Editar insumo ${escapeHtml(item.nome)}"
+                    title="Editar insumo"
+                  >
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-delete-item"
+                    data-delete-id="${item.id}"
+                    data-delete-name="${escapeHtml(item.nome)}"
+                    aria-label="Excluir insumo ${escapeHtml(item.nome)}"
+                    title="Excluir insumo"
+                  >
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               <!-- Valores da Embalagem -->
@@ -3568,6 +3719,43 @@ service cloud.firestore {
         dom.textLucroTotalLote.textContent = formatarMoeda(lucroLote, 2);
       }
 
+      function prepararNovaReceita() {
+        editingReceitaId = null;
+        itensReceitaEmElaboracao = [];
+        dom.formReceita.reset();
+        dom.formReceitaTitle.textContent = '📖 Nova Receita com Custos e Lucro';
+        dom.btnSubmitReceita.innerHTML = '<span>Salvar Receita no Firestore</span>';
+        dom.btnCancelEditReceita.classList.add('hidden');
+        dom.formReceita.classList.add('hidden');
+        dom.toggleFormReceitaIcon.textContent = '➕';
+        dom.toggleFormReceitaText.textContent = 'Criar Nova Receita';
+        dom.btnToggleFormReceita.setAttribute('aria-expanded', 'false');
+        renderizarItensReceitaEmElaboracao();
+      }
+
+      function abrirEdicaoReceita(id) {
+        const receita = cachedReceitas.find(item => item.id === id);
+        if (!receita) return;
+
+        editingReceitaId = id;
+        dom.inputReceitaNome.value = receita.nome || '';
+        dom.inputReceitaRendimento.value = receita.rendimento || 1;
+        dom.inputReceitaRendimentoUn.value = receita.rendimentoUnidade || 'pães';
+        dom.inputReceitaDescricao.value = receita.descricao || '';
+        dom.inputMargemLucro.value = receita.margemLucroDesejada ?? 100;
+        dom.inputPrecoPraticado.value = receita.precoVendaPraticado ?? '';
+        itensReceitaEmElaboracao = (receita.itens || []).map(item => ({ ...item }));
+        dom.formReceitaTitle.textContent = '✏️ Editar Receita';
+        dom.btnSubmitReceita.innerHTML = '<span>Salvar alterações</span>';
+        dom.btnCancelEditReceita.classList.remove('hidden');
+        dom.formReceita.classList.remove('hidden');
+        dom.toggleFormReceitaIcon.textContent = '▲';
+        dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
+        dom.btnToggleFormReceita.setAttribute('aria-expanded', 'true');
+        renderizarItensReceitaEmElaboracao();
+        dom.formReceita.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
       async function handleFormReceitaSubmit(e) {
         e.preventDefault();
 
@@ -3605,46 +3793,57 @@ service cloud.firestore {
           margemLucroDesejada,
           precoVendaSugerido: lucroCalc.precoSugerido,
           precoVendaPraticado: lucroCalc.precoFinal,
-          lucroPorUnidade: lucroCalc.lucroPorUnidade,
-          createdBy: currentUser?.uid || 'anon',
-          createdByName: currentUser?.displayName || 'Padeiro',
-          createdAt: serverTimestamp(),
-          updatedAt: serverTimestamp()
+          lucroPorUnidade: lucroCalc.lucroPorUnidade
         };
+        const receitaExistente = editingReceitaId
+          ? cachedReceitas.find(item => item.id === editingReceitaId)
+          : null;
 
         try {
           dom.btnSubmitReceita.disabled = true;
-          dom.btnSubmitReceita.innerHTML = '<span class="loading-spinner"></span> Gravando Receita...';
+          dom.btnSubmitReceita.innerHTML = '<span class="loading-spinner"></span> Salvando Receita...';
 
           if (!firestoreDb) initFirebase();
 
-          if (firestoreDb) {
-            await addDoc(collection(firestoreDb, 'receitas'), novaReceita);
-            showToast(`Receita "${nome}" gravada no Firestore com sucesso!`);
-          } else {
-            const itemComId = {
-              id: 'local-rec-' + Date.now(),
-              ...novaReceita,
-              createdAt: new Date().toISOString()
-            };
-            cachedReceitas.unshift(itemComId);
+          if (editingReceitaId) {
+            const atualizacoes = { ...novaReceita, updatedAt: serverTimestamp() };
+            if (firestoreDb && !editingReceitaId.startsWith('local-') && !editingReceitaId.startsWith('demo-')) {
+              await updateDoc(doc(firestoreDb, 'receitas', editingReceitaId), atualizacoes);
+            }
+            Object.assign(receitaExistente, novaReceita);
             renderizarReceitas();
-            showToast(`Receita "${nome}" salva localmente.`);
+            showToast(`Receita "${nome}" atualizada com sucesso!`);
+          } else {
+            const receitaComMetadados = {
+              ...novaReceita,
+              createdBy: currentUser?.uid || 'anon',
+              createdByName: currentUser?.displayName || 'Padeiro',
+              createdAt: serverTimestamp(),
+              updatedAt: serverTimestamp()
+            };
+            if (firestoreDb) {
+              await addDoc(collection(firestoreDb, 'receitas'), receitaComMetadados);
+              showToast(`Receita "${nome}" gravada no Firestore com sucesso!`);
+            } else {
+              cachedReceitas.unshift({
+                id: 'local-rec-' + Date.now(),
+                ...receitaComMetadados,
+                createdAt: new Date().toISOString()
+              });
+              renderizarReceitas();
+              showToast(`Receita "${nome}" salva localmente.`);
+            }
           }
 
-          // Reset do form de receitas
-          dom.formReceita.reset();
-          itensReceitaEmElaboracao = [];
-          renderizarItensReceitaEmElaboracao();
-          dom.formReceita.classList.add('hidden');
-          dom.toggleFormReceitaIcon.textContent = '➕';
-          dom.toggleFormReceitaText.textContent = 'Criar Nova Receita';
+          prepararNovaReceita();
         } catch (err) {
           console.error('Erro ao salvar receita:', err);
           showToast('Erro ao salvar receita: ' + (err.message || 'Tente novamente'));
         } finally {
           dom.btnSubmitReceita.disabled = false;
-          dom.btnSubmitReceita.innerHTML = '<span>Salvar Receita no Firestore</span>';
+          dom.btnSubmitReceita.innerHTML = editingReceitaId
+            ? '<span>Salvar alterações</span>'
+            : '<span>Salvar Receita no Firestore</span>';
         }
       }
 
@@ -3717,18 +3916,32 @@ service cloud.firestore {
                   <h3 class="receita-nome">${escapeHtml(rec.nome)}</h3>
                   ${rec.descricao ? `<span style="font-size: 12px; color: var(--text-secondary);">${escapeHtml(rec.descricao)}</span>` : ''}
                 </div>
-                <button
-                  type="button"
-                  class="btn-delete-item"
-                  data-delete-receita-id="${rec.id}"
-                  data-delete-receita-name="${escapeHtml(rec.nome)}"
-                  title="Excluir Receita"
-                >
-                  <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                  </svg>
-                </button>
+                <div class="item-card-actions">
+                  <button
+                    type="button"
+                    class="btn-edit-item"
+                    data-edit-receita-id="${rec.id}"
+                    aria-label="Editar receita ${escapeHtml(rec.nome)}"
+                    title="Editar receita"
+                  >
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 20h9"></path>
+                      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path>
+                    </svg>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-delete-item"
+                    data-delete-receita-id="${rec.id}"
+                    data-delete-receita-name="${escapeHtml(rec.nome)}"
+                    title="Excluir Receita"
+                  >
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <polyline points="3 6 5 6 21 6"></polyline>
+                      <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    </svg>
+                  </button>
+                </div>
               </div>
 
               <!-- Métricas Principais da Receita -->
@@ -4154,9 +4367,15 @@ service cloud.firestore {
       dom.inputQuantidade.addEventListener('input', atualizarPreviewCalculo);
       dom.selectUnidade.addEventListener('change', atualizarPreviewCalculo);
       dom.formInsumo.addEventListener('submit', handleFormSubmit);
+      dom.btnCancelEditInsumo.addEventListener('click', cancelarEdicaoInsumo);
 
       // Deleção de insumos
       dom.insumosContainer.addEventListener('click', (e) => {
+        const btnEdit = e.target.closest('[data-edit-id]');
+        if (btnEdit) {
+          abrirEdicaoInsumo(btnEdit.getAttribute('data-edit-id'));
+          return;
+        }
         const btnDelete = e.target.closest('[data-delete-id]');
         if (btnDelete) {
           const id = btnDelete.getAttribute('data-delete-id');
@@ -4255,9 +4474,16 @@ service cloud.firestore {
       });
 
       dom.formReceita.addEventListener('submit', handleFormReceitaSubmit);
+      dom.btnCancelEditReceita.addEventListener('click', prepararNovaReceita);
 
-      // Delegação de eventos no container de receitas (Adicionar Item, Salvar Preço, Excluir)
+      // Delegação de eventos no container de receitas
       dom.receitasContainer.addEventListener('click', (e) => {
+        const btnEditRec = e.target.closest('[data-edit-receita-id]');
+        if (btnEditRec) {
+          abrirEdicaoReceita(btnEditRec.getAttribute('data-edit-receita-id'));
+          return;
+        }
+
         // Excluir receita
         const btnDeleteRec = e.target.closest('[data-delete-receita-id]');
         if (btnDeleteRec) {
