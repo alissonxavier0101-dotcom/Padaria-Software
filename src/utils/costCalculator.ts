@@ -199,6 +199,25 @@ export function calcularTotaisReceita(
   };
 }
 
+export function calcularCustoUnitarioReceita(
+  receita: Pick<Receita, 'custoUnitario' | 'custoTotal' | 'rendimento' | 'unidadesVendaveis' | 'unidadesPerdidas'>
+): number {
+  const custoUnitario = Number(receita.custoUnitario);
+  if (Number.isFinite(custoUnitario) && custoUnitario > 0) return custoUnitario;
+
+  const rendimento = Number(receita.rendimento);
+  const perdas = Number(receita.unidadesPerdidas) || 0;
+  const unidadesVendaveis = receita.unidadesVendaveis !== undefined && receita.unidadesVendaveis !== null
+    ? Number(receita.unidadesVendaveis)
+    : rendimento - perdas;
+  const custoTotal = Number(receita.custoTotal);
+  if (!Number.isFinite(unidadesVendaveis) || unidadesVendaveis <= 0 ||
+      !Number.isFinite(custoTotal) || custoTotal < 0) {
+    return 0;
+  }
+  return Math.round((custoTotal / unidadesVendaveis) * 100) / 100;
+}
+
 /**
  * Calcula preço sugerido, lucro e margem real da receita
  */
@@ -257,4 +276,3 @@ export function formatarTextoCustoUnitario(custoUnitario: number, unidade: UnitT
   const valorFormatado = formatarMoeda(custoUnitario, casas);
   return `${valorFormatado} / ${unidade}`;
 }
-

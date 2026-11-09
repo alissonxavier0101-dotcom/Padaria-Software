@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
   calcularCustoUnitario,
+  calcularCustoUnitarioReceita,
   calcularCustoPorGramaOuMl,
   calcularCustoItemReceita,
   calcularTotaisReceita,
@@ -178,6 +179,29 @@ test('calcularTotaisReceita não divide por rendimento vendável zero', () => {
   assert.equal(totais.custoUnitario, 0);
 });
 
+test('custo de receita-base considera unidades vendáveis quando não há custo unitário salvo', () => {
+  assert.equal(calcularCustoUnitarioReceita({
+    custoUnitario: 0,
+    custoTotal: 20,
+    rendimento: 5,
+    unidadesVendaveis: 4,
+    unidadesPerdidas: 1
+  }), 5);
+  assert.equal(calcularCustoUnitarioReceita({
+    custoUnitario: 0,
+    custoTotal: 20,
+    rendimento: 5,
+    unidadesPerdidas: 1
+  }), 5);
+  assert.equal(calcularCustoUnitarioReceita({
+    custoUnitario: 0,
+    custoTotal: 20,
+    rendimento: 2,
+    unidadesVendaveis: 0,
+    unidadesPerdidas: 2
+  }), 0);
+});
+
 test('calcularLucroEPrecificacao projeta preço sugerido e margem real', () => {
   const custoUnitario = 4.13;
   // Margem desejada de 100% => Preço sugerido: R$ 8,26
@@ -207,4 +231,3 @@ test('formatarMoeda gera string em Real Brasileiro (BRL)', () => {
   assert.ok(formatado.includes('25,50'));
   assert.ok(formatado.includes('R$'));
 });
-

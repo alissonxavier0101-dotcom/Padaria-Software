@@ -25,7 +25,11 @@ service cloud.firestore {
         data.quantidade is number && data.quantidade > 0 &&
         data.unidade is string && data.unidade in ['kg', 'g', 'L', 'ml', 'un'] &&
         data.preco is number && data.preco >= 0 &&
-        data.custoUnitario is number && data.custoUnitario >= 0;
+        data.custoUnitario is number && data.custoUnitario >= 0 &&
+        (!data.keys().hasAny(['estoqueAtual']) ||
+          (data.estoqueAtual is number && data.estoqueAtual >= 0)) &&
+        (!data.keys().hasAny(['estoqueMinimo']) ||
+          (data.estoqueMinimo is number && data.estoqueMinimo >= 0));
     }
 
     function isValidReceita(data) {
@@ -36,6 +40,28 @@ service cloud.firestore {
         data.itens is list && data.itens.size() <= 100 &&
         data.custoTotal is number && data.custoTotal >= 0 &&
         data.custoUnitario is number && data.custoUnitario >= 0;
+    }
+
+    function isValidProducao(data) {
+      return data.keys().hasAll([
+          'receitaId', 'receitaNome', 'quantidade', 'data', 'quantidadeProduzida',
+          'unidadeProduzida', 'custoInsumos', 'custoIndireto', 'custoReal',
+          'custoUnitarioReal', 'insumos', 'createdBy'
+        ]) &&
+        data.receitaId is string && data.receitaId.size() > 0 &&
+        data.receitaNome is string && data.receitaNome.size() >= 1 && data.receitaNome.size() <= 100 &&
+        data.quantidade is number && data.quantidade >= 1 && data.quantidade % 1 == 0 &&
+        data.data is string && data.data.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+        data.quantidadeProduzida is number && data.quantidadeProduzida > 0 &&
+        data.unidadeProduzida is string && data.unidadeProduzida.size() <= 50 &&
+        data.custoInsumos is number && data.custoInsumos >= 0 &&
+        data.custoIndireto is number && data.custoIndireto >= 0 &&
+        data.custoReal is number && data.custoReal >= 0 &&
+        data.custoUnitarioReal is number && data.custoUnitarioReal >= 0 &&
+        data.insumos is list && data.insumos.size() > 0 && data.insumos.size() <= 100 &&
+        data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128 &&
+        (!data.keys().hasAny(['precoVendaUnitario']) ||
+          (data.precoVendaUnitario is number && data.precoVendaUnitario >= 0));
     }
 
     // Coleção de insumos para os 2 padeiros da padaria artesanal
@@ -52,6 +78,17 @@ service cloud.firestore {
       allow create: if isSignedIn() && isValidId(receitaId) && isValidReceita(incoming());
       allow update: if isSignedIn() && isValidId(receitaId) && isValidReceita(incoming());
       allow delete: if isSignedIn() && isValidId(receitaId);
+    }
+
+    match /producoes/{producaoId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(producaoId) && isValidProducao(incoming());
+      allow update: if isSignedIn() && isValidId(producaoId) &&
+        isValidProducao(incoming()) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+          'data', 'quantidadeProduzida', 'precoVendaUnitario', 'custoUnitarioReal', 'updatedAt'
+        ]);
+      allow delete: if isSignedIn() && isValidId(producaoId);
     }
   }
 }

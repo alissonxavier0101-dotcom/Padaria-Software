@@ -2,7 +2,7 @@
   "entities": {
     "insumo": {
       "title": "Insumo",
-      "description": "Matéria-prima cadastrada para cálculo de custos de pães caseiros e confeitaria",
+      "description": "Matéria-prima com custo unitário, quantidade atual e estoque mínimo para alertas e baixa automática na produção",
       "type": "object",
       "properties": {
         "nome": {
@@ -20,6 +20,16 @@
         "quantidade": {
           "type": "number",
           "description": "Quantidade da embalagem"
+        },
+        "estoqueAtual": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Quantidade disponível no estoque, na unidade cadastrada"
+        },
+        "estoqueMinimo": {
+          "type": "number",
+          "minimum": 0,
+          "description": "Nível mínimo que dispara o alerta de reposição"
         },
         "unidade": {
           "type": "string",
@@ -213,6 +223,66 @@
         "custoTotal",
         "custoUnitario"
       ]
+    },
+    "producao": {
+      "title": "Produção",
+      "description": "Registro imutável de uma ou mais fornadas com baixa de estoque e custo real calculado no momento da produção",
+      "type": "object",
+      "properties": {
+        "receitaId": { "type": "string" },
+        "receitaNome": { "type": "string" },
+        "quantidade": {
+          "type": "number",
+          "description": "Quantidade de fornadas registradas"
+        },
+        "data": {
+          "type": "string",
+          "format": "date",
+          "description": "Data em que a produção ocorreu"
+        },
+        "quantidadeProduzida": { "type": "number" },
+        "unidadeProduzida": { "type": "string" },
+        "precoVendaUnitario": {
+          "type": "number",
+          "description": "Preço de venda praticado por unidade na data da produção"
+        },
+        "custoInsumos": { "type": "number" },
+        "custoIndireto": { "type": "number" },
+        "custoReal": { "type": "number" },
+        "custoUnitarioReal": { "type": "number" },
+        "insumos": {
+          "type": "array",
+          "description": "Snapshot dos insumos consumidos e seus custos unitários no momento da produção",
+          "items": {
+            "type": "object",
+            "properties": {
+              "id": { "type": "string" },
+              "nome": { "type": "string" },
+              "quantidade": { "type": "number" },
+              "unidade": { "type": "string" },
+              "custoUnitario": { "type": "number" },
+              "custo": { "type": "number" }
+            }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" },
+        "createdByName": { "type": "string" }
+      },
+      "required": [
+        "receitaId",
+        "receitaNome",
+        "quantidade",
+        "data",
+        "quantidadeProduzida",
+        "unidadeProduzida",
+        "custoInsumos",
+        "custoIndireto",
+        "custoReal",
+        "custoUnitarioReal",
+        "insumos",
+        "createdBy"
+      ]
     }
   },
   "firestore": {
@@ -223,6 +293,10 @@
     "/receitas/{receitaId}": {
       "schema": "receita",
       "description": "Coleção de receitas de pães com cálculo automático de custos e precificação"
+    },
+    "/producoes/{producaoId}": {
+      "schema": "producao",
+      "description": "Histórico de fornadas com custos reais e baixa de estoque"
     }
   }
 }

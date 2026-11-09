@@ -2,11 +2,11 @@
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>PanisCustos - Gestão de Custos de Padaria</title>
-    <meta name="description" content="Gerenciador mobile-first de custos e insumos para padaria caseira com cálculo automático de custo unitário, autenticação Google e sincronização em tempo real." />
+    <meta name="description" content="Gestão de custos, receitas e estoque da padaria: acompanhe níveis mínimos e dê baixa automática de insumos ao registrar a produção." />
     <meta property="og:title" content="PanisCustos - Gestão de Custos de Padaria" />
-    <meta property="og:description" content="Gerenciador mobile-first de custos e insumos para padaria caseira com cálculo automático de custo unitário, autenticação Google e sincronização em tempo real." />
+    <meta property="og:description" content="Gestão de custos, receitas e estoque da padaria: acompanhe níveis mínimos e dê baixa automática de insumos ao registrar a produção." />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
 
@@ -23,6 +23,8 @@
         --border-color: #EBDAC5;
         --border-focus: #C26707;
         --text-primary: #3E2413;
+      }
+
       .receita-category-badge {
         display: inline-flex;
         width: fit-content;
@@ -114,6 +116,12 @@
         color: var(--text-muted);
         font-size: 12px;
       }
+
+      .user-avatar {
+        width: 42px;
+        height: 42px;
+        border-radius: var(--radius-full);
+        object-fit: cover;
         border: 2px solid var(--wheat-gold);
         background-color: var(--bg-warm-tint);
         flex-shrink: 0;
@@ -911,6 +919,16 @@
         animation: modalPop 0.2s ease-out;
       }
 
+      .production-modal-box {
+        max-height: calc(100vh - 32px);
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+
+      @supports (height: 100dvh) {
+        .production-modal-box { max-height: calc(100dvh - 32px); }
+      }
+
       @keyframes modalPop {
         from { transform: scale(0.95); opacity: 0; }
         to { transform: scale(1); opacity: 1; }
@@ -1077,6 +1095,8 @@
         overflow-x: auto;
         padding: 2px 0 6px 0;
         scrollbar-width: none;
+        scroll-snap-type: x proximity;
+        -webkit-overflow-scrolling: touch;
       }
 
       .category-pills-bar::-webkit-scrollbar {
@@ -1097,6 +1117,12 @@
         align-items: center;
         gap: 5px;
         transition: all 0.2s ease;
+        scroll-snap-align: start;
+      }
+
+      .category-pill:focus-visible {
+        outline: 3px solid var(--wheat-gold);
+        outline-offset: 2px;
       }
 
       .category-pill.active {
@@ -1451,6 +1477,1386 @@
       @keyframes spin {
         to { transform: rotate(360deg); }
       }
+
+      .stock-alert-banner {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        margin: 12px 0;
+        padding: 11px 14px;
+        color: #92400E;
+        background: #FFFBEB;
+        border: 1px solid #FDE68A;
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+      }
+      .stock-alert-banner span { color: #8A6A36; font-size: 11px; }
+      .stock-form-fields {
+        padding: 12px;
+        background: #F7F9F4;
+        border: 1px solid #DCE8D8;
+        border-radius: var(--radius-sm);
+      }
+      .stock-form-help {
+        grid-column: 1 / -1;
+        margin-top: -6px;
+        color: var(--text-muted);
+        font-size: 11px;
+      }
+      .stock-level-card {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 8px 18px;
+        padding: 10px 12px;
+        background: #F4F8F3;
+        border: 1px solid #DCE9DB;
+        border-radius: var(--radius-sm);
+      }
+      .stock-level-value {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+      }
+      .stock-level-value strong { color: #315A3F; font-size: 14px; }
+      .stock-level-status {
+        margin-left: auto;
+        color: #287044;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .stock-level-low {
+        background: #FFF7ED;
+        border-color: #F5D6A9;
+      }
+      .stock-level-low .stock-level-value:first-child strong,
+      .stock-level-low .stock-level-status { color: #A0442C; }
+      .production-action-row { margin: 10px 0; }
+      .production-action-row .btn-primary { width: 100%; }
+      .production-modal-box .form-label { display: block; margin: 12px 0 6px; }
+      .production-modal-box input[type="number"] {
+        width: 100%;
+        height: 40px;
+        padding: 0 10px;
+        border: 1.5px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font-size: 15px;
+      }
+      .production-modal-box input[type="date"] {
+        width: 100%;
+        height: 40px;
+        padding: 0 10px;
+        border: 1.5px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font: inherit;
+      }
+      .production-preview {
+        display: flex;
+        flex-direction: column;
+        gap: 7px;
+        max-height: min(42vh, 360px);
+        margin-top: 12px;
+        padding: 10px 12px;
+        background: #F7F5F0;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        font-size: 12px;
+        overflow-y: auto;
+        overscroll-behavior: contain;
+      }
+      @supports (height: 100dvh) {
+        .production-preview { max-height: min(42dvh, 360px); }
+      }
+      .production-preview > strong { color: var(--wheat-deep); }
+      .production-preview > div { display: flex; justify-content: space-between; gap: 8px; }
+      .production-preview > div strong { color: var(--text-primary); white-space: nowrap; }
+      .production-preview-error { color: #A33B2D; line-height: 1.45; }
+      .production-preview .production-cost-total {
+        border-top: 1px solid var(--border-color);
+        margin-top: 3px;
+        padding-top: 8px;
+        color: var(--wheat-deep);
+        font-size: 13px;
+      }
+      .production-record {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 10px;
+        align-items: center;
+        padding: 14px 16px;
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+        box-shadow: var(--shadow-sm);
+      }
+      .production-record-list { display: grid; gap: 10px; }
+      .production-record-name { color: var(--text-primary); font-size: 15px; font-weight: 700; }
+      .production-record-meta { margin-top: 4px; color: var(--text-secondary); font-size: 12px; }
+      .production-record-cost { color: var(--wheat-deep); font-size: 16px; font-weight: 800; text-align: right; }
+      .production-record-cost small { display: block; margin-top: 3px; color: var(--text-secondary); font-size: 11px; font-weight: 500; }
+      .production-record-profit { margin-top: 7px; color: #047857; font-size: 13px; font-weight: 800; }
+      .production-record-profit.loss { color: #B42318; }
+      .production-record-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+      .production-record-edit { padding: 6px 10px; font-size: 12px; }
+      .production-record-delete { padding: 6px 10px; font-size: 12px; color: var(--danger); }
+      .stock-mode-switch {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-bottom: 12px;
+        padding: 10px 12px;
+        background: #FFFDF9;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-md);
+      }
+      .stock-mode-label { color: var(--text-primary); font-size: 13px; font-weight: 800; }
+      .stock-mode-button { padding: 7px 12px; font-size: 12px; }
+      .stock-mode-button[aria-pressed="true"] {
+        background: #F7EFE4;
+        border-color: var(--wheat-gold);
+        color: var(--wheat-deep);
+      }
+      .stock-mode-description { color: var(--text-secondary); font-size: 12px; }
+      .production-modal-box .modal-actions {
+        position: sticky;
+        bottom: -24px;
+        margin: 0 -20px -24px;
+        padding: 12px 20px 16px;
+        background: #FFFFFF;
+        border-top: 1px solid var(--border-color);
+      }
+      @media (max-width: 480px) {
+        .production-record { grid-template-columns: 1fr; }
+        .production-record-cost { text-align: left; }
+      }
+    </style>
+    <style>
+      :root {
+        color-scheme: light;
+        --bg-main: #F5F7F2;
+        --bg-card: #FFFFFF;
+        --bg-warm-tint: #F1F4EC;
+        --border-color: #DCE4D8;
+        --border-focus: #B96832;
+        --text-primary: #1F3029;
+        --text-secondary: #596B61;
+        --text-muted: #748278;
+        --wheat-deep: #234838;
+        --wheat-dark: #35634D;
+        --wheat-gold: #C8793D;
+        --wheat-accent: #B96832;
+        --success: #21845B;
+        --success-soft: #E8F5ED;
+        --danger: #B84038;
+        --danger-soft: #FFF0EE;
+        --radius-sm: 12px;
+        --radius-md: 18px;
+        --radius-lg: 26px;
+        --radius-full: 999px;
+        --shadow-sm: 0 2px 8px rgba(31, 48, 41, 0.06);
+        --shadow-md: 0 10px 28px rgba(31, 48, 41, 0.1);
+        --shadow-lg: 0 20px 60px rgba(31, 48, 41, 0.16);
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+      }
+
+      html {
+        min-width: 320px;
+        min-height: 100%;
+        background: var(--bg-main);
+        scroll-behavior: smooth;
+        -webkit-text-size-adjust: 100%;
+      }
+
+      body {
+        min-width: 320px;
+        min-height: 100vh;
+        margin: 0;
+        background:
+          radial-gradient(ellipse at 92% 0%, rgba(201, 121, 61, 0.08), transparent 34rem),
+          var(--bg-main);
+        color: var(--text-primary);
+        font-family: 'Outfit', system-ui, sans-serif;
+        font-size: 15px;
+        line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+      }
+
+      button,
+      input,
+      select,
+      textarea {
+        font: inherit;
+      }
+
+      button {
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      button:focus-visible,
+      a:focus-visible,
+      summary:focus-visible {
+        outline: 3px solid rgba(185, 104, 50, 0.42);
+        outline-offset: 3px;
+      }
+
+      .app-viewport {
+        min-height: 100vh;
+      }
+
+      #app-panel:not(.hidden) {
+        width: min(100%, 1120px);
+        min-height: 100vh;
+        margin-inline: auto;
+        background: rgba(255, 255, 255, 0.32);
+      }
+
+      .top-navbar {
+        position: sticky;
+        top: 0;
+        z-index: 20;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 12px;
+        min-height: 68px;
+        padding: 10px 16px;
+        background: rgba(255, 255, 255, 0.92);
+        border-bottom: 1px solid rgba(220, 228, 216, 0.9);
+        box-shadow: 0 4px 16px rgba(31, 48, 41, 0.04);
+        backdrop-filter: blur(16px);
+      }
+
+      .top-user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        min-width: 0;
+      }
+
+      .user-avatar,
+      .user-avatar-placeholder {
+        width: 42px;
+        height: 42px;
+        flex: 0 0 42px;
+        border: 2px solid #FFFFFF;
+        border-radius: 50%;
+        object-fit: cover;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .user-avatar-placeholder {
+        display: grid;
+        place-items: center;
+        background: linear-gradient(145deg, #76A486, var(--wheat-deep));
+        color: #FFFFFF;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .user-greeting {
+        color: var(--text-muted);
+        font-size: 11px;
+        font-weight: 600;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+
+      .user-name {
+        display: block;
+        overflow: hidden;
+        color: var(--text-primary);
+        font-size: 15px;
+        font-weight: 700;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .btn-signout {
+        display: inline-flex;
+        min-height: 44px;
+        flex: 0 0 auto;
+        align-items: center;
+        justify-content: center;
+        gap: 7px;
+        padding: 8px 13px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-full);
+        background: #FFFFFF;
+        color: var(--text-secondary);
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      .bakery-badge-strip {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        min-height: 42px;
+        padding: 6px 16px;
+        border-bottom: 1px solid var(--border-color);
+        background: #F0F5EF;
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .bakery-badge-strip strong {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+
+      .app-content {
+        display: flex;
+        width: 100%;
+        flex-direction: column;
+        gap: 14px;
+        padding: 14px 14px calc(32px + env(safe-area-inset-bottom));
+      }
+
+      #view-insumos:not(.hidden),
+      #view-receitas:not(.hidden),
+      #view-producoes:not(.hidden) {
+        display: grid;
+        align-content: start;
+        gap: 14px;
+        min-width: 0;
+      }
+
+      h1,
+      h2,
+      h3,
+      .bakery-brand-title {
+        color: var(--wheat-deep);
+        letter-spacing: -0.025em;
+      }
+
+      .metrics-card {
+        gap: 12px;
+        padding: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 22px;
+        background: linear-gradient(135deg, #234838, #32634C);
+        box-shadow: 0 14px 30px rgba(35, 72, 56, 0.18);
+      }
+
+      .metric-label {
+        color: #DDEBDD;
+        font-size: 11px;
+        letter-spacing: 0.055em;
+      }
+
+      .metric-value {
+        font-size: clamp(22px, 6vw, 29px);
+        line-height: 1.15;
+      }
+
+      .metric-sub {
+        color: #C5DCCB;
+        line-height: 1.35;
+      }
+
+      .action-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+      }
+
+      .btn-primary,
+      .btn-secondary,
+      .btn-google,
+      .btn-demo-login,
+      .btn-modal-cancel,
+      .btn-modal-danger,
+      .btn-save-price {
+        min-height: 48px;
+        border-radius: 14px;
+        font-family: inherit;
+        font-size: 15px;
+        font-weight: 700;
+        line-height: 1.25;
+        transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+        touch-action: manipulation;
+      }
+
+      .btn-primary {
+        border: 1px solid #2D6149;
+        background: linear-gradient(135deg, #356B50, #234838);
+        box-shadow: 0 7px 16px rgba(35, 72, 56, 0.2);
+      }
+
+      .btn-primary:hover {
+        background: linear-gradient(135deg, #3F795B, #2C5942);
+        box-shadow: 0 9px 20px rgba(35, 72, 56, 0.24);
+      }
+
+      .btn-secondary {
+        border: 1px solid var(--border-color);
+        background: #FFFFFF;
+        color: var(--text-primary);
+      }
+
+      .btn-secondary:hover {
+        border-color: #B9C9BA;
+        background: #F5F8F3;
+      }
+
+      .btn-primary:active,
+      .btn-secondary:active,
+      .btn-google:active,
+      .btn-demo-login:active,
+      .btn-signout:active {
+        transform: scale(0.985);
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.68;
+        transform: none !important;
+      }
+
+      .btn-delete-item,
+      .btn-edit-item {
+        width: 44px;
+        height: 44px;
+        border-radius: 12px;
+      }
+
+      .card-form,
+      .insumo-card,
+      .receita-card,
+      .production-record {
+        border: 1px solid var(--border-color);
+        border-radius: 20px;
+        background: var(--bg-card);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .card-form {
+        width: 100%;
+        gap: 18px;
+        padding: 18px 16px;
+        scroll-margin-top: 84px;
+      }
+
+      .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .card-title {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.25;
+      }
+
+      .form-group {
+        gap: 7px;
+      }
+
+      .form-label {
+        color: var(--text-primary);
+        font-size: 14px;
+        font-weight: 650;
+        line-height: 1.35;
+      }
+
+      .form-label .req {
+        color: #B84F40;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      input[type="date"],
+      input[type="email"],
+      input[type="password"],
+      input[type="search"],
+      select,
+      textarea {
+        width: 100%;
+        min-height: 50px;
+        border: 1px solid #CFD9D0;
+        border-radius: 13px;
+        background-color: #FFFFFF;
+        color: var(--text-primary);
+        font-family: inherit;
+        font-size: 16px;
+        line-height: 1.4;
+        transition: border-color 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+      }
+
+      input[type="text"],
+      input[type="number"],
+      input[type="date"],
+      input[type="email"],
+      input[type="password"],
+      input[type="search"],
+      select {
+        padding: 12px 14px;
+      }
+
+      input::placeholder,
+      textarea::placeholder {
+        color: #8A978E;
+        opacity: 1;
+      }
+
+      input:focus,
+      select:focus,
+      textarea:focus {
+        border-color: var(--border-focus);
+        outline: none;
+        background: #FFFFFF;
+        box-shadow: 0 0 0 4px rgba(185, 104, 50, 0.14);
+      }
+
+      input.has-prefix {
+        padding-left: 46px;
+      }
+
+      .input-prefix {
+        left: 15px;
+        color: var(--text-muted);
+        font-weight: 700;
+      }
+
+      .form-grid-2 {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+      }
+
+      .stock-form-fields {
+        gap: 14px;
+        padding: 14px;
+        border-color: #DCE7DB;
+        border-radius: 15px;
+        background: #F6F9F4;
+      }
+
+      .stock-form-help,
+      .calc-detail {
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .auto-calc-preview {
+        align-items: flex-start;
+        border: 1px solid #E8D6B6;
+        border-radius: 16px;
+        background: linear-gradient(135deg, #FFF9EA, #F8EBD2);
+      }
+
+      .calc-display {
+        margin-block: 4px;
+        color: #704324;
+        font-size: 23px;
+      }
+
+      .search-box {
+        position: sticky;
+        top: 72px;
+        z-index: 8;
+        padding-block: 2px;
+        background: linear-gradient(var(--bg-main) 80%, transparent);
+      }
+
+      .search-input {
+        min-height: 50px;
+        border: 1px solid var(--border-color);
+        border-radius: 15px;
+        background: #FFFFFF;
+        box-shadow: 0 3px 12px rgba(31, 48, 41, 0.055);
+      }
+
+      .btn-clear-search {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+      }
+
+      .section-heading {
+        gap: 10px;
+        margin-top: 2px;
+      }
+
+      .section-title {
+        margin: 0;
+        font-size: 20px;
+        line-height: 1.25;
+      }
+
+      .section-subtitle {
+        margin: 4px 0 0;
+        color: var(--text-secondary);
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .items-count-badge {
+        flex: 0 0 auto;
+        padding: 6px 10px;
+        border: 1px solid #DCE6DA;
+        background: #F0F5EF;
+        color: var(--wheat-deep);
+        font-size: 12px;
+      }
+
+      .insumos-list,
+      .production-record-list {
+        gap: 12px;
+      }
+
+      .insumo-card,
+      .receita-card,
+      .production-record {
+        gap: 14px;
+        padding: 16px;
+        transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
+      }
+
+      .insumo-card:hover,
+      .receita-card:hover,
+      .production-record:hover {
+        border-color: #C9D8CA;
+        box-shadow: var(--shadow-md);
+      }
+
+      .insumo-icon-box {
+        width: 48px;
+        height: 48px;
+        border-radius: 15px;
+        background: #F5EBD7;
+        box-shadow: none;
+      }
+
+      .insumo-nome,
+      .receita-nome {
+        color: var(--wheat-deep);
+        font-size: 17px;
+        line-height: 1.3;
+      }
+
+      .insumo-values,
+      .receita-metrics-grid {
+        gap: 10px;
+        padding: 12px;
+        border: 1px solid #E7ECE5;
+        border-radius: 14px;
+        background: #F8FAF7;
+      }
+
+      .value-caption,
+      .receita-metric-lbl {
+        color: var(--text-muted);
+        font-size: 11px;
+        letter-spacing: 0.045em;
+      }
+
+      .value-text,
+      .receita-metric-val {
+        color: var(--text-primary);
+        font-size: 15px;
+        overflow-wrap: anywhere;
+      }
+
+      .insumo-unit-badge {
+        border: 1px solid #E8D6B6;
+        border-radius: 14px;
+        background: #FFF8E9;
+      }
+
+      .empty-state {
+        gap: 10px;
+        padding: 30px 20px;
+        border: 1px dashed #C9D5C9;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.82);
+      }
+
+      .empty-icon {
+        font-size: 44px;
+      }
+
+      .empty-title {
+        margin: 0;
+        color: var(--wheat-deep);
+        font-size: 20px;
+      }
+
+      .empty-desc {
+        max-width: 34ch;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .category-pills-bar {
+        gap: 8px;
+        padding: 3px 2px 8px;
+      }
+
+      .category-pill {
+        min-height: 40px;
+        padding: 8px 13px;
+        border-color: #DCE4D8;
+        background: #FFFFFF;
+        color: var(--text-secondary);
+        font-size: 13px;
+      }
+
+      .category-pill.active {
+        border-color: var(--wheat-deep);
+        background: var(--wheat-deep);
+        box-shadow: 0 4px 10px rgba(35, 72, 56, 0.16);
+        color: #FFFFFF;
+      }
+
+      .stock-mode-switch {
+        gap: 8px;
+        margin: 0;
+        padding: 12px;
+        border-color: var(--border-color);
+        border-radius: 16px;
+        background: #FFFFFF;
+        box-shadow: var(--shadow-sm);
+      }
+
+      .stock-mode-button {
+        min-height: 40px;
+        padding: 7px 13px;
+      }
+
+      .stock-mode-button[aria-pressed="true"] {
+        border-color: #B8CDBA;
+        background: #EDF5ED;
+        color: var(--wheat-deep);
+      }
+
+      .stock-mode-description {
+        flex-basis: 100%;
+        padding-left: 2px;
+        font-size: 12px;
+      }
+
+      .app-nav-tabs {
+        flex-wrap: nowrap;
+        gap: 5px;
+        margin: 0;
+        overflow-x: auto;
+        padding: 5px;
+        border: 1px solid #DCE4D8;
+        border-radius: 16px;
+        background: #EAF0E8;
+        scrollbar-width: none;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .app-nav-tabs::-webkit-scrollbar {
+        display: none;
+      }
+
+      .nav-tab-btn {
+        min-height: 46px;
+        flex: 0 0 auto;
+        gap: 7px;
+        padding: 10px 12px;
+        border-radius: 12px;
+        color: var(--text-secondary);
+        font-size: 13px;
+        white-space: nowrap;
+      }
+
+      .nav-tab-btn.active {
+        background: #FFFFFF;
+        color: var(--wheat-deep);
+        box-shadow: var(--shadow-sm);
+      }
+
+      .nav-tab-badge {
+        background: #E7EEE5;
+        color: var(--wheat-deep);
+      }
+
+      .nav-tab-btn.active .nav-tab-badge {
+        background: var(--wheat-deep);
+        color: #FFFFFF;
+      }
+
+      .stock-alert-banner,
+      .price-warning {
+        gap: 6px;
+        margin: 0;
+        padding: 14px 15px;
+        border: 1px solid #F0D39D;
+        border-left: 4px solid #C8793D;
+        border-radius: 15px;
+        background: #FFF8E9;
+        color: #684821;
+        font-size: 14px;
+        line-height: 1.45;
+      }
+
+      .stock-alert-banner span {
+        color: #765E3B;
+        font-size: 13px;
+        line-height: 1.45;
+      }
+
+      .price-warning {
+        border-color: #F0C9C4;
+        border-left-color: #B84038;
+        background: #FFF3F1;
+        color: #87382F;
+      }
+
+      .price-warning-card {
+        margin-top: 0;
+      }
+
+      .recipe-builder-box,
+      .conversion-settings,
+      .form-disclosure {
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        background: #FAFCF9;
+      }
+
+      .recipe-builder-box {
+        gap: 14px;
+        padding: 14px;
+      }
+
+      .shopping-list-panel {
+        display: grid;
+        gap: 12px;
+        padding: 16px;
+        border: 1px solid var(--border-color);
+        border-radius: 16px;
+        background: linear-gradient(145deg, #F5FAF5, #FFFFFF);
+      }
+
+      .shopping-list-heading h3 {
+        margin: 0;
+        color: var(--wheat-deep);
+        font-size: 15px;
+      }
+
+      .shopping-list-heading p,
+      .shopping-list-empty {
+        margin: 4px 0 0;
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .shopping-list-items {
+        display: grid;
+        gap: 8px;
+      }
+
+      .shopping-list-item {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 4px 12px;
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: 12px;
+        background: #FFFFFF;
+      }
+
+      .shopping-list-item-name {
+        color: var(--text-primary);
+        font-size: 13px;
+        font-weight: 750;
+        overflow-wrap: anywhere;
+      }
+
+      .shopping-list-item-quantity {
+        color: var(--wheat-deep);
+        font-size: 12px;
+        font-weight: 700;
+        text-align: right;
+      }
+
+      .shopping-list-item-detail {
+        grid-column: 1 / -1;
+        color: var(--text-secondary);
+        font-size: 12px;
+      }
+
+      .shopping-list-item-total {
+        grid-column: 1 / -1;
+        color: var(--wheat-deep);
+        font-size: 12px;
+        font-weight: 750;
+      }
+
+      .shopping-list-error {
+        margin: 0;
+        padding: 10px 12px;
+        border-radius: 10px;
+        background: var(--danger-soft);
+        color: var(--danger);
+        font-size: 12px;
+      }
+
+      .indirect-costs-box {
+        border: 0;
+        background: transparent;
+        padding: 0;
+      }
+
+      .form-disclosure {
+        overflow: clip;
+      }
+
+      .form-disclosure > summary,
+      .conversion-settings > summary {
+        display: flex;
+        min-height: 58px;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        gap: 2px;
+        padding: 12px 44px 12px 15px;
+        color: var(--text-primary);
+        font-size: 15px;
+        font-weight: 700;
+        list-style: none;
+        cursor: pointer;
+        position: relative;
+      }
+
+      .form-disclosure > summary::-webkit-details-marker,
+      .conversion-settings > summary::-webkit-details-marker {
+        display: none;
+      }
+
+      .form-disclosure > summary::after,
+      .conversion-settings > summary::after {
+        content: '+';
+        position: absolute;
+        top: 50%;
+        right: 16px;
+        display: grid;
+        width: 26px;
+        height: 26px;
+        place-items: center;
+        transform: translateY(-50%);
+        border-radius: 50%;
+        background: #EDF3EC;
+        color: var(--wheat-deep);
+        font-size: 19px;
+        line-height: 1;
+      }
+
+      .form-disclosure[open] > summary::after,
+      .conversion-settings[open] > summary::after {
+        content: '−';
+      }
+
+      .form-disclosure > summary small {
+        color: var(--text-secondary);
+        font-size: 12px;
+        font-weight: 500;
+      }
+
+      .form-disclosure-content {
+        display: grid;
+        gap: 15px;
+        padding: 0 14px 15px;
+      }
+
+      .form-disclosure .recipe-builder-box {
+        padding: 0 14px 15px;
+      }
+
+      .conversion-settings {
+        padding: 0;
+      }
+
+      .conversion-settings p,
+      .conversion-settings > .form-group,
+      .conversion-settings > .form-grid-2 {
+        margin-inline: 14px;
+      }
+
+      .conversion-settings > .form-grid-2 {
+        margin-bottom: 14px;
+      }
+
+      .recipe-totals-banner,
+      .card-profit-simulator {
+        gap: 10px;
+        padding: 16px;
+        border-radius: 16px;
+      }
+
+      .recipe-totals-banner {
+        border: 1px solid #E9DAB9;
+        background: #FFF9EB;
+      }
+
+      .totals-banner-row {
+        gap: 10px;
+        font-size: 13px;
+        line-height: 1.4;
+      }
+
+      .totals-banner-row > span {
+        color: var(--text-secondary);
+      }
+
+      .totals-banner-row > strong {
+        text-align: right;
+      }
+
+      .totals-banner-row.main-total {
+        border-color: #E5CF9E;
+        color: var(--wheat-deep);
+        font-size: 16px;
+      }
+
+      .card-profit-simulator {
+        border: 1px solid #CFE3D4;
+        background: #F0F8F1;
+      }
+
+      .profit-sim-title {
+        color: var(--wheat-deep);
+        font-size: 13px;
+      }
+
+      .profit-sim-controls {
+        grid-template-columns: minmax(0, 1fr);
+      }
+
+      .profit-input-wrap,
+      .btn-save-price {
+        min-height: 46px;
+      }
+
+      .recipe-draft-table {
+        min-width: 500px;
+        font-size: 13px;
+      }
+
+      .recipe-draft-table th {
+        padding: 9px 7px;
+        color: var(--text-secondary);
+      }
+
+      .recipe-draft-table td {
+        padding: 10px 7px;
+        overflow-wrap: anywhere;
+      }
+
+      .recipe-draft-table td strong {
+        overflow-wrap: anywhere;
+      }
+
+      .recipe-photo-input {
+        min-height: 52px;
+        border: 1px dashed #BBCBBC;
+        border-radius: 14px;
+        background: #FFFFFF;
+      }
+
+      .recipe-photo-field {
+        flex-wrap: wrap;
+      }
+
+      .production-modal-box,
+      .modal-box {
+        width: min(100%, 520px);
+        max-height: min(88vh, 760px);
+        overflow-y: auto;
+        border: 1px solid var(--border-color);
+        border-radius: 24px;
+        background: #FFFFFF;
+        box-shadow: var(--shadow-lg);
+        overscroll-behavior: contain;
+      }
+
+      .modal-backdrop {
+        align-items: flex-end;
+        padding: 12px;
+        padding-bottom: max(12px, env(safe-area-inset-bottom));
+        background: rgba(21, 37, 29, 0.5);
+        backdrop-filter: blur(5px);
+      }
+
+      .modal-backdrop.active {
+        display: flex;
+      }
+
+      .modal-box {
+        padding: 22px 18px;
+        animation: modalPop 180ms ease-out;
+      }
+
+      .modal-title {
+        margin: 0;
+        color: var(--wheat-deep);
+        font-size: 21px;
+        line-height: 1.25;
+      }
+
+      .modal-desc {
+        margin: 10px 0 16px;
+        color: var(--text-secondary);
+        font-size: 14px;
+        line-height: 1.5;
+      }
+
+      .modal-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 9px;
+      }
+
+      .btn-modal-cancel,
+      .btn-modal-danger {
+        width: 100%;
+        padding: 11px 16px;
+      }
+
+      .btn-modal-danger {
+        background: #B84038;
+        color: #FFFFFF;
+      }
+
+      .production-modal-box .modal-actions {
+        bottom: -22px;
+        margin: 8px -18px -22px;
+        padding: 12px 18px max(14px, env(safe-area-inset-bottom));
+        background: rgba(255, 255, 255, 0.96);
+      }
+
+      .production-preview {
+        gap: 9px;
+        padding: 14px;
+        border-radius: 15px;
+        background: #F6F8F5;
+        font-size: 13px;
+      }
+
+      .production-preview > div {
+        align-items: flex-start;
+        line-height: 1.4;
+      }
+
+      .production-preview > div strong {
+        white-space: normal;
+        text-align: right;
+      }
+
+      .toast {
+        bottom: max(18px, env(safe-area-inset-bottom));
+        width: max-content;
+        max-width: calc(100vw - 28px);
+        padding: 13px 17px;
+        border: 1px solid rgba(255, 255, 255, 0.14);
+        border-radius: 16px;
+        background: #203E31;
+        font-size: 14px;
+        line-height: 1.4;
+        box-shadow: 0 12px 28px rgba(20, 40, 30, 0.22);
+      }
+
+      #btn-submit-insumo,
+      #btn-submit-receita {
+        position: sticky;
+        bottom: max(10px, env(safe-area-inset-bottom));
+        z-index: 6;
+        min-height: 54px;
+        box-shadow: 0 10px 24px rgba(35, 72, 56, 0.28);
+      }
+
+      #btn-cancel-edit-insumo,
+      #btn-cancel-edit-receita {
+        width: 100%;
+      }
+
+      .auth-container {
+        min-height: 100vh;
+        min-height: 100dvh;
+        justify-content: flex-start;
+        padding: max(24px, env(safe-area-inset-top)) 16px max(24px, env(safe-area-inset-bottom));
+        background:
+          radial-gradient(ellipse at 80% 6%, rgba(201, 121, 61, 0.16), transparent 24rem),
+          linear-gradient(160deg, #F7F8F2, #EEF3EA);
+      }
+
+      .auth-card {
+        max-width: 460px;
+        margin-block: auto;
+        padding: 28px 20px;
+        border: 1px solid rgba(220, 228, 216, 0.9);
+        border-radius: 28px;
+        box-shadow: 0 18px 48px rgba(31, 48, 41, 0.11);
+      }
+
+      .bakery-logo-badge {
+        width: 72px;
+        height: 72px;
+        border: 0;
+        background: #F4E9D4;
+        box-shadow: inset 0 0 0 1px #E9D8B9;
+      }
+
+      .auth-title {
+        margin: 0;
+        color: var(--wheat-deep);
+        font-size: 30px;
+        letter-spacing: -0.04em;
+      }
+
+      .auth-subtitle {
+        color: var(--text-secondary);
+        font-size: 15px;
+        line-height: 1.55;
+      }
+
+      .auth-features-box {
+        border-color: #E5EBE2;
+        border-radius: 15px;
+        background: #F8FAF7;
+      }
+
+      .btn-google {
+        border-radius: 15px;
+        box-shadow: 0 4px 12px rgba(31, 48, 41, 0.07);
+      }
+
+      .btn-demo-login {
+        min-height: 48px;
+        border-radius: 15px;
+      }
+
+      @media (min-width: 620px) {
+        .app-content {
+          gap: 18px;
+          padding: 20px 24px 40px;
+        }
+
+        .app-nav-tabs {
+          justify-content: center;
+          overflow: visible;
+        }
+
+        .nav-tab-btn {
+          flex: 1 1 0;
+        }
+
+        #view-insumos:not(.hidden),
+        #view-receitas:not(.hidden),
+        #view-producoes:not(.hidden) {
+          gap: 18px;
+        }
+
+        .form-grid-2 {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .card-form {
+          gap: 20px;
+          padding: 24px;
+        }
+
+        .card-header {
+          flex-direction: row;
+          align-items: center;
+        }
+
+        .action-row {
+          grid-template-columns: minmax(0, 420px);
+        }
+
+        .modal-backdrop {
+          align-items: center;
+          padding: 24px;
+        }
+
+        .modal-actions {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+
+        .production-modal-box .modal-actions {
+          margin-inline: -24px;
+          padding-inline: 24px;
+        }
+      }
+
+      @media (max-width: 390px) {
+        .app-content {
+          padding-inline: 11px;
+        }
+
+        .top-navbar {
+          padding-inline: 12px;
+        }
+
+        .bakery-badge-strip {
+          padding-inline: 12px;
+          font-size: 11px;
+        }
+
+        .user-greeting {
+          font-size: 10px;
+        }
+
+        .user-name {
+          max-width: 145px;
+          font-size: 14px;
+        }
+
+        .btn-signout {
+          min-height: 42px;
+          padding-inline: 10px;
+        }
+
+        .metrics-card {
+          padding: 16px 14px;
+        }
+
+        .metric-label {
+          font-size: 10px;
+        }
+
+        .metric-sub {
+          font-size: 10px;
+        }
+
+        .receita-metrics-grid {
+          grid-template-columns: 1fr 1fr;
+        }
+
+        .receita-metric-box:last-child {
+          grid-column: 1 / -1;
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        *,
+        *::before,
+        *::after {
+          scroll-behavior: auto !important;
+          animation-duration: 0.01ms !important;
+          animation-iteration-count: 1 !important;
+          transition-duration: 0.01ms !important;
+        }
+      }
     </style>
   </head>
   <body>
@@ -1531,11 +2937,11 @@
             🔒 O painel e os insumos só podem ser acessados após login.
           </p>
         </div>
-      </section>
+        </section>
 
       <!-- ================= PAINEL DO SISTEMA (PROTEGIDO) ================= -->
       <section id="app-panel" class="hidden">
-        
+
         <!-- Barra Superior com Foto, Nome e Botão de Sair -->
         <header class="top-navbar">
           <div class="top-user-info">
@@ -1563,16 +2969,30 @@
         </div>
 
         <main class="app-content">
+          <div class="stock-mode-switch" role="group" aria-label="Modo de estoque">
+            <span class="stock-mode-label">Estoque:</span>
+            <button id="btn-stock-mode-real" class="btn-secondary stock-mode-button" type="button" aria-pressed="true">
+              📦 Real
+            </button>
+            <button id="btn-stock-mode-test" class="btn-secondary stock-mode-button" type="button" aria-pressed="false">
+              🧪 Testes
+            </button>
+            <span id="stock-mode-description" class="stock-mode-description">Dados sincronizados da padaria.</span>
+          </div>
 
           <!-- Navegação em Abas do Painel Principal -->
           <nav class="app-nav-tabs" role="tablist">
             <button id="tab-nav-insumos" class="nav-tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="view-insumos">
-              <span>🌾 Insumos</span>
+              <span>📦 Estoque & Insumos</span>
               <span id="tab-badge-insumos" class="nav-tab-badge">0</span>
             </button>
             <button id="tab-nav-receitas" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-receitas">
               <span>🥖 Receitas & Lucro</span>
               <span id="tab-badge-receitas" class="nav-tab-badge">0</span>
+            </button>
+            <button id="tab-nav-producoes" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-producoes">
+              <span>🔥 Produção</span>
+              <span id="tab-badge-producoes" class="nav-tab-badge">0</span>
             </button>
           </nav>
 
@@ -1591,17 +3011,18 @@
                 <span class="metric-sub">base ponderada</span>
               </div>
             </div>
+            <div id="stock-alert-banner" class="stock-alert-banner hidden" role="status" aria-live="polite"></div>
 
             <!-- Botão para Expandir / Recolher Formulário de Insumos -->
             <div class="action-row">
-              <button id="btn-toggle-form" class="btn-primary" type="button" aria-expanded="true">
+              <button id="btn-toggle-form" class="btn-primary" type="button" aria-expanded="false" aria-controls="form-insumo">
                 <span id="toggle-form-icon">➕</span>
                 <span id="toggle-form-text">Cadastrar Novo Insumo ou Embalagem</span>
               </button>
             </div>
 
             <!-- Formulário de Cadastro de Matéria-Prima & Embalagem -->
-            <form id="form-insumo" class="card-form" autocomplete="off">
+            <form id="form-insumo" class="card-form hidden" autocomplete="off">
               <div class="card-header">
                 <h2 id="form-insumo-title" class="card-title">🌾 Novo Insumo ou Embalagem</h2>
                 <span style="font-size: 12px; color: var(--text-muted);">Campos obrigatórios <span style="color:var(--wheat-accent);">*</span></span>
@@ -1697,6 +3118,22 @@
                 </div>
               </div>
 
+              <div class="form-grid-2 stock-form-fields">
+                <div class="form-group">
+                  <label for="input-estoque-atual" class="form-label">
+                    Quantidade atual em estoque (<span id="estoque-unit-current">kg</span>) <span class="req">*</span>
+                  </label>
+                  <input id="input-estoque-atual" type="number" step="any" min="0" required placeholder="Ex: 5" />
+                </div>
+                <div class="form-group">
+                  <label for="input-estoque-minimo" class="form-label">
+                    Estoque mínimo para alerta (<span id="estoque-unit-minimum">kg</span>) <span class="req">*</span>
+                  </label>
+                  <input id="input-estoque-minimo" type="number" step="any" min="0" value="0" required placeholder="Ex: 1" />
+                </div>
+                <span class="stock-form-help">Use a mesma unidade de medida da embalagem. O alerta aparece quando o estoque atingir o mínimo.</span>
+              </div>
+
               <details class="conversion-settings">
                 <summary>Conversões culinárias deste ingrediente</summary>
                 <p>Informe o peso ou volume de cada medida para este material. Exemplo: 1 ovo = 50 g.</p>
@@ -1767,17 +3204,17 @@
               <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">
                 Filtrar por Grupo:
               </span>
-              <div class="category-pills-bar" id="category-pills-container">
-                <button class="category-pill active" data-group-filter="todos" type="button">
+              <div class="category-pills-bar" id="category-pills-container" role="group" aria-label="Filtrar insumos por grupo">
+                <button class="category-pill active" data-group-filter="todos" type="button" aria-pressed="true">
                   Todos (<span id="count-group-todos">0</span>)
                 </button>
-                <button class="category-pill" data-group-filter="ingrediente" type="button">
+                <button class="category-pill" data-group-filter="ingrediente" type="button" aria-pressed="false">
                   🌾 Ingredientes (<span id="count-group-ingrediente">0</span>)
                 </button>
-                <button class="category-pill" data-group-filter="embalagem" type="button">
+                <button class="category-pill" data-group-filter="embalagem" type="button" aria-pressed="false">
                   🛍️ Embalagens & Formas (<span id="count-group-embalagem">0</span>)
                 </button>
-                <button class="category-pill" data-group-filter="outro" type="button">
+                <button class="category-pill" data-group-filter="outro" type="button" aria-pressed="false">
                   📦 Outros (<span id="count-group-outro">0</span>)
                 </button>
               </div>
@@ -1802,7 +3239,7 @@
             <!-- Cabeçalho da Listagem -->
             <div class="section-heading">
               <h3 class="section-title">Insumos em Estoque</h3>
-              <span id="items-counter" class="items-count-badge">0 itens</span>
+              <span id="items-counter" class="items-count-badge" aria-live="polite" aria-atomic="true">0 itens</span>
             </div>
 
             <!-- Container da Listagem em Tempo Real -->
@@ -1813,13 +3250,14 @@
             <!-- Estado Vazio (quando não há insumos) -->
             <div id="empty-state" class="empty-state hidden">
               <div class="empty-icon">🌾</div>
-              <h4 class="empty-title">Nenhum insumo cadastrado</h4>
-              <p class="empty-desc">
+              <h4 id="empty-title" class="empty-title">Nenhum insumo cadastrado</h4>
+              <p id="empty-desc" class="empty-desc">
                 Comece cadastrando suas farinhas, fermentos, sacolas e formas para calcular o custo das receitas.
               </p>
               <button id="btn-empty-add" class="btn-primary" type="button" style="margin-top: 6px;">
                 Cadastrar Primeiro Insumo
               </button>
+              <button id="btn-empty-clear-filters" class="btn-secondary hidden" type="button">Limpar filtros</button>
             </div>
           </div>
 
@@ -1841,7 +3279,7 @@
 
             <!-- Botão Expandir / Recolher Formulário de Receita -->
             <div class="action-row">
-              <button id="btn-toggle-form-receita" class="btn-primary" type="button" aria-expanded="false">
+              <button id="btn-toggle-form-receita" class="btn-primary" type="button" aria-expanded="false" aria-controls="form-receita">
                 <span id="toggle-form-receita-icon">➕</span>
                 <span id="toggle-form-receita-text">Criar Nova Receita</span>
               </button>
@@ -1919,70 +3357,81 @@
                 </div>
               </div>
 
-              <div class="recipe-builder-box indirect-costs-box">
-                <strong style="font-size: 13px; color: var(--wheat-deep);">Custos indiretos da fornada</strong>
-                <span class="calc-detail">Energia e água são valores por fornada. A mão de obra usa o tempo de preparo ativo acima.</span>
-                <div class="form-grid-2">
-                  <div class="form-group">
-                    <label for="input-custo-energia" class="form-label">Gás / energia por fornada (R$)</label>
-                    <input id="input-custo-energia" type="number" min="0" step="0.01" placeholder="Ex: 4,50" />
+              <details id="recipe-cost-details" class="form-disclosure">
+                <summary>
+                  <span>Custos e perdas</span>
+                  <small>Energia, água, mão de obra e quebras</small>
+                </summary>
+                <div class="recipe-builder-box indirect-costs-box">
+                  <strong style="font-size: 13px; color: var(--wheat-deep);">Custos indiretos da fornada</strong>
+                  <span class="calc-detail">Energia e água são valores por fornada. A mão de obra usa o tempo de preparo informado na ficha técnica.</span>
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label for="input-custo-energia" class="form-label">Gás / energia por fornada (R$)</label>
+                      <input id="input-custo-energia" type="number" min="0" step="0.01" placeholder="Ex: 4,50" />
+                    </div>
+                    <div class="form-group">
+                      <label for="input-valor-hora" class="form-label">Valor da hora de trabalho (R$)</label>
+                      <input id="input-valor-hora" type="number" min="0" step="0.01" placeholder="Ex: 25,00" />
+                    </div>
+                    <div class="form-group">
+                      <label for="input-custo-agua" class="form-label">Água por fornada (R$)</label>
+                      <input id="input-custo-agua" type="number" min="0" step="0.01" placeholder="Ex: 0,30" />
+                    </div>
+                    <div class="form-group">
+                      <label for="input-unidades-perdidas" class="form-label">Perdas / quebra (unidades)</label>
+                      <input id="input-unidades-perdidas" type="number" min="0" step="1" value="0" />
+                    </div>
                   </div>
+                </div>
+              </details>
+
+              <details id="recipe-tech-details" class="form-disclosure">
+                <summary>
+                  <span>Ficha técnica e preparo</span>
+                  <small>Observações, etapas, tempos e foto</small>
+                </summary>
+                <div class="form-disclosure-content">
                   <div class="form-group">
-                    <label for="input-valor-hora" class="form-label">Valor da hora de trabalho (R$)</label>
-                    <input id="input-valor-hora" type="number" min="0" step="0.01" placeholder="Ex: 25,00" />
+                    <label for="input-receita-descricao" class="form-label">Observações (opcional)</label>
+                    <input
+                      id="input-receita-descricao"
+                      type="text"
+                      placeholder="Ex: Assar a 200°C por 35 minutos com vapor"
+                    />
                   </div>
+
                   <div class="form-group">
-                    <label for="input-custo-agua" class="form-label">Água por fornada (R$)</label>
-                    <input id="input-custo-agua" type="number" min="0" step="0.01" placeholder="Ex: 0,30" />
+                    <label for="input-modo-preparo" class="form-label">Modo de preparo</label>
+                    <textarea id="input-modo-preparo" class="recipe-textarea" rows="5" maxlength="6000" placeholder="Descreva as etapas, ponto da massa e descanso"></textarea>
                   </div>
+
+                  <div class="form-grid-2">
+                    <div class="form-group">
+                      <label for="input-tempo-preparo" class="form-label">Tempo de preparo ativo (min)</label>
+                      <input id="input-tempo-preparo" type="number" min="0" step="1" placeholder="Ex: 30" />
+                    </div>
+                    <div class="form-group">
+                      <label for="input-tempo-forno" class="form-label">Tempo de forno (min)</label>
+                      <input id="input-tempo-forno" type="number" min="0" step="1" placeholder="Ex: 35" />
+                    </div>
+                    <div class="form-group">
+                      <label for="input-temperatura-forno" class="form-label">Temperatura do forno (°C)</label>
+                      <input id="input-temperatura-forno" type="number" min="0" max="500" step="1" placeholder="Ex: 200" />
+                    </div>
+                  </div>
+
                   <div class="form-group">
-                    <label for="input-unidades-perdidas" class="form-label">Perdas / quebra (unidades)</label>
-                    <input id="input-unidades-perdidas" type="number" min="0" step="1" value="0" />
+                    <label for="input-foto-receita" class="form-label">Foto do produto</label>
+                    <input id="input-foto-receita" class="recipe-photo-input" type="file" accept="image/*" />
+                    <div class="recipe-photo-field">
+                      <img id="preview-foto-receita" class="recipe-photo-preview hidden" alt="Prévia da foto da receita" />
+                      <button id="btn-remover-foto-receita" class="btn-secondary hidden" type="button" aria-label="Remover foto da receita" title="Remover foto">Remover foto</button>
+                    </div>
+                    <span class="calc-detail">A imagem é reduzida antes de ser salva.</span>
                   </div>
                 </div>
-              </div>
-
-              <!-- Observações / Descrição -->
-              <div class="form-group">
-                <label for="input-receita-descricao" class="form-label">
-                  Observações (opcional):
-                </label>
-                <input
-                  id="input-receita-descricao"
-                  type="text"
-                  placeholder="Ex: Assar a 200°C por 35 minutos com vapor"
-                />
-              </div>
-
-              <div class="form-group">
-                <label for="input-modo-preparo" class="form-label">Modo de preparo</label>
-                <textarea id="input-modo-preparo" class="recipe-textarea" rows="5" maxlength="6000" placeholder="Descreva as etapas, ponto da massa e descanso"></textarea>
-              </div>
-
-              <div class="form-grid-2">
-                <div class="form-group">
-                  <label for="input-tempo-preparo" class="form-label">Tempo de preparo (min)</label>
-                  <input id="input-tempo-preparo" type="number" min="0" step="1" placeholder="Ex: 30" />
-                </div>
-                <div class="form-group">
-                  <label for="input-tempo-forno" class="form-label">Tempo de forno (min)</label>
-                  <input id="input-tempo-forno" type="number" min="0" step="1" placeholder="Ex: 35" />
-                </div>
-                <div class="form-group">
-                  <label for="input-temperatura-forno" class="form-label">Temperatura do forno (°C)</label>
-                  <input id="input-temperatura-forno" type="number" min="0" max="500" step="1" placeholder="Ex: 200" />
-                </div>
-              </div>
-
-              <div class="form-group">
-                <label for="input-foto-receita" class="form-label">Foto do produto</label>
-                <input id="input-foto-receita" class="recipe-photo-input" type="file" accept="image/*" />
-                <div class="recipe-photo-field">
-                  <img id="preview-foto-receita" class="recipe-photo-preview hidden" alt="Prévia da foto da receita" />
-                  <button id="btn-remover-foto-receita" class="btn-secondary hidden" type="button" aria-label="Remover foto da receita" title="Remover foto">Remover foto</button>
-                </div>
-                <span class="calc-detail">A imagem é reduzida antes de ser salva.</span>
-              </div>
+              </details>
 
               <!-- Construtor de Itens da Receita (Ingredientes + Sacolas + Formas descartáveis) -->
               <div class="recipe-builder-box">
@@ -2068,6 +3517,18 @@
                   </table>
                 </div>
               </div>
+
+              <section class="shopping-list-panel" aria-labelledby="shopping-list-title">
+                <div class="shopping-list-heading">
+                  <div>
+                    <h3 id="shopping-list-title">🛒 Lista de compras</h3>
+                    <p>Pacotes e preços do cadastro para produzir uma receita. Não desconta o estoque atual.</p>
+                  </div>
+                </div>
+                <div id="recipe-shopping-list" class="shopping-list-items" aria-live="polite">
+                  <p class="shopping-list-empty">Adicione ingredientes para calcular os pacotes necessários.</p>
+                </div>
+              </section>
 
               <!-- Banner de Totais e Discriminação de Custos -->
               <div class="recipe-totals-banner">
@@ -2195,24 +3656,24 @@
                 id="input-search-receitas"
                 class="search-input"
                 type="text"
-                placeholder="Buscar receita pelo nome..."
-                aria-label="Buscar receita pelo nome"
+                placeholder="Buscar receita, ingrediente ou preparo..."
+                aria-label="Buscar receita, ingrediente, observação ou modo de preparo"
               />
               <button id="btn-clear-search-receitas" class="btn-clear-search" type="button" aria-label="Limpar busca">✕</button>
             </div>
 
-            <div class="category-pills-bar" id="recipe-category-pills" aria-label="Filtrar receitas por categoria">
-              <button class="category-pill active" data-recipe-category="todos" type="button">Todas</button>
-              <button class="category-pill" data-recipe-category="paes" type="button">Pães</button>
-              <button class="category-pill" data-recipe-category="bolos" type="button">Bolos</button>
-              <button class="category-pill" data-recipe-category="salgados" type="button">Salgados</button>
-              <button class="category-pill" data-recipe-category="outros" type="button">Outros</button>
+            <div class="category-pills-bar" id="recipe-category-pills" role="group" aria-label="Filtrar receitas por categoria">
+              <button class="category-pill active" data-recipe-category="todos" type="button" aria-pressed="true">Todas (<span id="count-recipe-todos">0</span>)</button>
+              <button class="category-pill" data-recipe-category="paes" type="button" aria-pressed="false">Pães (<span id="count-recipe-paes">0</span>)</button>
+              <button class="category-pill" data-recipe-category="bolos" type="button" aria-pressed="false">Bolos (<span id="count-recipe-bolos">0</span>)</button>
+              <button class="category-pill" data-recipe-category="salgados" type="button" aria-pressed="false">Salgados (<span id="count-recipe-salgados">0</span>)</button>
+              <button class="category-pill" data-recipe-category="outros" type="button" aria-pressed="false">Outros (<span id="count-recipe-outros">0</span>)</button>
             </div>
 
             <!-- Cabeçalho da Listagem de Receitas -->
             <div class="section-heading">
               <h3 class="section-title">Receitas de Pães Cadastradas</h3>
-              <span id="receitas-counter" class="items-count-badge">0 receitas</span>
+              <span id="receitas-counter" class="items-count-badge" aria-live="polite" aria-atomic="true">0 receitas</span>
             </div>
 
             <!-- Container da Listagem de Receitas em Tempo Real -->
@@ -2223,13 +3684,31 @@
             <!-- Estado Vazio de Receitas -->
             <div id="empty-state-receitas" class="empty-state hidden">
               <div class="empty-icon">📖</div>
-              <h4 class="empty-title">Nenhuma receita cadastrada</h4>
-              <p class="empty-desc">
+              <h4 id="empty-title-receitas" class="empty-title">Nenhuma receita cadastrada</h4>
+              <p id="empty-desc-receitas" class="empty-desc">
                 Crie receitas personalizadas combinando seus ingredientes e sacolas/formas para calcular custos e margem de lucro.
               </p>
               <button id="btn-empty-add-receita" class="btn-primary" type="button" style="margin-top: 6px;">
                 Criar Primeira Receita
               </button>
+              <button id="btn-empty-clear-filters-receitas" class="btn-secondary hidden" type="button">Limpar filtros</button>
+            </div>
+          </div>
+
+          <div id="view-producoes" class="hidden">
+            <div class="section-heading">
+              <div>
+                <h2 class="section-title">Histórico de produção</h2>
+                <p class="section-subtitle">Fornadas registradas, consumo de estoque e custo real.</p>
+              </div>
+              <span id="producoes-counter" class="items-count-badge">0 fornadas</span>
+            </div>
+            <div id="producoes-container" class="production-record-list"></div>
+            <div id="empty-state-producoes" class="empty-state hidden">
+              <div class="empty-icon">🔥</div>
+              <h4 class="empty-title">Nenhuma produção registrada</h4>
+              <p class="empty-desc">Registre uma fornada pela aba de receitas para acompanhar a baixa de estoque e o custo real.</p>
+              <button id="btn-producoes-ver-receitas" class="btn-primary" type="button">Ir para receitas</button>
             </div>
           </div>
 
@@ -2248,7 +3727,7 @@
 
           <div class="form-group">
             <label for="select-modal-add-insumo" class="form-label" style="font-size: 12px;">
-              Escolha o Insumo ou Embalagem:
+              Matéria-prima, embalagem ou receita-base:
             </label>
             <select id="select-modal-add-insumo" style="font-size: 13px;">
               <option value="">Selecione...</option>
@@ -2318,6 +3797,67 @@
           <div class="modal-actions">
             <button id="btn-cancel-delete" class="btn-modal-cancel" type="button">Cancelar</button>
             <button id="btn-confirm-delete" class="btn-modal-danger" type="button">Excluir Insumo</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="production-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-production-title">
+        <div class="modal-box production-modal-box">
+          <h3 id="modal-production-title" class="modal-title">Registrar produção</h3>
+          <p class="modal-desc">Informe a data e a quantidade. Os insumos serão baixados do estoque e o custo real será calculado pelo custo atual de cada insumo.</p>
+          <div class="form-grid-2">
+            <div>
+              <label for="production-date" class="form-label">Data da produção</label>
+              <input id="production-date" type="date" required />
+            </div>
+            <div>
+              <label for="production-batches" class="form-label">Quantidade de fornadas</label>
+              <input id="production-batches" type="number" min="1" step="1" value="1" />
+            </div>
+          </div>
+          <div id="production-preview" class="production-preview"></div>
+          <div class="modal-actions">
+            <button id="btn-cancel-production" class="btn-modal-cancel" type="button">Cancelar</button>
+            <button id="btn-confirm-production" class="btn-primary" type="button">Confirmar produção</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="edit-production-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-production-title">
+        <div class="modal-box production-modal-box">
+          <h3 id="edit-production-title" class="modal-title">Editar produção</h3>
+          <p class="modal-desc">Ajuste os dados realizados. Esta edição não altera as baixas de estoque registradas.</p>
+          <div class="form-group">
+            <label for="edit-production-date" class="form-label">Data da produção</label>
+            <input id="edit-production-date" type="date" required />
+          </div>
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label for="edit-production-quantity" class="form-label">Quantidade produzida</label>
+              <input id="edit-production-quantity" type="number" min="0.01" step="any" required />
+            </div>
+            <div class="form-group">
+              <label for="edit-production-sale-price" class="form-label">Preço de venda por unidade (R$)</label>
+              <input id="edit-production-sale-price" type="number" min="0" step="0.01" required />
+            </div>
+          </div>
+          <div id="edit-production-preview" class="production-preview" aria-live="polite"></div>
+          <div class="modal-actions">
+            <button id="btn-cancel-edit-production" class="btn-modal-cancel" type="button">Cancelar</button>
+            <button id="btn-save-edit-production" class="btn-primary" type="button">Salvar alterações</button>
+          </div>
+        </div>
+      </div>
+
+      <div id="delete-production-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="delete-production-title">
+        <div class="modal-box">
+          <h3 id="delete-production-title" class="modal-title">Excluir produção?</h3>
+          <p id="delete-production-description" class="modal-desc">
+            O registro será removido e os insumos consumidos serão devolvidos ao estoque. Esta ação não pode ser desfeita.
+          </p>
+          <div class="modal-actions">
+            <button id="btn-cancel-delete-production" class="btn-modal-cancel" type="button">Cancelar</button>
+            <button id="btn-confirm-delete-production" class="btn-modal-danger" type="button">Excluir produção</button>
           </div>
         </div>
       </div>
@@ -2402,25 +3942,15 @@
             Permissão do Firestore
           </h3>
           <p class="modal-desc" style="font-size: 13px; text-align: left; line-height: 1.5;">
-            O Firestore do projeto <strong>padaria-sistema-6a6b4</strong> precisa de regras liberadas para gravar a coleção <code>insumos</code>:
+            Publique o arquivo <code>firestore.rules</code> deste projeto no Firebase Console. Ele contém regras autenticadas e validações para insumos, receitas e registros de produção.
           </p>
 
-          <div style="background: #2D1A0E; color: #FDE68A; border-radius: 8px; padding: 10px 12px; font-family: monospace; font-size: 12px; position: relative;">
-            <pre id="code-firestore-rules" style="white-space: pre-wrap; margin: 0;">rules_version = '2';
-service cloud.firestore {
-  match /databases/{database}/documents {
-    match /insumos/{document=**} {
-      allow read, write: if true;
-    }
-  }
-}</pre>
+          <div role="note" style="background: #F2F8F5; border: 1px solid #D4E8DE; border-radius: 8px; padding: 10px 12px; color: #245345; font-size: 12px;">
+            Não substitua as regras por acesso público. Depois de publicar, tente novamente.
           </div>
 
           <div style="display: flex; gap: 8px;">
-            <button id="btn-copy-rules" class="btn-primary" style="flex: 1; padding: 10px; font-size: 13px;" type="button">
-              📋 Copiar Regras
-            </button>
-            <a id="link-firestore-rules" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/firestore/rules" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="flex: 1; padding: 10px; font-size: 13px; text-align: center; text-decoration: none;">
+            <a id="link-firestore-rules" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/firestore/rules" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px; text-align: center; text-decoration: none;">
               Abrir Regras ↗
             </a>
           </div>
@@ -2442,8 +3972,20 @@ service cloud.firestore {
     <script type="module">
       import {
         calcularCustoItemReceita as calcularCustoItemReceitaValidado,
+        calcularCustoUnitarioReceita,
         calcularTotaisReceita as calcularTotaisReceitaValidado
       } from "./src/utils/costCalculator.ts";
+      import {
+        calcularBaixaEstoque,
+        calcularListaComprasReceita,
+        convertStockQuantity,
+        isBelowMinimum
+      } from "./src/utils/inventory.ts";
+      import {
+        calcularCustoRealProducao,
+        calcularRestauracaoEstoqueProducao,
+        calcularResultadoFinanceiroProducao
+      } from "./src/utils/production.ts";
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
       import { 
         getAuth, 
@@ -2465,6 +4007,7 @@ service cloud.firestore {
         doc, 
         onSnapshot, 
         serverTimestamp,
+        runTransaction,
         query,
         orderBy
       } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
@@ -2487,6 +4030,10 @@ service cloud.firestore {
       const LOCAL_DEMO_USER_KEY = 'paniscustos_demo_user';
       const LOCAL_DEMO_ITEMS_KEY = 'paniscustos_demo_items';
       const LOCAL_DEMO_RECEITAS_KEY = 'paniscustos_demo_receitas';
+      const LOCAL_DEMO_PRODUCOES_KEY = 'paniscustos_demo_producoes';
+      const TEST_ITEMS_KEY = 'paniscustos_test_items';
+      const TEST_RECIPES_KEY = 'paniscustos_test_recipes';
+      const TEST_PRODUCTIONS_KEY = 'paniscustos_test_productions';
 
       let firebaseApp = null;
       let firebaseAuth = null;
@@ -2494,15 +4041,22 @@ service cloud.firestore {
       let redirectResultChecked = false;
       let unsubscribeSnapshot = null;
       let unsubscribeReceitasSnapshot = null;
+      let unsubscribeProducoesSnapshot = null;
       let isDemoMode = false;
+      let isTestStockMode = false;
       let currentUser = null;
       let cachedInsumos = [];
       let cachedReceitas = [];
+      let cachedProducoes = [];
       let pendingDeleteId = null;
       let pendingDeleteReceitaId = null;
       let pendingAddItemReceitaId = null;
       let editingInsumoId = null;
       let editingReceitaId = null;
+      let stockFormUnit = 'kg';
+      let pendingProductionRecipeId = null;
+      let pendingEditProductionId = null;
+      let pendingDeleteProductionId = null;
       let activeGroupFilter = 'todos';
       let activeRecipeCategory = 'todos';
       let activeTab = 'insumos';
@@ -2671,14 +4225,24 @@ service cloud.firestore {
         headerUserName: document.getElementById('header-user-name'),
         syncStatusLabel: document.getElementById('sync-status-label'),
         providerBadgeLabel: document.getElementById('provider-badge-label'),
+        btnStockModeReal: document.getElementById('btn-stock-mode-real'),
+        btnStockModeTest: document.getElementById('btn-stock-mode-test'),
+        stockModeDescription: document.getElementById('stock-mode-description'),
         
         // Abas principais
         tabNavInsumos: document.getElementById('tab-nav-insumos'),
         tabNavReceitas: document.getElementById('tab-nav-receitas'),
+        tabNavProducoes: document.getElementById('tab-nav-producoes'),
         tabBadgeInsumos: document.getElementById('tab-badge-insumos'),
         tabBadgeReceitas: document.getElementById('tab-badge-receitas'),
+        tabBadgeProducoes: document.getElementById('tab-badge-producoes'),
         viewInsumos: document.getElementById('view-insumos'),
         viewReceitas: document.getElementById('view-receitas'),
+        viewProducoes: document.getElementById('view-producoes'),
+        producoesCounter: document.getElementById('producoes-counter'),
+        producoesContainer: document.getElementById('producoes-container'),
+        emptyStateProducoes: document.getElementById('empty-state-producoes'),
+        btnProducoesVerReceitas: document.getElementById('btn-producoes-ver-receitas'),
 
         // Insumos
         statTotalItems: document.getElementById('stat-total-items'),
@@ -2695,6 +4259,11 @@ service cloud.firestore {
         inputFornecedor: document.getElementById('input-fornecedor'),
         inputQuantidade: document.getElementById('input-quantidade'),
         selectUnidade: document.getElementById('select-unidade'),
+        inputEstoqueAtual: document.getElementById('input-estoque-atual'),
+        inputEstoqueMinimo: document.getElementById('input-estoque-minimo'),
+        estoqueUnitCurrent: document.getElementById('estoque-unit-current'),
+        estoqueUnitMinimum: document.getElementById('estoque-unit-minimum'),
+        stockAlertBanner: document.getElementById('stock-alert-banner'),
         conversionBaseUnit: document.getElementById('select-conversion-base-unit'),
         conversionXicara: document.getElementById('input-conversion-xicara'),
         conversionColherSopa: document.getElementById('input-conversion-colher-sopa'),
@@ -2716,7 +4285,10 @@ service cloud.firestore {
         btnClearSearch: document.getElementById('btn-clear-search'),
         insumosContainer: document.getElementById('insumos-container'),
         emptyState: document.getElementById('empty-state'),
+        emptyTitle: document.getElementById('empty-title'),
+        emptyDesc: document.getElementById('empty-desc'),
         btnEmptyAdd: document.getElementById('btn-empty-add'),
+        btnEmptyClearFilters: document.getElementById('btn-empty-clear-filters'),
 
         // Receitas
         statTotalReceitas: document.getElementById('stat-total-receitas'),
@@ -2726,6 +4298,8 @@ service cloud.firestore {
         toggleFormReceitaText: document.getElementById('toggle-form-receita-text'),
         formReceita: document.getElementById('form-receita'),
         formReceitaTitle: document.getElementById('form-receita-title'),
+        recipeCostDetails: document.getElementById('recipe-cost-details'),
+        recipeTechDetails: document.getElementById('recipe-tech-details'),
         btnCancelEditReceita: document.getElementById('btn-cancel-edit-receita'),
         inputReceitaNome: document.getElementById('input-receita-nome'),
         selectCategoriaReceita: document.getElementById('select-categoria-receita'),
@@ -2749,6 +4323,7 @@ service cloud.firestore {
         receitaItemCostPreview: document.getElementById('receita-item-cost-preview'),
         btnAddItemToReceita: document.getElementById('btn-add-item-to-receita'),
         tbodyDraftReceitaItens: document.getElementById('tbody-draft-receita-itens'),
+        recipeShoppingList: document.getElementById('recipe-shopping-list'),
         bannerCustoIngredientes: document.getElementById('banner-custo-ingredientes'),
         bannerCustoEmbalagens: document.getElementById('banner-custo-embalagens'),
         bannerCustoEnergia: document.getElementById('banner-custo-energia'),
@@ -2768,11 +4343,19 @@ service cloud.firestore {
 
         inputSearchReceitas: document.getElementById('input-search-receitas'),
         btnClearSearchReceitas: document.getElementById('btn-clear-search-receitas'),
+        countRecipeTodos: document.getElementById('count-recipe-todos'),
+        countRecipePaes: document.getElementById('count-recipe-paes'),
+        countRecipeBolos: document.getElementById('count-recipe-bolos'),
+        countRecipeSalgados: document.getElementById('count-recipe-salgados'),
+        countRecipeOutros: document.getElementById('count-recipe-outros'),
         receitasCounter: document.getElementById('receitas-counter'),
         receitasContainer: document.getElementById('receitas-container'),
         recipeCategoryPills: document.getElementById('recipe-category-pills'),
         emptyStateReceitas: document.getElementById('empty-state-receitas'),
+        emptyTitleReceitas: document.getElementById('empty-title-receitas'),
+        emptyDescReceitas: document.getElementById('empty-desc-receitas'),
         btnEmptyAddReceita: document.getElementById('btn-empty-add-receita'),
+        btnEmptyClearFiltersReceitas: document.getElementById('btn-empty-clear-filters-receitas'),
 
         // Modais de Insumos e Receitas
         deleteModal: document.getElementById('delete-modal'),
@@ -2793,6 +4376,26 @@ service cloud.firestore {
         modalDeleteReceitaName: document.getElementById('modal-delete-receita-name'),
         btnCancelDeleteReceita: document.getElementById('btn-cancel-delete-receita'),
         btnConfirmDeleteReceita: document.getElementById('btn-confirm-delete-receita'),
+
+        productionModal: document.getElementById('production-modal'),
+        productionTitle: document.getElementById('modal-production-title'),
+        productionBatches: document.getElementById('production-batches'),
+        productionDate: document.getElementById('production-date'),
+        productionPreview: document.getElementById('production-preview'),
+        btnCancelProduction: document.getElementById('btn-cancel-production'),
+        btnConfirmProduction: document.getElementById('btn-confirm-production'),
+        editProductionModal: document.getElementById('edit-production-modal'),
+        editProductionTitle: document.getElementById('edit-production-title'),
+        editProductionDate: document.getElementById('edit-production-date'),
+        editProductionQuantity: document.getElementById('edit-production-quantity'),
+        editProductionSalePrice: document.getElementById('edit-production-sale-price'),
+        editProductionPreview: document.getElementById('edit-production-preview'),
+        btnCancelEditProduction: document.getElementById('btn-cancel-edit-production'),
+        btnSaveEditProduction: document.getElementById('btn-save-edit-production'),
+        deleteProductionModal: document.getElementById('delete-production-modal'),
+        deleteProductionDescription: document.getElementById('delete-production-description'),
+        btnCancelDeleteProduction: document.getElementById('btn-cancel-delete-production'),
+        btnConfirmDeleteProduction: document.getElementById('btn-confirm-delete-production'),
 
         // Config e Ajuda
         btnOpenConfig: document.getElementById('btn-open-config'),
@@ -2818,7 +4421,6 @@ service cloud.firestore {
         btnCloseUnauthModal: document.getElementById('btn-close-unauth-modal'),
 
         firestoreRulesModal: document.getElementById('firestore-rules-modal'),
-        btnCopyRules: document.getElementById('btn-copy-rules'),
         btnCloseRulesModal: document.getElementById('btn-close-rules-modal'),
 
         toast: document.getElementById('toast'),
@@ -2843,6 +4445,20 @@ service cloud.firestore {
           .replace(/>/g, '&gt;')
           .replace(/"/g, '&quot;')
           .replace(/'/g, '&#39;');
+      }
+
+      function normalizarTextoBusca(valor) {
+        return String(valor ?? '')
+          .normalize('NFD')
+          .replace(/[\u0300-\u036f]/g, '')
+          .toLocaleLowerCase('pt-BR');
+      }
+
+      function correspondeBusca(consulta, campos) {
+        const termos = normalizarTextoBusca(consulta).trim().split(/\s+/).filter(Boolean);
+        if (termos.length === 0) return true;
+        const texto = normalizarTextoBusca(campos.filter(Boolean).join(' '));
+        return termos.every(termo => texto.includes(termo));
       }
 
       function formatarMoeda(valor, casas = 2) {
@@ -3010,7 +4626,11 @@ service cloud.firestore {
                   email: user.email || '',
                   photoURL: user.photoURL || null
                 });
-                iniciarListenerFirestore();
+                if (isTestStockMode) {
+                  carregarDadosTeste();
+                } else {
+                  iniciarListenerFirestore();
+                }
               } else {
                 if (!isDemoMode && !currentUser) {
                   onUserLoggedOut();
@@ -3116,20 +4736,6 @@ service cloud.firestore {
         if (dom.firestoreRulesModal) dom.firestoreRulesModal.classList.remove('active');
       }
 
-      async function copiarRegrasFirestore() {
-        const rules = `rules_version = '2';\nservice cloud.firestore {\n  match /databases/{database}/documents {\n    match /{document=**} {\n      allow read, write: if true;\n    }\n  }\n}`;
-        try {
-          await navigator.clipboard.writeText(rules);
-          showToast('Regras do Firestore copiadas!');
-          if (dom.btnCopyRules) {
-            dom.btnCopyRules.textContent = '✅ Copiado!';
-            setTimeout(() => { dom.btnCopyRules.textContent = '📋 Copiar Regras'; }, 2500);
-          }
-        } catch (e) {
-          showToast('Copie o código exibido na caixa de texto');
-        }
-      }
-
       async function copiarDominio(btnElement) {
         const host = window.location.hostname || 'localhost';
         try {
@@ -3176,11 +4782,26 @@ service cloud.firestore {
         dom.syncStatusLabel.textContent = `Padeiro(a) ${nome} • ${cargo}`;
         dom.providerBadgeLabel.textContent = 'Firestore padaria-sistema-6a6b4';
 
+        if (isTestStockMode) {
+          carregarDadosTeste();
+          atualizarIndicadorModoEstoque();
+          showToast(`Bem-vindo(a), ${nome}! Modo de testes ativo; nenhum dado real será alterado.`);
+          return;
+        }
+
         iniciarListenerFirestore();
+        if (!firestoreDb) {
+          carregarDadosLocais();
+          dom.syncStatusLabel.textContent = 'Dados salvos neste dispositivo';
+          dom.providerBadgeLabel.textContent = 'Modo local';
+          showToast(`Bem-vindo(a), ${nome}! Os dados serão salvos neste dispositivo.`);
+          return;
+        }
         showToast(`Bem-vindo(a), ${nome}! Conectado ao banco Firestore.`);
       }
 
       async function handleLoginDemo() {
+        isTestStockMode = true;
         await loginComoPadeiro('Carlos', 'Padeiro 1', 'C');
       }
 
@@ -3192,6 +4813,10 @@ service cloud.firestore {
         if (unsubscribeReceitasSnapshot) {
           unsubscribeReceitasSnapshot();
           unsubscribeReceitasSnapshot = null;
+        }
+        if (unsubscribeProducoesSnapshot) {
+          unsubscribeProducoesSnapshot();
+          unsubscribeProducoesSnapshot = null;
         }
 
         if (firebaseAuth && !isDemoMode) {
@@ -3212,6 +4837,7 @@ service cloud.firestore {
         currentUser = user;
         dom.authScreen.classList.add('hidden');
         dom.appPanel.classList.remove('hidden');
+        atualizarIndicadorModoEstoque();
 
         dom.headerUserName.textContent = user.displayName || 'Padeiro Artesanal';
         if (user.photoURL) {
@@ -3233,16 +4859,124 @@ service cloud.firestore {
 
       function onUserLoggedOut() {
         currentUser = null;
+        isTestStockMode = false;
         cachedInsumos = [];
         cachedReceitas = [];
+        cachedProducoes = [];
+        atualizarIndicadorModoEstoque();
+        renderizarProducoes();
         dom.appPanel.classList.add('hidden');
         dom.authScreen.classList.remove('hidden');
+      }
+
+      function carregarDadosLocais() {
+        try {
+          const savedItems = localStorage.getItem(LOCAL_DEMO_ITEMS_KEY);
+          const savedRecipes = localStorage.getItem(LOCAL_DEMO_RECEITAS_KEY);
+          const savedProductions = localStorage.getItem(LOCAL_DEMO_PRODUCOES_KEY);
+          cachedInsumos = savedItems ? JSON.parse(savedItems) : [...DEMO_SEED_INSUMOS];
+          cachedReceitas = savedRecipes ? JSON.parse(savedRecipes) : [];
+          cachedProducoes = savedProductions ? JSON.parse(savedProductions) : [];
+          renderizarInsumos();
+          atualizarSelectsInsumosParaReceitas();
+          renderizarReceitas();
+          renderizarProducoes();
+        } catch (error) {
+          console.error('Erro ao carregar dados locais da padaria:', error);
+          showToast('Não foi possível carregar o estoque salvo neste dispositivo.');
+        }
+      }
+
+      function pararListenersFirestore() {
+        [unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeProducoesSnapshot].forEach(unsubscribe => {
+          if (unsubscribe) unsubscribe();
+        });
+        unsubscribeSnapshot = null;
+        unsubscribeReceitasSnapshot = null;
+        unsubscribeProducoesSnapshot = null;
+      }
+
+      function carregarDadosTeste() {
+        try {
+          const savedItems = localStorage.getItem(TEST_ITEMS_KEY);
+          const savedRecipes = localStorage.getItem(TEST_RECIPES_KEY);
+          const savedProductions = localStorage.getItem(TEST_PRODUCTIONS_KEY);
+          cachedInsumos = savedItems ? JSON.parse(savedItems) : JSON.parse(JSON.stringify(DEMO_SEED_INSUMOS));
+          cachedReceitas = savedRecipes ? JSON.parse(savedRecipes) : JSON.parse(JSON.stringify(DEMO_SEED_RECEITAS));
+          cachedProducoes = savedProductions ? JSON.parse(savedProductions) : [];
+          renderizarInsumos();
+          atualizarSelectsInsumosParaReceitas();
+          renderizarReceitas();
+          renderizarProducoes();
+          atualizarIndicadorModoEstoque();
+        } catch (error) {
+          console.error('Erro ao carregar os dados de teste:', error);
+          showToast('Não foi possível carregar o estoque de testes salvo neste dispositivo.');
+        }
+      }
+
+      function salvarDadosInsumosLocais() {
+        localStorage.setItem(isTestStockMode ? TEST_ITEMS_KEY : LOCAL_DEMO_ITEMS_KEY, JSON.stringify(cachedInsumos));
+      }
+
+      function salvarDadosReceitasLocais() {
+        localStorage.setItem(isTestStockMode ? TEST_RECIPES_KEY : LOCAL_DEMO_RECEITAS_KEY, JSON.stringify(cachedReceitas));
+      }
+
+      function salvarDadosProducoesLocais() {
+        localStorage.setItem(isTestStockMode ? TEST_PRODUCTIONS_KEY : LOCAL_DEMO_PRODUCOES_KEY, JSON.stringify(cachedProducoes));
+      }
+
+      function atualizarIndicadorModoEstoque() {
+        const test = isTestStockMode;
+        dom.btnStockModeTest.setAttribute('aria-pressed', String(test));
+        dom.btnStockModeReal.setAttribute('aria-pressed', String(!test));
+        dom.stockModeDescription.textContent = test
+          ? 'Dados de teste isolados neste dispositivo; não altera o estoque real.'
+          : firestoreDb
+            ? 'Dados sincronizados da padaria.'
+            : 'Modo local: dados reais salvos neste dispositivo.';
+        if (test) {
+          dom.syncStatusLabel.textContent = 'Modo de testes isolado';
+          dom.providerBadgeLabel.textContent = 'Dados de teste';
+        } else if (!firestoreDb) {
+          dom.syncStatusLabel.textContent = 'Dados salvos neste dispositivo';
+          dom.providerBadgeLabel.textContent = 'Modo local';
+        } else {
+          dom.syncStatusLabel.textContent = 'Firestore em Tempo Real';
+          dom.providerBadgeLabel.textContent = 'Firestore Conectado';
+        }
+      }
+
+      function alterarModoEstoque(test) {
+        if (test === isTestStockMode) return;
+        pararListenersFirestore();
+        isTestStockMode = test;
+        if (test) {
+          carregarDadosTeste();
+          showToast('Modo de testes ativado. O estoque real permanece protegido.');
+        } else if (firestoreDb && currentUser) {
+          cachedInsumos = [];
+          cachedReceitas = [];
+          cachedProducoes = [];
+          renderizarInsumos();
+          renderizarReceitas();
+          renderizarProducoes();
+          iniciarListenerFirestore();
+          atualizarIndicadorModoEstoque();
+          showToast('Modo real ativado. Carregando dados sincronizados.');
+        } else {
+          carregarDadosLocais();
+          atualizarIndicadorModoEstoque();
+          showToast('Modo real local ativado.');
+        }
       }
 
       // -------------------------------------------------------------
       // 5. BANCO DE DADOS FIRESTORE: LISTAGENS EM TEMPO REAL
       // -------------------------------------------------------------
       function iniciarListenerFirestore() {
+        if (isTestStockMode) return;
         if (!firestoreDb) {
           initFirebase();
         }
@@ -3257,6 +4991,7 @@ service cloud.firestore {
         try {
           const insumosColl = collection(firestoreDb, 'insumos');
           unsubscribeSnapshot = onSnapshot(insumosColl, (snapshot) => {
+            if (isTestStockMode) return;
             const itens = [];
             snapshot.forEach((docSnap) => {
               const data = docSnap.data();
@@ -3296,6 +5031,7 @@ service cloud.firestore {
 
         // Listener da coleção de Receitas
         iniciarListenerReceitas();
+        iniciarListenerProducoes();
       }
 
       function iniciarListenerReceitas() {
@@ -3308,6 +5044,7 @@ service cloud.firestore {
         try {
           const receitasColl = collection(firestoreDb, 'receitas');
           unsubscribeReceitasSnapshot = onSnapshot(receitasColl, (snapshot) => {
+            if (isTestStockMode) return;
             const receitas = [];
             snapshot.forEach((docSnap) => {
               const data = docSnap.data();
@@ -3337,9 +5074,76 @@ service cloud.firestore {
         }
       }
 
+      function iniciarListenerProducoes() {
+        if (!firestoreDb) return;
+        if (unsubscribeProducoesSnapshot) {
+          unsubscribeProducoesSnapshot();
+          unsubscribeProducoesSnapshot = null;
+        }
+
+        try {
+          unsubscribeProducoesSnapshot = onSnapshot(collection(firestoreDb, 'producoes'), (snapshot) => {
+            if (isTestStockMode) return;
+            cachedProducoes = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            cachedProducoes.sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+            renderizarProducoes();
+          }, (error) => {
+            console.error('Erro no snapshot de produções:', error);
+            if (error?.code === 'permission-denied') {
+              showToast('Sem permissão para consultar o histórico de produção.');
+            }
+          });
+        } catch (error) {
+          console.error('Falha ao conectar o histórico de produção:', error);
+          showToast('Não foi possível carregar o histórico de produção.');
+        }
+      }
+
       // -------------------------------------------------------------
       // 6. CADASTRO DE INSUMOS & EMBALAGENS COM GRUPOS
       // -------------------------------------------------------------
+      function obterEstoqueAtual(insumo) {
+        return Number.isFinite(insumo?.estoqueAtual)
+          ? Number(insumo.estoqueAtual)
+          : Number(insumo?.quantidade) || 0;
+      }
+
+      function formatarQuantidadeEstoque(quantidade) {
+        return Number(quantidade).toLocaleString('pt-BR', { maximumFractionDigits: 3 });
+      }
+
+      function atualizarRotulosUnidadeEstoque() {
+        const unidade = dom.selectUnidade.value || 'kg';
+        dom.estoqueUnitCurrent.textContent = unidade;
+        dom.estoqueUnitMinimum.textContent = unidade;
+      }
+
+      function handleStockUnitChange() {
+        const nextUnit = dom.selectUnidade.value || 'kg';
+        if (editingInsumoId && stockFormUnit !== nextUnit) {
+          const item = cachedInsumos.find(insumo => insumo.id === editingInsumoId);
+          try {
+            const conversions = item?.conversoes;
+            const convert = value => {
+              const quantity = parseFloat(value);
+              return Number.isFinite(quantity)
+                ? convertStockQuantity(quantity, stockFormUnit, nextUnit, conversions)
+                : value;
+            };
+            dom.inputQuantidade.value = convert(dom.inputQuantidade.value);
+            dom.inputEstoqueAtual.value = convert(dom.inputEstoqueAtual.value);
+            dom.inputEstoqueMinimo.value = convert(dom.inputEstoqueMinimo.value);
+          } catch (error) {
+            dom.selectUnidade.value = stockFormUnit;
+            showToast(error.message || 'Não foi possível converter as quantidades para esta unidade.');
+            return;
+          }
+        }
+        stockFormUnit = nextUnit;
+        atualizarRotulosUnidadeEstoque();
+        atualizarPreviewCalculo();
+      }
+
       function atualizarPreviewCalculo() {
         const preco = parseFloat(dom.inputPreco.value) || 0;
         const qtd = parseFloat(dom.inputQuantidade.value) || 0;
@@ -3360,6 +5164,10 @@ service cloud.firestore {
         dom.formInsumo.reset();
         dom.selectCategoriaInsumo.value = 'ingrediente';
         dom.selectUnidade.value = 'kg';
+        stockFormUnit = 'kg';
+        dom.inputEstoqueAtual.value = '';
+        dom.inputEstoqueMinimo.value = '0';
+        atualizarRotulosUnidadeEstoque();
         preencherConversoesDoFormulario(null);
         dom.formInsumoTitle.textContent = '🌾 Novo Insumo ou Embalagem';
         dom.btnSubmitInsumo.innerHTML = '<span>Salvar no Firestore</span>';
@@ -3381,6 +5189,10 @@ service cloud.firestore {
         dom.inputFornecedor.value = insumo.fornecedor || '';
         dom.inputQuantidade.value = insumo.quantidade ?? '';
         dom.selectUnidade.value = insumo.unidade || 'kg';
+        stockFormUnit = dom.selectUnidade.value;
+        dom.inputEstoqueAtual.value = obterEstoqueAtual(insumo);
+        dom.inputEstoqueMinimo.value = insumo.estoqueMinimo ?? 0;
+        atualizarRotulosUnidadeEstoque();
         preencherConversoesDoFormulario(insumo.conversoes);
         dom.inputPreco.value = insumo.preco ?? '';
         dom.formInsumoTitle.textContent = '✏️ Editar Insumo ou Material';
@@ -3429,14 +5241,15 @@ service cloud.firestore {
             ...totais,
             precoVendaSugerido: lucro.precoSugerido,
             lucroPorUnidade: lucro.lucroPorUnidade,
-            updatedAt: serverTimestamp()
+            updatedAt: isTestStockMode ? new Date().toISOString() : serverTimestamp()
           };
 
           try {
-            if (firestoreDb && !receita.id.startsWith('local-') && !receita.id.startsWith('demo-')) {
+            if (firestoreDb && !isTestStockMode && !receita.id.startsWith('local-') && !receita.id.startsWith('demo-')) {
               await updateDoc(doc(firestoreDb, 'receitas', receita.id), atualizacoes);
             }
             Object.assign(receita, atualizacoes);
+            if (isTestStockMode) salvarDadosReceitasLocais();
             falhas += await atualizarReceitasDependentes(receita.id);
           } catch (err) {
             falhas++;
@@ -3487,14 +5300,15 @@ service cloud.firestore {
             ...totais,
             precoVendaSugerido: lucro.precoSugerido,
             lucroPorUnidade: lucro.lucroPorUnidade,
-            updatedAt: serverTimestamp()
+            updatedAt: isTestStockMode ? new Date().toISOString() : serverTimestamp()
           };
 
           try {
-            if (firestoreDb && !receita.id.startsWith('local-') && !receita.id.startsWith('demo-')) {
+            if (firestoreDb && !isTestStockMode && !receita.id.startsWith('local-') && !receita.id.startsWith('demo-')) {
               await updateDoc(doc(firestoreDb, 'receitas', receita.id), atualizacoes);
             }
             Object.assign(receita, atualizacoes);
+            if (isTestStockMode) salvarDadosReceitasLocais();
             falhas += await atualizarReceitasDependentes(receita.id, visitadas);
           } catch (err) {
             falhas++;
@@ -3514,10 +5328,14 @@ service cloud.firestore {
         const quantidade = parseFloat(dom.inputQuantidade.value);
         const unidade = dom.selectUnidade.value;
         const preco = parseFloat(dom.inputPreco.value);
+        const estoqueAtual = parseFloat(dom.inputEstoqueAtual.value);
+        const estoqueMinimo = parseFloat(dom.inputEstoqueMinimo.value);
         const conversoes = obterConversoesDoFormulario();
 
-        if (!nome || !fornecedor || isNaN(quantidade) || quantidade <= 0 || isNaN(preco) || preco <= 0) {
-          showToast('Preencha todos os campos com valores válidos.');
+        if (!nome || !fornecedor || isNaN(quantidade) || quantidade <= 0 || isNaN(preco) || preco <= 0 ||
+            !Number.isFinite(estoqueAtual) || estoqueAtual < 0 ||
+            !Number.isFinite(estoqueMinimo) || estoqueMinimo < 0) {
+          showToast('Preencha todos os campos com valores válidos. O estoque atual e o mínimo não podem ser negativos.');
           return;
         }
 
@@ -3531,6 +5349,8 @@ service cloud.firestore {
           preco,
           custoUnitario,
           categoria,
+          estoqueAtual,
+          estoqueMinimo,
           ...(conversoes ? { conversoes } : {})
         };
         const insumoExistente = editingInsumoId
@@ -3541,18 +5361,21 @@ service cloud.firestore {
           dom.btnSubmitInsumo.disabled = true;
           dom.btnSubmitInsumo.innerHTML = '<span class="loading-spinner"></span> Salvando...';
 
-          if (!firestoreDb) {
+          if (!firestoreDb && !isTestStockMode) {
             initFirebase();
           }
 
           if (editingInsumoId) {
             const atualizacoes = { ...novoInsumo, updatedAt: serverTimestamp() };
-            if (firestoreDb && !editingInsumoId.startsWith('local-') && !editingInsumoId.startsWith('demo-')) {
+            if (firestoreDb && !isTestStockMode && !editingInsumoId.startsWith('local-') && !editingInsumoId.startsWith('demo-')) {
               await updateDoc(doc(firestoreDb, 'insumos', editingInsumoId), atualizacoes);
             }
             const insumoAtualizado = { ...insumoExistente, ...novoInsumo, id: editingInsumoId };
             const index = cachedInsumos.findIndex(item => item.id === editingInsumoId);
             if (index >= 0) cachedInsumos[index] = insumoAtualizado;
+            if (!firestoreDb || isTestStockMode || editingInsumoId.startsWith('local-') || editingInsumoId.startsWith('demo-')) {
+              salvarDadosInsumosLocais();
+            }
             renderizarInsumos();
             const falhas = await atualizarReceitasDoInsumo(insumoAtualizado);
             showToast(falhas
@@ -3565,15 +5388,16 @@ service cloud.firestore {
               createdByName: currentUser?.displayName || 'Padeiro',
               createdAt: serverTimestamp()
             };
-            if (firestoreDb) {
+            if (firestoreDb && !isTestStockMode) {
               await addDoc(collection(firestoreDb, 'insumos'), novoInsumoComMetadados);
               showToast(`"${nome}" gravado no Firestore com sucesso!`);
             } else {
               cachedInsumos.unshift({
-                id: 'local-' + Date.now(),
+                id: `${isTestStockMode ? 'demo-test-' : 'local-'}${Date.now()}`,
                 ...novoInsumoComMetadados,
                 createdAt: new Date().toISOString()
               });
+              salvarDadosInsumosLocais();
               renderizarInsumos();
               showToast(`"${nome}" cadastrado localmente.`);
             }
@@ -3617,17 +5441,13 @@ service cloud.firestore {
           dom.btnConfirmDelete.disabled = true;
           dom.btnConfirmDelete.innerHTML = '<span class="loading-spinner"></span> Excluindo...';
 
-          if (firestoreDb) {
-            try {
+          const itemLocal = idToDelete.startsWith('local-') || idToDelete.startsWith('demo-');
+          if (firestoreDb && !isTestStockMode && !itemLocal) {
               await deleteDoc(doc(firestoreDb, 'insumos', idToDelete));
               showToast('Insumo excluído do Firestore!');
-            } catch (errDel) {
-              cachedInsumos = cachedInsumos.filter(item => item.id !== idToDelete);
-              renderizarInsumos();
-              showToast('Insumo removido!');
-            }
           } else {
             cachedInsumos = cachedInsumos.filter(item => item.id !== idToDelete);
+            salvarDadosInsumosLocais();
             renderizarInsumos();
             showToast('Insumo removido!');
           }
@@ -3645,7 +5465,7 @@ service cloud.firestore {
       // 7. RENDERIZAÇÃO DA LISTAGEM DE INSUMOS & FILTROS POR GRUPO
       // -------------------------------------------------------------
       function renderizarInsumos() {
-        const querySearch = dom.inputSearch.value.trim().toLowerCase();
+        const querySearch = dom.inputSearch.value.trim();
         
         // Atualiza contadores dos grupos
         const countTodos = cachedInsumos.length;
@@ -3658,6 +5478,18 @@ service cloud.firestore {
         dom.countGroupEmbalagem.textContent = countEmb;
         dom.countGroupOutro.textContent = countOutro;
         dom.tabBadgeInsumos.textContent = countTodos;
+        const estoqueBaixo = cachedInsumos.filter(isBelowMinimum);
+        if (estoqueBaixo.length) {
+          dom.stockAlertBanner.innerHTML = `
+            <strong>⚠️ ${estoqueBaixo.length} ${estoqueBaixo.length === 1 ? 'insumo precisa' : 'insumos precisam'} de reposição</strong>
+            <span>${estoqueBaixo.slice(0, 4).map(item =>
+              `${escapeHtml(item.nome)} (${formatarQuantidadeEstoque(obterEstoqueAtual(item))} ${escapeHtml(item.unidade)})`
+            ).join(' · ')}${estoqueBaixo.length > 4 ? ` · e mais ${estoqueBaixo.length - 4}` : ''}</span>`;
+          dom.stockAlertBanner.classList.remove('hidden');
+        } else {
+          dom.stockAlertBanner.classList.add('hidden');
+          dom.stockAlertBanner.textContent = '';
+        }
 
         // Filtragem por grupo e busca
         let filtrados = cachedInsumos;
@@ -3667,8 +5499,7 @@ service cloud.firestore {
 
         if (querySearch) {
           filtrados = filtrados.filter(item => 
-            (item.nome || '').toLowerCase().includes(querySearch) ||
-            (item.fornecedor || '').toLowerCase().includes(querySearch)
+            correspondeBusca(querySearch, [item.nome, item.fornecedor])
           );
         }
 
@@ -3685,6 +5516,13 @@ service cloud.firestore {
 
         if (filtrados.length === 0) {
           dom.insumosContainer.innerHTML = '';
+          const possuiFiltros = Boolean(querySearch) || activeGroupFilter !== 'todos';
+          dom.emptyTitle.textContent = possuiFiltros ? 'Nenhum resultado encontrado' : 'Nenhum insumo cadastrado';
+          dom.emptyDesc.textContent = possuiFiltros
+            ? 'Tente outro termo ou remova os filtros para ver seus insumos.'
+            : 'Comece cadastrando suas farinhas, fermentos, sacolas e formas para calcular o custo das receitas.';
+          dom.btnEmptyAdd.classList.toggle('hidden', possuiFiltros);
+          dom.btnEmptyClearFilters.classList.toggle('hidden', !possuiFiltros);
           dom.emptyState.classList.remove('hidden');
           return;
         }
@@ -3721,6 +5559,9 @@ service cloud.firestore {
           const precoFormatado = formatarMoeda(item.preco);
           const custoFormatado = formatarCustoComUnidade(item.custoUnitario, item.unidade);
           const equivalencia = calcularEquivalenciaReceita(item.custoUnitario, item.unidade);
+          const estoqueAtual = obterEstoqueAtual(item);
+          const estoqueMinimo = Number(item.estoqueMinimo) || 0;
+          const estoqueBaixo = isBelowMinimum(item);
           const dataCriacao = item.createdAt 
             ? (new Date(item.createdAt?.toDate ? item.createdAt.toDate() : item.createdAt)).toLocaleDateString('pt-BR') 
             : 'Recente';
@@ -3782,6 +5623,18 @@ service cloud.firestore {
                 </div>
               </div>
 
+              <div class="stock-level-card ${estoqueBaixo ? 'stock-level-low' : ''}">
+                <div class="stock-level-value">
+                  <span class="value-caption">Estoque atual</span>
+                  <strong>${formatarQuantidadeEstoque(estoqueAtual)} ${escapeHtml(item.unidade)}</strong>
+                </div>
+                <div class="stock-level-value">
+                  <span class="value-caption">Mínimo</span>
+                  <strong>${formatarQuantidadeEstoque(estoqueMinimo)} ${escapeHtml(item.unidade)}</strong>
+                </div>
+                <span class="stock-level-status">${estoqueBaixo ? '⚠ Repor' : '✓ Em dia'}</span>
+              </div>
+
               <!-- DESTAQUE DO CUSTO UNITÁRIO CALCULADO AUTOMATICAMENTE -->
               <div class="insumo-unit-badge">
                 <div>
@@ -3806,11 +5659,9 @@ service cloud.firestore {
         activeGroupFilter = grupo;
         const pills = dom.categoryPillsContainer.querySelectorAll('.category-pill');
         pills.forEach(pill => {
-          if (pill.getAttribute('data-group-filter') === grupo) {
-            pill.classList.add('active');
-          } else {
-            pill.classList.remove('active');
-          }
+          const active = pill.getAttribute('data-group-filter') === grupo;
+          pill.classList.toggle('active', active);
+          pill.setAttribute('aria-pressed', String(active));
         });
         renderizarInsumos();
       }
@@ -3831,8 +5682,7 @@ service cloud.firestore {
       }
 
       function obterCustoPorUnidadeReceita(receita) {
-        const rendimento = Number(receita.rendimento) || 1;
-        return Number(receita.custoUnitario) || Number(receita.custoTotal || 0) / rendimento;
+        return calcularCustoUnitarioReceita(receita);
       }
 
       function receitaAlcanca(receitaOrigemId, receitaAlvoId, visitadas = new Set()) {
@@ -3913,6 +5763,9 @@ service cloud.firestore {
         }
         if (dom.calcSelectInsumo) {
           dom.calcSelectInsumo.innerHTML = optionsHtml;
+        }
+        if (dom.recipeShoppingList && itensReceitaEmElaboracao.length > 0) {
+          renderizarListaComprasReceita();
         }
       }
 
@@ -4023,7 +5876,66 @@ service cloud.firestore {
           }).join('');
         }
 
+        renderizarListaComprasReceita();
         atualizarTotaisReceitaEmElaboracao();
+      }
+
+      function renderizarListaComprasReceita() {
+        if (itensReceitaEmElaboracao.length === 0) {
+          dom.recipeShoppingList.innerHTML = '<p class="shopping-list-empty">Adicione ingredientes para calcular os pacotes necessários.</p>';
+          return;
+        }
+
+        const insumosDisponiveis = cachedInsumos.length > 0 ? cachedInsumos : DEMO_SEED_INSUMOS;
+        const receitasDisponiveis = cachedReceitas.length > 0
+          ? cachedReceitas
+          : (isDemoMode ? DEMO_SEED_RECEITAS : []);
+        dom.recipeShoppingList.innerHTML = gerarHtmlListaComprasReceita(
+          itensReceitaEmElaboracao,
+          receitasDisponiveis,
+          insumosDisponiveis
+        );
+      }
+
+      function gerarHtmlListaComprasReceita(itens, receitas, insumos) {
+        if (itens.length === 0) {
+          return '<p class="shopping-list-empty">Adicione ingredientes para calcular os pacotes necessários.</p>';
+        }
+
+        try {
+          const lista = calcularListaComprasReceita(
+            itens.map(item => ({
+              insumoId: item.insumoId,
+              sourceType: item.sourceType,
+              receitaId: item.receitaId,
+              quantidadeUsada: item.quantidadeUsada,
+              unidadeUsada: item.unidadeUsada,
+              conversoes: item.conversoes
+            })),
+            receitas,
+            insumos
+          );
+          return lista.map(item => `
+            <article class="shopping-list-item">
+              <span class="shopping-list-item-name">${escapeHtml(item.nome)}</span>
+              <span class="shopping-list-item-quantity">Usado: ${Number(item.quantidadeNecessaria).toLocaleString('pt-BR', { maximumFractionDigits: 3 })} ${escapeHtml(item.unidade)}</span>
+              <span class="shopping-list-item-detail">
+                Embalagem original: ${Number(item.quantidadeEmbalagem).toLocaleString('pt-BR', { maximumFractionDigits: 3 })} ${escapeHtml(item.unidade)}
+                • ${formatarMoeda(item.precoEmbalagem, 2)} cada
+              </span>
+              <span class="shopping-list-item-total">
+                Comprar: ${item.pacotesNecessarios} ${item.pacotesNecessarios === 1 ? 'pacote' : 'pacotes'}
+                • ${formatarMoeda(item.custoCompra, 2)}
+                <span style="font-weight: 500; color: var(--text-secondary);">
+                  (custo proporcional usado: ${formatarMoeda(item.custoProporcional, 2)})
+                </span>
+              </span>
+            </article>
+          `).join('');
+        } catch (error) {
+          console.error('Não foi possível calcular a lista de compras da receita:', error);
+          return `<p class="shopping-list-error">${escapeHtml(error.message || 'Não foi possível calcular a lista. Confira os insumos e suas unidades.')}</p>`;
+        }
       }
 
       function atualizarTotaisReceitaEmElaboracao() {
@@ -4141,6 +6053,8 @@ service cloud.firestore {
         editingReceitaId = null;
         itensReceitaEmElaboracao = [];
         dom.formReceita.reset();
+        dom.recipeCostDetails.open = false;
+        dom.recipeTechDetails.open = false;
         dom.selectCategoriaReceita.value = 'paes';
         atualizarPreviewFotoReceita(null);
         dom.formReceitaTitle.textContent = '📖 Nova Receita com Custos e Lucro';
@@ -4174,6 +6088,14 @@ service cloud.firestore {
         atualizarPreviewFotoReceita(receita.fotoDataUrl);
         dom.inputMargemLucro.value = receita.margemLucroDesejada ?? 100;
         dom.inputPrecoPraticado.value = receita.precoVendaPraticado ?? '';
+        dom.recipeCostDetails.open = Boolean(
+          Number(receita.custoEnergia) || Number(receita.valorHoraMaoDeObra) ||
+          Number(receita.custoAgua) || Number(receita.unidadesPerdidas)
+        );
+        dom.recipeTechDetails.open = Boolean(
+          receita.descricao || receita.modoPreparo || receita.tempoPreparoMin != null ||
+          receita.tempoFornoMin != null || receita.temperaturaFornoC != null || receita.fotoDataUrl
+        );
         itensReceitaEmElaboracao = (receita.itens || []).map(item => ({ ...item }));
         dom.formReceitaTitle.textContent = '✏️ Editar Receita';
         dom.btnSubmitReceita.innerHTML = '<span>Salvar alterações</span>';
@@ -4208,6 +6130,14 @@ service cloud.firestore {
         atualizarPreviewFotoReceita(receita.fotoDataUrl);
         dom.inputMargemLucro.value = receita.margemLucroDesejada ?? 100;
         dom.inputPrecoPraticado.value = '';
+        dom.recipeCostDetails.open = Boolean(
+          Number(receita.custoEnergia) || Number(receita.valorHoraMaoDeObra) ||
+          Number(receita.custoAgua) || Number(receita.unidadesPerdidas)
+        );
+        dom.recipeTechDetails.open = Boolean(
+          receita.descricao || receita.modoPreparo || receita.tempoPreparoMin != null ||
+          receita.tempoFornoMin != null || receita.temperaturaFornoC != null || receita.fotoDataUrl
+        );
         itensReceitaEmElaboracao = (receita.itens || []).map(item => ({ ...item }));
         dom.formReceitaTitle.textContent = `📖 Variação de ${receita.nome}`;
         dom.btnSubmitReceita.innerHTML = '<span>Salvar nova receita</span>';
@@ -4299,15 +6229,18 @@ service cloud.firestore {
           dom.btnSubmitReceita.disabled = true;
           dom.btnSubmitReceita.innerHTML = '<span class="loading-spinner"></span> Salvando Receita...';
 
-          if (!firestoreDb) initFirebase();
+          if (!firestoreDb && !isTestStockMode) initFirebase();
 
           if (editingReceitaId) {
             const receitaIdAtualizada = editingReceitaId;
             const atualizacoes = { ...novaReceita, updatedAt: serverTimestamp() };
-            if (firestoreDb && !receitaIdAtualizada.startsWith('local-') && !receitaIdAtualizada.startsWith('demo-')) {
+            if (firestoreDb && !isTestStockMode && !receitaIdAtualizada.startsWith('local-') && !receitaIdAtualizada.startsWith('demo-')) {
               await updateDoc(doc(firestoreDb, 'receitas', receitaIdAtualizada), atualizacoes);
             }
             Object.assign(receitaExistente, novaReceita);
+            if (!firestoreDb || isTestStockMode || receitaIdAtualizada.startsWith('local-') || receitaIdAtualizada.startsWith('demo-')) {
+              salvarDadosReceitasLocais();
+            }
             renderizarReceitas();
             const falhas = await atualizarReceitasDependentes(receitaIdAtualizada);
             showToast(falhas
@@ -4319,17 +6252,18 @@ service cloud.firestore {
               createdBy: currentUser?.uid || 'anon',
               createdByName: currentUser?.displayName || 'Padeiro',
               createdAt: serverTimestamp(),
-              updatedAt: serverTimestamp()
+              updatedAt: isTestStockMode ? new Date().toISOString() : serverTimestamp()
             };
-            if (firestoreDb) {
+            if (firestoreDb && !isTestStockMode) {
               await addDoc(collection(firestoreDb, 'receitas'), receitaComMetadados);
               showToast(`Receita "${nome}" gravada no Firestore com sucesso!${avisoPreco}`);
             } else {
               cachedReceitas.unshift({
-                id: 'local-rec-' + Date.now(),
+                id: `${isTestStockMode ? 'demo-rec-test-' : 'local-rec-'}${Date.now()}`,
                 ...receitaComMetadados,
                 createdAt: new Date().toISOString()
               });
+              salvarDadosReceitasLocais();
               renderizarReceitas();
               showToast(`Receita "${nome}" salva localmente.${avisoPreco}`);
             }
@@ -4347,31 +6281,288 @@ service cloud.firestore {
         }
       }
 
+      function abrirModalProducao(receitaId) {
+        const receita = cachedReceitas.find(item => item.id === receitaId);
+        if (!receita) {
+          showToast('A receita selecionada não foi encontrada.');
+          return;
+        }
+        pendingProductionRecipeId = receitaId;
+        dom.productionTitle.textContent = `Produzir: ${receita.nome}`;
+        dom.productionBatches.value = '1';
+        dom.productionDate.value = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
+        renderizarPreviaProducao();
+        dom.productionModal.classList.add('active');
+        dom.productionBatches.focus();
+      }
+
+      function fecharModalProducao() {
+        pendingProductionRecipeId = null;
+        dom.productionModal.classList.remove('active');
+        dom.productionPreview.textContent = '';
+      }
+
+      function renderizarPreviaProducao() {
+        const fornadas = Number(dom.productionBatches.value);
+        if (!pendingProductionRecipeId || !Number.isInteger(fornadas) || fornadas < 1) {
+          dom.productionPreview.innerHTML = '<span class="production-preview-error">Informe um número inteiro de fornadas maior que zero.</span>';
+          return;
+        }
+        try {
+          const receita = cachedReceitas.find(item => item.id === pendingProductionRecipeId);
+          if (!receita) throw new Error('A receita selecionada não foi encontrada.');
+          const baixas = calcularBaixaEstoque(pendingProductionRecipeId, cachedReceitas, cachedInsumos, fornadas);
+          const quantidadeProduzida = Number(receita.rendimento) * fornadas;
+          const custos = calcularCustoRealProducao(baixas, cachedInsumos, receita, fornadas, quantidadeProduzida);
+          dom.productionPreview.innerHTML = `
+            <strong>Consumo previsto para ${fornadas} ${fornadas === 1 ? 'fornada' : 'fornadas'}</strong>
+            ${baixas.map(item => `<div><span>${escapeHtml(item.nome)}</span><strong>${formatarQuantidadeEstoque(item.quantidadeNecessaria)} ${escapeHtml(item.unidade)}</strong></div>`).join('')}
+            <div><span>Produção estimada</span><strong>${formatarQuantidadeEstoque(quantidadeProduzida)} ${escapeHtml(receita.rendimentoUnidade || 'unidades')}</strong></div>
+            <div><span>Custo dos insumos</span><strong>${formatarMoeda(custos.custoInsumos)}</strong></div>
+            <div><span>Custos indiretos</span><strong>${formatarMoeda(custos.custoIndireto)}</strong></div>
+            <div class="production-cost-total"><span>Custo real total</span><strong>${formatarMoeda(custos.custoReal)}</strong></div>
+            <div><span>Custo real por unidade</span><strong>${formatarMoeda(custos.custoUnitarioReal)}</strong></div>`;
+        } catch (error) {
+          dom.productionPreview.innerHTML = `<span class="production-preview-error">${escapeHtml(error.message || 'Não foi possível calcular os insumos.')}</span>`;
+        }
+      }
+
+      async function confirmarProducao() {
+        const receitaId = pendingProductionRecipeId;
+        const fornadas = Number(dom.productionBatches.value);
+        if (!receitaId) return;
+
+        const dataProducao = dom.productionDate.value;
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(dataProducao) || Number.isNaN(new Date(`${dataProducao}T00:00:00`).getTime())) {
+          showToast('Informe uma data válida para a produção.');
+          dom.productionDate.focus();
+          return;
+        }
+
+        const receita = cachedReceitas.find(item => item.id === receitaId);
+        if (!receita) {
+          showToast('A receita selecionada não foi encontrada.');
+          return;
+        }
+
+        let baixas;
+        let custos;
+        try {
+          baixas = calcularBaixaEstoque(receitaId, cachedReceitas, cachedInsumos, fornadas);
+          custos = calcularCustoRealProducao(
+            baixas,
+            cachedInsumos,
+            receita,
+            fornadas,
+            Number(receita.rendimento) * fornadas
+          );
+        } catch (error) {
+          showToast(error.message || 'Não foi possível validar o estoque para esta produção.');
+          renderizarPreviaProducao();
+          return;
+        }
+
+        const receitaLocal = receitaId.startsWith('local-') || receitaId.startsWith('demo-');
+        const idsLocais = baixas.filter(item => item.id.startsWith('local-') || item.id.startsWith('demo-'));
+        const idsRemotos = baixas.filter(item => !item.id.startsWith('local-') && !item.id.startsWith('demo-'));
+        if ((idsLocais.length && idsRemotos.length) ||
+            (receitaLocal && idsRemotos.length) ||
+            (!receitaLocal && idsLocais.length)) {
+          showToast('A receita mistura insumos locais e sincronizados. Revise os cadastros antes de produzir.');
+          return;
+        }
+
+        const button = dom.btnConfirmProduction;
+        button.disabled = true;
+        button.innerHTML = '<span class="loading-spinner"></span> Registrando...';
+        try {
+          if (firestoreDb && !isTestStockMode && !receitaLocal && idsRemotos.length === baixas.length) {
+            const productionRef = doc(collection(firestoreDb, 'producoes'));
+            await runTransaction(firestoreDb, async transaction => {
+              const atualizacoes = [];
+              const insumosLidos = new Map();
+              const receitaSnapshot = await transaction.get(doc(firestoreDb, 'receitas', receitaId));
+              if (!receitaSnapshot.exists()) {
+                throw new Error('A receita não existe mais no Firestore.');
+              }
+              const receitaAtual = receitaSnapshot.data();
+              if (
+                receitaAtual.nome !== receita.nome ||
+                Number(receitaAtual.rendimento) !== Number(receita.rendimento) ||
+                receitaAtual.rendimentoUnidade !== receita.rendimentoUnidade ||
+                Number(receitaAtual.custoIndireto || 0) !== Number(receita.custoIndireto || 0) ||
+                JSON.stringify(normalizarParaComparacao(receitaAtual.itens || [])) !==
+                  JSON.stringify(normalizarParaComparacao(receita.itens || []))
+              ) {
+                throw new Error('A receita foi alterada durante o registro. Feche e abra a produção novamente.');
+              }
+              for (const baixa of baixas) {
+                const ref = doc(firestoreDb, 'insumos', baixa.id);
+                const snapshot = await transaction.get(ref);
+                if (!snapshot.exists()) {
+                  throw new Error(`O insumo "${baixa.nome}" não existe mais no Firestore.`);
+                }
+                const dados = snapshot.data();
+                if (dados.unidade !== baixa.unidade) {
+                  throw new Error(`A unidade de ${baixa.nome} mudou. Atualize os dados e tente novamente.`);
+                }
+                const disponivel = Number.isFinite(dados.estoqueAtual)
+                  ? Number(dados.estoqueAtual)
+                  : Number(dados.quantidade) || 0;
+                if (baixa.quantidadeNecessaria > disponivel + Number.EPSILON * Math.max(1, disponivel)) {
+                  throw new Error(`Estoque insuficiente de ${baixa.nome}: disponível ${formatarQuantidadeEstoque(disponivel)} ${baixa.unidade}, necessário ${formatarQuantidadeEstoque(baixa.quantidadeNecessaria)} ${baixa.unidade}.`);
+                }
+                insumosLidos.set(baixa.id, {
+                  ...cachedInsumos.find(item => item.id === baixa.id),
+                  ...dados,
+                  id: baixa.id
+                });
+                atualizacoes.push({
+                  ref,
+                  estoqueAtual: Math.max(0, disponivel - baixa.quantidadeNecessaria)
+                });
+              }
+
+              const insumosParaCusto = cachedInsumos.map(item => insumosLidos.get(item.id) || item);
+              const custoAtualizado = calcularCustoRealProducao(
+                baixas,
+                insumosParaCusto,
+                receita,
+                fornadas,
+                Number(receita.rendimento) * fornadas
+              );
+              custos = custoAtualizado;
+              const registro = criarRegistroProducao(
+                receita,
+                receitaId,
+                fornadas,
+                dataProducao,
+                baixas,
+                insumosParaCusto,
+                custoAtualizado
+              );
+              atualizacoes.forEach(item => transaction.update(item.ref, {
+                estoqueAtual: item.estoqueAtual,
+                updatedAt: isTestStockMode ? new Date().toISOString() : serverTimestamp()
+              }));
+              transaction.set(productionRef, {
+                ...registro,
+                createdAt: serverTimestamp()
+              });
+            });
+          } else {
+            const atualizados = cachedInsumos.map(insumo => {
+              const baixa = baixas.find(item => item.id === insumo.id);
+              return baixa
+                ? { ...insumo, estoqueAtual: Math.max(0, baixa.quantidadeAtual - baixa.quantidadeNecessaria) }
+                : insumo;
+            });
+            const registro = {
+              id: `${isTestStockMode ? 'demo-prod-' : 'local-prod-'}${Date.now()}`,
+              ...criarRegistroProducao(receita, receitaId, fornadas, dataProducao, baixas, cachedInsumos, custos),
+              createdAt: new Date().toISOString()
+            };
+            const producoesAtualizadas = [registro, ...cachedProducoes];
+            cachedInsumos = atualizados;
+            cachedProducoes = producoesAtualizadas;
+            salvarDadosInsumosLocais();
+            salvarDadosProducoesLocais();
+            renderizarInsumos();
+            renderizarProducoes();
+          }
+
+          fecharModalProducao();
+          showToast(`Produção de ${receita.nome} registrada. Estoque baixado e custo real de ${formatarMoeda(custos.custoReal)} calculado.`);
+        } catch (error) {
+          console.error('Erro ao registrar produção e baixar insumos:', error);
+          showToast(error.message || 'Não foi possível registrar a produção.');
+        } finally {
+          button.disabled = false;
+          button.textContent = 'Confirmar produção';
+        }
+      }
+
+      function criarRegistroProducao(receita, receitaId, fornadas, data, baixas, insumos, custos) {
+        const insumosPorId = new Map(insumos.map(item => [item.id, item]));
+        return {
+          receitaId,
+          receitaNome: receita.nome,
+          quantidade: fornadas,
+          data,
+          quantidadeProduzida: Number(receita.rendimento) * fornadas,
+          unidadeProduzida: receita.rendimentoUnidade || 'unidades',
+          precoVendaUnitario: Number(receita.precoVendaPraticado) || 0,
+          custoInsumos: custos.custoInsumos,
+          custoIndireto: custos.custoIndireto,
+          custoReal: custos.custoReal,
+          custoUnitarioReal: custos.custoUnitarioReal,
+          insumos: baixas.map(baixa => {
+            const item = insumosPorId.get(baixa.id);
+            return {
+              id: baixa.id,
+              nome: baixa.nome,
+              quantidade: baixa.quantidadeNecessaria,
+              unidade: baixa.unidade,
+              custoUnitario: item.custoUnitario,
+              custo: Math.round(baixa.quantidadeNecessaria * item.custoUnitario * 100) / 100
+            };
+          }),
+          createdBy: currentUser?.uid || 'anon',
+          createdByName: currentUser?.displayName || 'Padeiro'
+        };
+      }
+
+      function normalizarParaComparacao(valor) {
+        if (Array.isArray(valor)) return valor.map(normalizarParaComparacao);
+        if (valor && typeof valor === 'object') {
+          return Object.fromEntries(
+            Object.keys(valor).sort().map(chave => [chave, normalizarParaComparacao(valor[chave])])
+          );
+        }
+        return valor;
+      }
+
       // -------------------------------------------------------------
       // 9. RENDERIZAÇÃO DA LISTAGEM DE RECEITAS EM TEMPO REAL
       // -------------------------------------------------------------
       function renderizarReceitas() {
-        const querySearch = dom.inputSearchReceitas.value.trim().toLowerCase();
+        const querySearch = dom.inputSearchReceitas.value.trim();
 
-        let filtradas = cachedReceitas.length > 0 ? cachedReceitas : (isDemoMode ? DEMO_SEED_RECEITAS : []);
+        const receitasDisponiveis = cachedReceitas.length > 0 ? cachedReceitas : (isDemoMode ? DEMO_SEED_RECEITAS : []);
+        const contagensCategoria = receitasDisponiveis.reduce((contagens, receita) => {
+          const categoria = receita.categoria || 'paes';
+          contagens[categoria] = (contagens[categoria] || 0) + 1;
+          return contagens;
+        }, { todos: receitasDisponiveis.length });
+        dom.countRecipeTodos.textContent = contagensCategoria.todos;
+        dom.countRecipePaes.textContent = contagensCategoria.paes || 0;
+        dom.countRecipeBolos.textContent = contagensCategoria.bolos || 0;
+        dom.countRecipeSalgados.textContent = contagensCategoria.salgados || 0;
+        dom.countRecipeOutros.textContent = contagensCategoria.outros || 0;
+
+        let filtradas = receitasDisponiveis;
         if (activeRecipeCategory !== 'todos') {
           filtradas = filtradas.filter(receita => (receita.categoria || 'paes') === activeRecipeCategory);
         }
         if (querySearch) {
-          filtradas = filtradas.filter(r => 
-            (r.nome || '').toLowerCase().includes(querySearch) ||
-            (r.descricao || '').toLowerCase().includes(querySearch) ||
-            (r.itens || []).some(it => (it.insumoNome || '').toLowerCase().includes(querySearch))
+          filtradas = filtradas.filter(receita =>
+            correspondeBusca(querySearch, [
+              receita.nome,
+              receita.descricao,
+              receita.modoPreparo,
+              receita.categoria,
+              ...(receita.itens || []).map(item => item.insumoNome)
+            ])
           );
         }
 
-        dom.statTotalReceitas.textContent = cachedReceitas.length;
+        dom.statTotalReceitas.textContent = receitasDisponiveis.length;
         dom.receitasCounter.textContent = `${filtradas.length} ${filtradas.length === 1 ? 'receita' : 'receitas'}`;
-        dom.tabBadgeReceitas.textContent = cachedReceitas.length;
+        dom.tabBadgeReceitas.textContent = receitasDisponiveis.length;
 
-        if (cachedReceitas.length > 0) {
-          const totalCustoUnitario = cachedReceitas.reduce((acc, r) => acc + (r.custoUnitario || 0), 0);
-          const media = totalCustoUnitario / cachedReceitas.length;
+        if (receitasDisponiveis.length > 0) {
+          const totalCustoUnitario = receitasDisponiveis.reduce((acc, r) => acc + (r.custoUnitario || 0), 0);
+          const media = totalCustoUnitario / receitasDisponiveis.length;
           dom.statAvgReceitaCost.textContent = formatarMoeda(media, 2);
         } else {
           dom.statAvgReceitaCost.textContent = 'R$ 0,00';
@@ -4379,6 +6570,13 @@ service cloud.firestore {
 
         if (filtradas.length === 0) {
           dom.receitasContainer.innerHTML = '';
+          const possuiFiltros = Boolean(querySearch) || activeRecipeCategory !== 'todos';
+          dom.emptyTitleReceitas.textContent = possuiFiltros ? 'Nenhuma receita encontrada' : 'Nenhuma receita cadastrada';
+          dom.emptyDescReceitas.textContent = possuiFiltros
+            ? 'Tente outro termo ou escolha outra categoria para ver suas receitas.'
+            : 'Crie receitas personalizadas combinando seus ingredientes e sacolas/formas para calcular custos e margem de lucro.';
+          dom.btnEmptyAddReceita.classList.toggle('hidden', possuiFiltros);
+          dom.btnEmptyClearFiltersReceitas.classList.toggle('hidden', !possuiFiltros);
           dom.emptyStateReceitas.classList.remove('hidden');
           return;
         }
@@ -4416,6 +6614,12 @@ service cloud.firestore {
           const recipePhoto = rec.fotoDataUrl
             ? `<img class="recipe-card-photo" src="${escapeHtml(rec.fotoDataUrl)}" alt="${escapeHtml(rec.nome)}" loading="lazy">`
             : '';
+          const insumosParaListaCompras = cachedInsumos.length > 0
+            ? cachedInsumos
+            : (isDemoMode ? DEMO_SEED_INSUMOS : []);
+          const listaComprasHtml = itens.length > 0
+            ? gerarHtmlListaComprasReceita(itens, receitasDisponiveis, insumosParaListaCompras)
+            : '<p class="shopping-list-empty">Esta receita ainda não tem itens para listar.</p>';
 
           // Lista de itens formatada
           const itensHtml = itens.map(it => {
@@ -4548,6 +6752,24 @@ service cloud.firestore {
                 ${itensHtml}
               </div>
 
+              <section class="shopping-list-panel recipe-card-shopping-list" aria-label="Lista de compras de ${escapeHtml(rec.nome)}">
+                <div class="shopping-list-heading">
+                  <div>
+                    <h3>🛒 Lista de compras</h3>
+                    <p>Pacotes para uma receita, com preços do cadastro. Não desconta o estoque atual.</p>
+                  </div>
+                </div>
+                <div class="shopping-list-items">
+                  ${listaComprasHtml}
+                </div>
+              </section>
+
+              <div class="production-action-row">
+                <button type="button" class="btn-primary" data-produce-receita-id="${escapeHtml(rec.id)}">
+                  🍞 Registrar produção e baixar insumos
+                </button>
+              </div>
+
               <!-- Simulador de Lucro Interativo no Próprio Card -->
               <div class="card-profit-simulator">
                 <div class="profit-sim-header">
@@ -4585,6 +6807,294 @@ service cloud.firestore {
         }).join('');
 
         dom.receitasContainer.innerHTML = html;
+      }
+
+      function renderizarProducoes() {
+        const producoes = [...cachedProducoes].sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+        dom.tabBadgeProducoes.textContent = String(producoes.length);
+        dom.producoesCounter.textContent = `${producoes.length} ${producoes.length === 1 ? 'registro' : 'registros'}`;
+        dom.emptyStateProducoes.classList.toggle('hidden', producoes.length > 0);
+        dom.producoesContainer.classList.toggle('hidden', producoes.length === 0);
+
+        dom.producoesContainer.innerHTML = producoes.map(producao => {
+          const date = new Date(`${producao.data}T00:00:00`);
+          const dateLabel = Number.isNaN(date.getTime())
+            ? escapeHtml(producao.data || 'Data não informada')
+            : date.toLocaleDateString('pt-BR');
+          const quantidade = Number(producao.quantidade) || 0;
+          const quantidadeProduzida = Number(producao.quantidadeProduzida) || 0;
+          const receita = cachedReceitas.find(item => item.id === producao.receitaId);
+          const precoVendaUnitario = Number(producao.precoVendaUnitario ?? receita?.precoVendaPraticado) || 0;
+          const custoReal = Number(producao.custoReal) || 0;
+          const resultado = quantidadeProduzida > 0 && quantidade > 0
+            ? calcularResultadoFinanceiroProducao(custoReal, quantidadeProduzida, precoVendaUnitario, quantidade)
+            : null;
+          return `
+            <article class="production-record">
+              <div>
+                <div class="production-record-name">${escapeHtml(producao.receitaNome || 'Receita')}</div>
+                <div class="production-record-meta">
+                  ${dateLabel} · ${quantidade} ${quantidade === 1 ? 'fornada' : 'fornadas'}
+                  · ${formatarQuantidadeEstoque(quantidadeProduzida)} ${escapeHtml(producao.unidadeProduzida || 'unidades')}
+                </div>
+                <div class="production-record-meta">
+                  Insumos: ${formatarMoeda(Number(producao.custoInsumos) || 0)}
+                  · Indiretos: ${formatarMoeda(Number(producao.custoIndireto) || 0)}
+                </div>
+                ${resultado ? `
+                  <div class="production-record-meta">Vendas: ${formatarMoeda(resultado.faturamento)}</div>
+                  <div class="production-record-profit ${resultado.lucro < 0 ? 'loss' : ''}">
+                    Lucro: ${formatarMoeda(resultado.lucro)}
+                    · ${formatarMoeda(resultado.lucroPorFornada)} por fornada
+                  </div>
+                ` : ''}
+                <div class="production-record-actions">
+                  <button type="button" class="btn-secondary production-record-edit" data-edit-production-id="${escapeHtml(producao.id)}">
+                    ✏️ Editar produção
+                  </button>
+                  <button type="button" class="btn-secondary production-record-delete" data-delete-production-id="${escapeHtml(producao.id)}">
+                    🗑️ Excluir
+                  </button>
+                </div>
+              </div>
+              <div class="production-record-cost">
+                ${formatarMoeda(Number(producao.custoReal) || 0)}
+                <small>${formatarMoeda(Number(producao.custoUnitarioReal) || 0)} / unidade</small>
+              </div>
+            </article>
+          `;
+        }).join('');
+      }
+
+      function abrirEdicaoProducao(producaoId) {
+        const producao = cachedProducoes.find(item => item.id === producaoId);
+        if (!producao) {
+          showToast('O registro de produção não foi encontrado.');
+          return;
+        }
+        const receita = cachedReceitas.find(item => item.id === producao.receitaId);
+        pendingEditProductionId = producaoId;
+        dom.editProductionTitle.textContent = `Editar produção: ${producao.receitaNome || 'Receita'}`;
+        dom.editProductionDate.value = producao.data || '';
+        dom.editProductionQuantity.value = Number(producao.quantidadeProduzida) || '';
+        dom.editProductionSalePrice.value = Number(
+          producao.precoVendaUnitario ?? receita?.precoVendaPraticado ?? 0
+        ).toFixed(2);
+        atualizarPreviaEdicaoProducao();
+        dom.editProductionModal.classList.add('active');
+        dom.editProductionDate.focus();
+      }
+
+      function fecharEdicaoProducao() {
+        pendingEditProductionId = null;
+        dom.editProductionModal.classList.remove('active');
+        dom.editProductionPreview.textContent = '';
+      }
+
+      function atualizarPreviaEdicaoProducao() {
+        const producao = cachedProducoes.find(item => item.id === pendingEditProductionId);
+        if (!producao) return;
+        const quantidadeProduzida = Number(dom.editProductionQuantity.value);
+        const precoVendaUnitario = Number(dom.editProductionSalePrice.value);
+        try {
+          const resultado = calcularResultadoFinanceiroProducao(
+            Number(producao.custoReal) || 0,
+            quantidadeProduzida,
+            precoVendaUnitario,
+            Number(producao.quantidade)
+          );
+          dom.editProductionPreview.innerHTML = `
+            <div><span>Custo real</span><strong>${formatarMoeda(Number(producao.custoReal) || 0)}</strong></div>
+            <div><span>Faturamento previsto</span><strong>${formatarMoeda(resultado.faturamento)}</strong></div>
+            <div class="production-cost-total"><span>Lucro previsto</span><strong>${formatarMoeda(resultado.lucro)}</strong></div>
+            <div><span>Lucro por fornada (${Number(producao.quantidade)})</span><strong>${formatarMoeda(resultado.lucroPorFornada)}</strong></div>`;
+        } catch (error) {
+          dom.editProductionPreview.innerHTML = `<span class="production-preview-error">${escapeHtml(error.message || 'Informe os dados para calcular o lucro.')}</span>`;
+        }
+      }
+
+      async function salvarEdicaoProducao() {
+        const producao = cachedProducoes.find(item => item.id === pendingEditProductionId);
+        if (!producao) {
+          showToast('O registro de produção não foi encontrado.');
+          fecharEdicaoProducao();
+          return;
+        }
+
+        const data = dom.editProductionDate.value;
+        const quantidadeProduzida = Number(dom.editProductionQuantity.value);
+        const precoVendaUnitario = Number(dom.editProductionSalePrice.value);
+        const parsedDate = new Date(`${data}T00:00:00`);
+        if (!/^\d{4}-\d{2}-\d{2}$/.test(data) || Number.isNaN(parsedDate.getTime()) ||
+            parsedDate.toISOString().slice(0, 10) !== data) {
+          showToast('Informe uma data válida para a produção.');
+          dom.editProductionDate.focus();
+          return;
+        }
+        if (!Number.isFinite(quantidadeProduzida) || quantidadeProduzida <= 0) {
+          showToast('A quantidade produzida deve ser maior que zero.');
+          dom.editProductionQuantity.focus();
+          return;
+        }
+        if (!Number.isFinite(precoVendaUnitario) || precoVendaUnitario < 0) {
+          showToast('Informe um preço de venda válido, igual ou maior que zero.');
+          dom.editProductionSalePrice.focus();
+          return;
+        }
+
+        const atualizacoes = {
+          data,
+          quantidadeProduzida,
+          precoVendaUnitario: Math.round(precoVendaUnitario * 100) / 100,
+          custoUnitarioReal: Math.round((Number(producao.custoReal) / quantidadeProduzida) * 100) / 100,
+          updatedAt: isTestStockMode ? new Date().toISOString() : serverTimestamp()
+        };
+        const isLocal = producao.id.startsWith('local-') || producao.id.startsWith('demo-');
+        const button = dom.btnSaveEditProduction;
+        button.disabled = true;
+        button.textContent = 'Salvando...';
+        try {
+          if (firestoreDb && !isTestStockMode && !isLocal) {
+            await updateDoc(doc(firestoreDb, 'producoes', producao.id), atualizacoes);
+          } else {
+            Object.assign(producao, atualizacoes);
+            salvarDadosProducoesLocais();
+            renderizarProducoes();
+          }
+          const resultado = calcularResultadoFinanceiroProducao(
+            Number(producao.custoReal) || 0,
+            quantidadeProduzida,
+            atualizacoes.precoVendaUnitario,
+            Number(producao.quantidade)
+          );
+          fecharEdicaoProducao();
+          showToast(`Produção atualizada. Lucro: ${formatarMoeda(resultado.lucro)} (${formatarMoeda(resultado.lucroPorFornada)} por fornada).`);
+        } catch (error) {
+          console.error('Erro ao editar produção:', error);
+          showToast(error.message || 'Não foi possível salvar as alterações da produção.');
+        } finally {
+          button.disabled = false;
+          button.textContent = 'Salvar alterações';
+        }
+      }
+
+      function abrirExclusaoProducao(producaoId) {
+        const producao = cachedProducoes.find(item => item.id === producaoId);
+        if (!producao) {
+          showToast('O registro de produção não foi encontrado.');
+          return;
+        }
+
+        pendingDeleteProductionId = producaoId;
+        const podeRestaurarEstoque = Array.isArray(producao.insumos) && producao.insumos.length > 0;
+        dom.deleteProductionDescription.textContent = podeRestaurarEstoque
+          ? `A produção de ${producao.receitaNome || 'Receita'} será removida e os insumos consumidos serão devolvidos ao estoque. Esta ação não pode ser desfeita.`
+          : 'Este registro antigo não contém os detalhes dos insumos consumidos. Para evitar alterar o estoque incorretamente, ele não pode ser excluído por aqui.';
+        dom.btnConfirmDeleteProduction.disabled = !podeRestaurarEstoque;
+        dom.deleteProductionModal.classList.add('active');
+      }
+
+      function fecharExclusaoProducao() {
+        pendingDeleteProductionId = null;
+        dom.deleteProductionModal.classList.remove('active');
+        dom.btnConfirmDeleteProduction.disabled = false;
+        dom.btnConfirmDeleteProduction.textContent = 'Excluir produção';
+      }
+
+      async function confirmarExclusaoProducao() {
+        if (!pendingDeleteProductionId) return;
+        const productionId = pendingDeleteProductionId;
+        const producao = cachedProducoes.find(item => item.id === productionId);
+        if (!producao) {
+          showToast('O registro de produção não foi encontrado.');
+          fecharExclusaoProducao();
+          return;
+        }
+
+        const button = dom.btnConfirmDeleteProduction;
+        button.disabled = true;
+        button.innerHTML = '<span class="loading-spinner"></span> Excluindo e devolvendo insumos...';
+        try {
+          const isLocal = productionId.startsWith('local-') || productionId.startsWith('demo-');
+          if (firestoreDb && !isTestStockMode && !isLocal) {
+            const productionRef = doc(firestoreDb, 'producoes', productionId);
+            await runTransaction(firestoreDb, async transaction => {
+              const productionSnapshot = await transaction.get(productionRef);
+              if (!productionSnapshot.exists()) {
+                throw new Error('Este registro já foi removido.');
+              }
+              const registroAtual = productionSnapshot.data();
+              const consumptions = registroAtual.insumos;
+              if (!Array.isArray(consumptions) || consumptions.length === 0) {
+                throw new Error('Este registro não contém os insumos consumidos; não é possível restaurar o estoque com segurança.');
+              }
+
+              const stockSnapshots = new Map();
+              for (const consumption of consumptions) {
+                if (!consumption.id) {
+                  throw new Error('O registro contém um insumo sem identificação; o estoque não foi alterado.');
+                }
+                if (!stockSnapshots.has(consumption.id)) {
+                  const stockRef = doc(firestoreDb, 'insumos', consumption.id);
+                  const stockSnapshot = await transaction.get(stockRef);
+                  if (!stockSnapshot.exists()) {
+                    throw new Error(`O insumo "${consumption.nome || consumption.id}" não foi encontrado; o estoque não foi alterado.`);
+                  }
+                  stockSnapshots.set(consumption.id, { ref: stockRef, data: stockSnapshot.data() });
+                }
+              }
+
+              const stockRecords = [...stockSnapshots].map(([id, snapshot]) => ({
+                id,
+                ...snapshot.data
+              }));
+              const restored = calcularRestauracaoEstoqueProducao(consumptions, stockRecords);
+              restored.forEach(item => {
+                const stockSnapshot = stockSnapshots.get(item.id);
+                transaction.update(stockSnapshot.ref, {
+                  estoqueAtual: item.estoqueAtual,
+                  updatedAt: serverTimestamp()
+                });
+              });
+              transaction.delete(productionRef);
+            });
+          } else {
+            const restored = calcularRestauracaoEstoqueProducao(producao.insumos, cachedInsumos);
+            const stockById = new Map(restored.map(item => [item.id, item]));
+            const updatedItems = cachedInsumos.map(item => {
+              const restoredItem = stockById.get(item.id);
+              return restoredItem ? { ...item, estoqueAtual: restoredItem.estoqueAtual } : item;
+            });
+            const updatedProductions = cachedProducoes.filter(item => item.id !== productionId);
+            localStorage.setItem(
+              isTestStockMode ? TEST_ITEMS_KEY : LOCAL_DEMO_ITEMS_KEY,
+              JSON.stringify(updatedItems)
+            );
+            localStorage.setItem(
+              isTestStockMode ? TEST_PRODUCTIONS_KEY : LOCAL_DEMO_PRODUCOES_KEY,
+              JSON.stringify(updatedProductions)
+            );
+            cachedInsumos = updatedItems;
+            cachedProducoes = updatedProductions;
+            renderizarInsumos();
+            renderizarProducoes();
+          }
+
+          if (firestoreDb && !isTestStockMode && !isLocal) {
+            cachedProducoes = cachedProducoes.filter(item => item.id !== productionId);
+            renderizarProducoes();
+          }
+          fecharExclusaoProducao();
+          showToast('Produção excluída e insumos devolvidos ao estoque.');
+        } catch (error) {
+          console.error('Erro ao excluir produção e restaurar estoque:', error);
+          showToast(error.message || 'Não foi possível excluir a produção.');
+        } finally {
+          if (pendingDeleteProductionId) {
+            button.disabled = false;
+            button.textContent = 'Excluir produção';
+          }
+        }
       }
 
       // Adicionar novo item a uma receita existente
@@ -4694,7 +7204,7 @@ service cloud.firestore {
           dom.btnConfirmModalAddItem.disabled = true;
           dom.btnConfirmModalAddItem.innerHTML = '<span class="loading-spinner"></span> Gravando...';
 
-          if (firestoreDb && !receitaId.startsWith('local-') && !receitaId.startsWith('demo-')) {
+          if (firestoreDb && !isTestStockMode && !receitaId.startsWith('local-') && !receitaId.startsWith('demo-')) {
             await updateDoc(doc(firestoreDb, 'receitas', receitaId), atualizacoes);
             showToast(`Item "${insumoNome}" gravado na receita!`);
           } else {
@@ -4702,6 +7212,9 @@ service cloud.firestore {
           }
 
           Object.assign(receitaAlvo, atualizacoes);
+          if (!firestoreDb || isTestStockMode || receitaId.startsWith('local-') || receitaId.startsWith('demo-')) {
+            salvarDadosReceitasLocais();
+          }
           renderizarReceitas();
           await atualizarReceitasDependentes(receitaId);
 
@@ -4731,7 +7244,7 @@ service cloud.firestore {
           : `Preço de "${receita.nome}" atualizado para ${formatarMoeda(precoValido, 2)}!`;
 
         try {
-          if (firestoreDb && !receitaId.startsWith('local-') && !receitaId.startsWith('demo-')) {
+          if (firestoreDb && !isTestStockMode && !receitaId.startsWith('local-') && !receitaId.startsWith('demo-')) {
             await updateDoc(doc(firestoreDb, 'receitas', receitaId), {
               precoVendaPraticado: precoValido,
               lucroPorUnidade: lucroCalc.lucroPorUnidade,
@@ -4741,6 +7254,7 @@ service cloud.firestore {
           } else {
             receita.precoVendaPraticado = precoValido;
             receita.lucroPorUnidade = lucroCalc.lucroPorUnidade;
+            salvarDadosReceitasLocais();
             renderizarReceitas();
             showToast(aviso);
           }
@@ -4769,11 +7283,12 @@ service cloud.firestore {
           dom.btnConfirmDeleteReceita.disabled = true;
           dom.btnConfirmDeleteReceita.innerHTML = '<span class="loading-spinner"></span> Excluindo...';
 
-          if (firestoreDb && !idToDelete.startsWith('local-') && !idToDelete.startsWith('demo-')) {
+          if (firestoreDb && !isTestStockMode && !idToDelete.startsWith('local-') && !idToDelete.startsWith('demo-')) {
             await deleteDoc(doc(firestoreDb, 'receitas', idToDelete));
             showToast('Receita excluída do Firestore!');
           } else {
             cachedReceitas = cachedReceitas.filter(r => r.id !== idToDelete);
+            salvarDadosReceitasLocais();
             renderizarReceitas();
             showToast('Receita removida!');
           }
@@ -4790,22 +7305,26 @@ service cloud.firestore {
       // Alternar abas do aplicativo
       function switchTab(tab) {
         activeTab = tab;
+        const tabs = [
+          ['insumos', dom.tabNavInsumos, dom.viewInsumos],
+          ['receitas', dom.tabNavReceitas, dom.viewReceitas],
+          ['producoes', dom.tabNavProducoes, dom.viewProducoes]
+        ];
+        tabs.forEach(([name, button, view]) => {
+          const isActive = name === tab;
+          button.classList.toggle('active', isActive);
+          button.setAttribute('aria-selected', String(isActive));
+          view.classList.toggle('hidden', !isActive);
+        });
+
         if (tab === 'insumos') {
-          dom.tabNavInsumos.classList.add('active');
-          dom.tabNavInsumos.setAttribute('aria-selected', 'true');
-          dom.tabNavReceitas.classList.remove('active');
-          dom.tabNavReceitas.setAttribute('aria-selected', 'false');
-          dom.viewInsumos.classList.remove('hidden');
-          dom.viewReceitas.classList.add('hidden');
-        } else {
-          dom.tabNavReceitas.classList.add('active');
-          dom.tabNavReceitas.setAttribute('aria-selected', 'true');
-          dom.tabNavInsumos.classList.remove('active');
-          dom.tabNavInsumos.setAttribute('aria-selected', 'false');
-          dom.viewReceitas.classList.remove('hidden');
-          dom.viewInsumos.classList.add('hidden');
+          return;
+        }
+        if (tab === 'receitas') {
           atualizarSelectsInsumosParaReceitas();
           renderizarReceitas();
+        } else if (tab === 'producoes') {
+          renderizarProducoes();
         }
       }
 
@@ -4856,6 +7375,8 @@ service cloud.firestore {
       dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       dom.btnLoginDemo.addEventListener('click', handleLoginDemo);
       dom.btnLogout.addEventListener('click', handleLogout);
+      dom.btnStockModeReal.addEventListener('click', () => alterarModoEstoque(false));
+      dom.btnStockModeTest.addEventListener('click', () => alterarModoEstoque(true));
 
       if (dom.btnLoginCarlos) {
         dom.btnLoginCarlos.addEventListener('click', () => loginComoPadeiro('Carlos', 'Padeiro 1', 'C'));
@@ -4867,6 +7388,8 @@ service cloud.firestore {
       // Navegação por abas
       dom.tabNavInsumos.addEventListener('click', () => switchTab('insumos'));
       dom.tabNavReceitas.addEventListener('click', () => switchTab('receitas'));
+      dom.tabNavProducoes.addEventListener('click', () => switchTab('producoes'));
+      dom.btnProducoesVerReceitas.addEventListener('click', () => switchTab('receitas'));
 
       // Filtro de insumos por grupo
       dom.categoryPillsContainer.addEventListener('click', (e) => {
@@ -4890,7 +7413,6 @@ service cloud.firestore {
       if (dom.btnCloseUnauthModal) dom.btnCloseUnauthModal.addEventListener('click', fecharModalDominioNaoAutorizado);
 
       // Regras Firestore modal
-      if (dom.btnCopyRules) dom.btnCopyRules.addEventListener('click', copiarRegrasFirestore);
       if (dom.btnCloseRulesModal) dom.btnCloseRulesModal.addEventListener('click', fecharModalRegrasFirestore);
 
       // Configuração modal
@@ -4919,8 +7441,16 @@ service cloud.firestore {
         dom.formInsumo.classList.remove('hidden');
         dom.toggleFormText.textContent = 'Recolher Formulário';
         dom.toggleFormIcon.textContent = '▲';
+        dom.btnToggleForm.setAttribute('aria-expanded', 'true');
         dom.inputNome.focus();
         dom.formInsumo.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      dom.btnEmptyClearFilters.addEventListener('click', () => {
+        dom.inputSearch.value = '';
+        dom.btnClearSearch.style.display = 'none';
+        setGroupFilter('todos');
+        dom.inputSearch.focus();
       });
 
       // Auto-selecionar unidade padrão ao mudar a categoria de insumo
@@ -4930,12 +7460,12 @@ service cloud.firestore {
         } else if (dom.selectCategoriaInsumo.value === 'ingrediente') {
           dom.selectUnidade.value = 'kg';
         }
-        atualizarPreviewCalculo();
+        handleStockUnitChange();
       });
 
       dom.inputPreco.addEventListener('input', atualizarPreviewCalculo);
       dom.inputQuantidade.addEventListener('input', atualizarPreviewCalculo);
-      dom.selectUnidade.addEventListener('change', atualizarPreviewCalculo);
+      dom.selectUnidade.addEventListener('change', handleStockUnitChange);
       dom.formInsumo.addEventListener('submit', handleFormSubmit);
       dom.btnCancelEditInsumo.addEventListener('click', cancelarEdicaoInsumo);
 
@@ -4991,8 +7521,22 @@ service cloud.firestore {
         dom.formReceita.classList.remove('hidden');
         dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
         dom.toggleFormReceitaIcon.textContent = '▲';
+        dom.btnToggleFormReceita.setAttribute('aria-expanded', 'true');
         dom.inputReceitaNome.focus();
         dom.formReceita.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      dom.btnEmptyClearFiltersReceitas.addEventListener('click', () => {
+        dom.inputSearchReceitas.value = '';
+        dom.btnClearSearchReceitas.style.display = 'none';
+        activeRecipeCategory = 'todos';
+        dom.recipeCategoryPills.querySelectorAll('[data-recipe-category]').forEach(button => {
+          const active = button.getAttribute('data-recipe-category') === 'todos';
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        renderizarReceitas();
+        dom.inputSearchReceitas.focus();
       });
 
       // Construtor de Itens de Receita
@@ -5073,6 +7617,11 @@ service cloud.firestore {
 
       // Delegação de eventos no container de receitas
       dom.receitasContainer.addEventListener('click', (e) => {
+        const btnProduce = e.target.closest('[data-produce-receita-id]');
+        if (btnProduce) {
+          abrirModalProducao(btnProduce.getAttribute('data-produce-receita-id'));
+          return;
+        }
         const btnDuplicateRec = e.target.closest('[data-duplicate-receita-id]');
         if (btnDuplicateRec) {
           duplicarReceita(btnDuplicateRec.getAttribute('data-duplicate-receita-id'));
@@ -5127,6 +7676,32 @@ service cloud.firestore {
       });
 
       // Modais de receitas
+      dom.btnCancelProduction.addEventListener('click', fecharModalProducao);
+      dom.btnConfirmProduction.addEventListener('click', confirmarProducao);
+      dom.productionBatches.addEventListener('input', renderizarPreviaProducao);
+      dom.productionModal.addEventListener('click', event => {
+        if (event.target === dom.productionModal) fecharModalProducao();
+      });
+      dom.producoesContainer.addEventListener('click', event => {
+        const button = event.target.closest('[data-edit-production-id]');
+        if (button) abrirEdicaoProducao(button.getAttribute('data-edit-production-id'));
+        const deleteButton = event.target.closest('[data-delete-production-id]');
+        if (deleteButton) abrirExclusaoProducao(deleteButton.getAttribute('data-delete-production-id'));
+      });
+      dom.btnCancelEditProduction.addEventListener('click', fecharEdicaoProducao);
+      dom.btnSaveEditProduction.addEventListener('click', salvarEdicaoProducao);
+      dom.btnCancelDeleteProduction.addEventListener('click', fecharExclusaoProducao);
+      dom.btnConfirmDeleteProduction.addEventListener('click', confirmarExclusaoProducao);
+      dom.editProductionDate.addEventListener('input', atualizarPreviaEdicaoProducao);
+      dom.editProductionQuantity.addEventListener('input', atualizarPreviaEdicaoProducao);
+      dom.editProductionSalePrice.addEventListener('input', atualizarPreviaEdicaoProducao);
+      dom.editProductionModal.addEventListener('click', event => {
+        if (event.target === dom.editProductionModal) fecharEdicaoProducao();
+      });
+      dom.deleteProductionModal.addEventListener('click', event => {
+        if (event.target === dom.deleteProductionModal) fecharExclusaoProducao();
+      });
+
       dom.selectModalAddInsumo.addEventListener('change', () => {
         const selected = dom.selectModalAddInsumo.selectedOptions[0];
         const unit = selected?.getAttribute('data-unit');
@@ -5182,10 +7757,7 @@ service cloud.firestore {
             if (hasFirebase) {
               iniciarListenerFirestore();
             } else {
-              const savedItems = localStorage.getItem(LOCAL_DEMO_ITEMS_KEY);
-              cachedInsumos = savedItems ? JSON.parse(savedItems) : [...DEMO_SEED_INSUMOS];
-              renderizarInsumos();
-              atualizarSelectsInsumosParaReceitas();
+              carregarDadosLocais();
             }
           } catch (e) {
             console.error('Erro ao restaurar sessão de padeiro:', e);
