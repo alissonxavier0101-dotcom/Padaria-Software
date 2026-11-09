@@ -1308,6 +1308,21 @@
         border: 1px solid #6EE7B7;
       }
 
+      .price-warning {
+        background: #FEF2F2;
+        color: #991B1B;
+        border: 1px solid #FECACA;
+        border-radius: var(--radius-sm);
+        padding: 9px 11px;
+        font-size: 12px;
+        font-weight: 700;
+        line-height: 1.4;
+      }
+
+      .price-warning-card {
+        margin-top: 8px;
+      }
+
       .profit-sim-controls {
         display: grid;
         grid-template-columns: 1fr auto;
@@ -1904,6 +1919,29 @@
                 </div>
               </div>
 
+              <div class="recipe-builder-box indirect-costs-box">
+                <strong style="font-size: 13px; color: var(--wheat-deep);">Custos indiretos da fornada</strong>
+                <span class="calc-detail">Energia e água são valores por fornada. A mão de obra usa o tempo de preparo ativo acima.</span>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="input-custo-energia" class="form-label">Gás / energia por fornada (R$)</label>
+                    <input id="input-custo-energia" type="number" min="0" step="0.01" placeholder="Ex: 4,50" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-valor-hora" class="form-label">Valor da hora de trabalho (R$)</label>
+                    <input id="input-valor-hora" type="number" min="0" step="0.01" placeholder="Ex: 25,00" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-custo-agua" class="form-label">Água por fornada (R$)</label>
+                    <input id="input-custo-agua" type="number" min="0" step="0.01" placeholder="Ex: 0,30" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-unidades-perdidas" class="form-label">Perdas / quebra (unidades)</label>
+                    <input id="input-unidades-perdidas" type="number" min="0" step="1" value="0" />
+                  </div>
+                </div>
+              </div>
+
               <!-- Observações / Descrição -->
               <div class="form-group">
                 <label for="input-receita-descricao" class="form-label">
@@ -2041,6 +2079,22 @@
                   <span>🛍️ Custo das Embalagens (Sacolas + Formas):</span>
                   <strong id="banner-custo-embalagens">R$ 0,00</strong>
                 </div>
+                <div class="totals-banner-row">
+                  <span>🔥 Gás / energia:</span>
+                  <strong id="banner-custo-energia">R$ 0,00</strong>
+                </div>
+                <div class="totals-banner-row">
+                  <span>👩‍🍳 Mão de obra:</span>
+                  <strong id="banner-custo-mao-de-obra">R$ 0,00</strong>
+                </div>
+                <div class="totals-banner-row">
+                  <span>💧 Água:</span>
+                  <strong id="banner-custo-agua">R$ 0,00</strong>
+                </div>
+                <div class="totals-banner-row">
+                  <span>Unidades vendáveis após perdas:</span>
+                  <strong id="banner-unidades-vendaveis">0</strong>
+                </div>
                 <div class="totals-banner-row main-total">
                   <span>🍞 Custo Total da Produção:</span>
                   <strong id="banner-custo-total">R$ 0,00</strong>
@@ -2061,7 +2115,7 @@
                 <!-- Seletor de Margem de Lucro Desejada -->
                 <div class="form-group">
                   <label for="input-margem-lucro" class="form-label" style="font-size: 12px; color: #065F46;">
-                    Margem de Lucro Desejada (%):
+                    Acréscimo desejado sobre o custo (%):
                   </label>
                   <div style="display: flex; gap: 6px; align-items: center;">
                     <input
@@ -2075,6 +2129,7 @@
                     />
                     <div style="display: flex; gap: 4px; overflow-x: auto;">
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="50" style="padding: 6px 8px; font-size: 11px;">50%</button>
+                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="60" style="padding: 6px 8px; font-size: 11px;">60%</button>
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="80" style="padding: 6px 8px; font-size: 11px;">80%</button>
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="100" style="padding: 6px 8px; font-size: 11px; background: #FEF3C7; font-weight: 800;">100%</button>
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="150" style="padding: 6px 8px; font-size: 11px;">150%</button>
@@ -2110,6 +2165,8 @@
                     </div>
                   </div>
                 </div>
+
+                <p id="recipe-price-warning" class="price-warning hidden" role="status" aria-live="polite"></p>
 
                 <!-- Resumo de Lucro -->
                 <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46;">
@@ -2383,7 +2440,10 @@ service cloud.firestore {
 
     <!-- ================= SCRIPT MODULAR FIREBASE V10 VIA CDN ================= -->
     <script type="module">
-      import { calcularCustoItemReceita as calcularCustoItemReceitaValidado } from "./src/utils/costCalculator.ts";
+      import {
+        calcularCustoItemReceita as calcularCustoItemReceitaValidado,
+        calcularTotaisReceita as calcularTotaisReceitaValidado
+      } from "./src/utils/costCalculator.ts";
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
       import { 
         getAuth, 
@@ -2674,6 +2734,10 @@ service cloud.firestore {
         inputReceitaDescricao: document.getElementById('input-receita-descricao'),
         inputModoPreparo: document.getElementById('input-modo-preparo'),
         inputTempoPreparo: document.getElementById('input-tempo-preparo'),
+        inputCustoEnergia: document.getElementById('input-custo-energia'),
+        inputValorHora: document.getElementById('input-valor-hora'),
+        inputCustoAgua: document.getElementById('input-custo-agua'),
+        inputUnidadesPerdidas: document.getElementById('input-unidades-perdidas'),
         inputTempoForno: document.getElementById('input-tempo-forno'),
         inputTemperaturaForno: document.getElementById('input-temperatura-forno'),
         inputFotoReceita: document.getElementById('input-foto-receita'),
@@ -2687,11 +2751,16 @@ service cloud.firestore {
         tbodyDraftReceitaItens: document.getElementById('tbody-draft-receita-itens'),
         bannerCustoIngredientes: document.getElementById('banner-custo-ingredientes'),
         bannerCustoEmbalagens: document.getElementById('banner-custo-embalagens'),
+        bannerCustoEnergia: document.getElementById('banner-custo-energia'),
+        bannerCustoMaoDeObra: document.getElementById('banner-custo-mao-de-obra'),
+        bannerCustoAgua: document.getElementById('banner-custo-agua'),
+        bannerUnidadesVendaveis: document.getElementById('banner-unidades-vendaveis'),
         bannerCustoTotal: document.getElementById('banner-custo-total'),
         bannerCustoUnitario: document.getElementById('banner-custo-unitario'),
         inputMargemLucro: document.getElementById('input-margem-lucro'),
         badgeProfitPreview: document.getElementById('badge-profit-preview'),
         textPrecoSugerido: document.getElementById('text-preco-sugerido'),
+        recipePriceWarning: document.getElementById('recipe-price-warning'),
         inputPrecoPraticado: document.getElementById('input-preco-praticado'),
         textLucroLiquidoUn: document.getElementById('text-lucro-liquido-un'),
         textLucroTotalLote: document.getElementById('text-lucro-total-lote'),
@@ -2844,28 +2913,27 @@ service cloud.firestore {
         dom.conversionUn.value = conversoes?.un || '';
       }
 
-      function calcularTotaisReceita(itens, rendimento = 1) {
-        const rendimentoValido = rendimento > 0 ? rendimento : 1;
-        let custoIngredientes = 0;
-        let custoEmbalagens = 0;
+      function calcularTotaisReceita(itens, rendimento = 1, custosIndiretos = {}) {
+        return calcularTotaisReceitaValidado(itens, rendimento, custosIndiretos);
+      }
 
-        for (const item of itens) {
-          const custo = Number(item.custoItem) || 0;
-          if (item.categoria === 'embalagem') {
-            custoEmbalagens += custo;
-          } else {
-            custoIngredientes += custo;
-          }
-        }
-
-        const custoTotal = Math.round((custoIngredientes + custoEmbalagens) * 100) / 100;
-        const custoUnitario = Math.round((custoTotal / rendimentoValido) * 100) / 100;
-
+      function obterCustosIndiretosDoFormulario() {
         return {
-          custoIngredientes: Math.round(custoIngredientes * 100) / 100,
-          custoEmbalagens: Math.round(custoEmbalagens * 100) / 100,
-          custoTotal,
-          custoUnitario
+          custoEnergia: Number(dom.inputCustoEnergia.value) || 0,
+          custoAgua: Number(dom.inputCustoAgua.value) || 0,
+          tempoPreparoMin: Number(dom.inputTempoPreparo.value) || 0,
+          valorHoraMaoDeObra: Number(dom.inputValorHora.value) || 0,
+          unidadesPerdidas: Number(dom.inputUnidadesPerdidas.value) || 0
+        };
+      }
+
+      function obterCustosIndiretosDaReceita(receita) {
+        return {
+          custoEnergia: receita.custoEnergia || 0,
+          custoAgua: receita.custoAgua || 0,
+          tempoPreparoMin: receita.tempoPreparoMin || 0,
+          valorHoraMaoDeObra: receita.valorHoraMaoDeObra || 0,
+          unidadesPerdidas: receita.unidadesPerdidas || 0
         };
       }
 
@@ -2883,6 +2951,8 @@ service cloud.firestore {
 
         return {
           precoSugerido,
+          precoMinimo: precoSugerido,
+          precoAbaixoDoMinimo: Boolean(precoVendaPraticado && precoVendaPraticado > 0 && precoFinal < precoSugerido),
           precoFinal,
           lucroPorUnidade,
           margemReal
@@ -3348,7 +3418,7 @@ service cloud.firestore {
               )
             };
           });
-          const totais = calcularTotaisReceita(itens, receita.rendimento);
+          const totais = calcularTotaisReceita(itens, receita.rendimento, obterCustosIndiretosDaReceita(receita));
           const lucro = calcularLucroEPrecificacao(
             totais.custoUnitario,
             receita.margemLucroDesejada,
@@ -3406,7 +3476,7 @@ service cloud.firestore {
               }
             : item
           );
-          const totais = calcularTotaisReceita(itens, receita.rendimento);
+          const totais = calcularTotaisReceita(itens, receita.rendimento, obterCustosIndiretosDaReceita(receita));
           const lucro = calcularLucroEPrecificacao(
             totais.custoUnitario,
             receita.margemLucroDesejada,
@@ -3960,14 +4030,22 @@ service cloud.firestore {
         const rendimento = parseFloat(dom.inputReceitaRendimento.value) || 1;
         const unRendimento = dom.inputReceitaRendimentoUn.value || 'pães';
 
-        const totais = calcularTotaisReceita(itensReceitaEmElaboracao, rendimento);
+        const totais = calcularTotaisReceita(
+          itensReceitaEmElaboracao,
+          rendimento,
+          obterCustosIndiretosDoFormulario()
+        );
 
         dom.bannerCustoIngredientes.textContent = formatarMoeda(totais.custoIngredientes, 2);
         dom.bannerCustoEmbalagens.textContent = formatarMoeda(totais.custoEmbalagens, 2);
+        dom.bannerCustoEnergia.textContent = formatarMoeda(totais.custoEnergia, 2);
+        dom.bannerCustoMaoDeObra.textContent = formatarMoeda(totais.custoMaoDeObra, 2);
+        dom.bannerCustoAgua.textContent = formatarMoeda(totais.custoAgua, 2);
+        dom.bannerUnidadesVendaveis.textContent = totais.unidadesVendaveis;
         dom.bannerCustoTotal.textContent = formatarMoeda(totais.custoTotal, 2);
-        dom.bannerCustoUnitario.textContent = `${formatarMoeda(totais.custoUnitario, 2)} / ${unRendimento}`;
+        dom.bannerCustoUnitario.textContent = `${formatarMoeda(totais.custoUnitario, 2)} / ${unRendimento} vendável`;
 
-        atualizarCalculadoraLucroReceita(totais.custoUnitario, rendimento);
+        atualizarCalculadoraLucroReceita(totais.custoUnitario, totais.unidadesVendaveis);
       }
 
       function atualizarCalculadoraLucroReceita(custoUnitario, rendimento = 1) {
@@ -3979,6 +4057,10 @@ service cloud.firestore {
         const calculo = calcularLucroEPrecificacao(custoUnitario, margem, precoPraticadoInput);
 
         dom.textPrecoSugerido.textContent = formatarMoeda(calculo.precoSugerido, 2);
+        dom.recipePriceWarning.textContent = calculo.precoAbaixoDoMinimo
+          ? `Atenção: o preço praticado está abaixo do mínimo recomendado de ${formatarMoeda(calculo.precoMinimo, 2)} para a margem de ${margem}%.`
+          : '';
+        dom.recipePriceWarning.classList.toggle('hidden', !calculo.precoAbaixoDoMinimo);
 
         // Se o usuário ainda não digitou preço praticado, sugere o valor
         if (!dom.inputPrecoPraticado.value || parseFloat(dom.inputPrecoPraticado.value) <= 0) {
@@ -4083,6 +4165,10 @@ service cloud.firestore {
         dom.inputReceitaDescricao.value = receita.descricao || '';
         dom.inputModoPreparo.value = receita.modoPreparo || '';
         dom.inputTempoPreparo.value = receita.tempoPreparoMin ?? '';
+        dom.inputCustoEnergia.value = receita.custoEnergia ?? '';
+        dom.inputValorHora.value = receita.valorHoraMaoDeObra ?? '';
+        dom.inputCustoAgua.value = receita.custoAgua ?? '';
+        dom.inputUnidadesPerdidas.value = receita.unidadesPerdidas ?? 0;
         dom.inputTempoForno.value = receita.tempoFornoMin ?? '';
         dom.inputTemperaturaForno.value = receita.temperaturaFornoC ?? '';
         atualizarPreviewFotoReceita(receita.fotoDataUrl);
@@ -4113,6 +4199,10 @@ service cloud.firestore {
         dom.inputReceitaDescricao.value = receita.descricao || '';
         dom.inputModoPreparo.value = receita.modoPreparo || '';
         dom.inputTempoPreparo.value = receita.tempoPreparoMin ?? '';
+        dom.inputCustoEnergia.value = receita.custoEnergia ?? '';
+        dom.inputValorHora.value = receita.valorHoraMaoDeObra ?? '';
+        dom.inputCustoAgua.value = receita.custoAgua ?? '';
+        dom.inputUnidadesPerdidas.value = receita.unidadesPerdidas ?? 0;
         dom.inputTempoForno.value = receita.tempoFornoMin ?? '';
         dom.inputTemperaturaForno.value = receita.temperaturaFornoC ?? '';
         atualizarPreviewFotoReceita(receita.fotoDataUrl);
@@ -4160,8 +4250,18 @@ service cloud.firestore {
           return;
         }
 
-        const totais = calcularTotaisReceita(itensReceitaEmElaboracao, rendimento);
+        const custosIndiretos = obterCustosIndiretosDoFormulario();
+        if (custosIndiretos.unidadesPerdidas >= rendimento) {
+          showToast('As perdas devem ser menores que o rendimento da fornada.');
+          dom.inputUnidadesPerdidas.focus();
+          return;
+        }
+
+        const totais = calcularTotaisReceita(itensReceitaEmElaboracao, rendimento, custosIndiretos);
         const lucroCalc = calcularLucroEPrecificacao(totais.custoUnitario, margemLucroDesejada, precoVendaPraticado);
+        const avisoPreco = lucroCalc.precoAbaixoDoMinimo
+          ? ` Atenção: preço abaixo do mínimo de ${formatarMoeda(lucroCalc.precoMinimo, 2)}.`
+          : '';
 
         const novaReceita = {
           nome,
@@ -4179,6 +4279,13 @@ service cloud.firestore {
           custoEmbalagens: totais.custoEmbalagens,
           custoTotal: totais.custoTotal,
           custoUnitario: totais.custoUnitario,
+          custoEnergia: totais.custoEnergia,
+          custoMaoDeObra: totais.custoMaoDeObra,
+          custoAgua: totais.custoAgua,
+          custoIndireto: totais.custoIndireto,
+          valorHoraMaoDeObra: custosIndiretos.valorHoraMaoDeObra,
+          unidadesPerdidas: custosIndiretos.unidadesPerdidas,
+          unidadesVendaveis: totais.unidadesVendaveis,
           margemLucroDesejada,
           precoVendaSugerido: lucroCalc.precoSugerido,
           precoVendaPraticado: lucroCalc.precoFinal,
@@ -4205,7 +4312,7 @@ service cloud.firestore {
             const falhas = await atualizarReceitasDependentes(receitaIdAtualizada);
             showToast(falhas
               ? `Receita atualizada; houve falha ao recalcular ${falhas} dependência(s).`
-              : `Receita "${nome}" atualizada com sucesso!`);
+              : `Receita "${nome}" atualizada com sucesso!${avisoPreco}`);
           } else {
             const receitaComMetadados = {
               ...novaReceita,
@@ -4216,7 +4323,7 @@ service cloud.firestore {
             };
             if (firestoreDb) {
               await addDoc(collection(firestoreDb, 'receitas'), receitaComMetadados);
-              showToast(`Receita "${nome}" gravada no Firestore com sucesso!`);
+              showToast(`Receita "${nome}" gravada no Firestore com sucesso!${avisoPreco}`);
             } else {
               cachedReceitas.unshift({
                 id: 'local-rec-' + Date.now(),
@@ -4224,7 +4331,7 @@ service cloud.firestore {
                 createdAt: new Date().toISOString()
               });
               renderizarReceitas();
-              showToast(`Receita "${nome}" salva localmente.`);
+              showToast(`Receita "${nome}" salva localmente.${avisoPreco}`);
             }
           }
 
@@ -4286,6 +4393,13 @@ service cloud.firestore {
           const countEmbalagens = itens.filter(i => i.categoria === 'embalagem').length;
 
           const lucroUn = (rec.precoVendaPraticado || 0) - (rec.custoUnitario || 0);
+          const unidadesVendaveis = rec.unidadesVendaveis ?? Math.max(0, rec.rendimento - (rec.unidadesPerdidas || 0));
+          const custoEnergia = Number(rec.custoEnergia) || 0;
+          const custoMaoDeObra = Number(rec.custoMaoDeObra) || 0;
+          const custoAgua = Number(rec.custoAgua) || 0;
+          const margemDesejada = Number(rec.margemLucroDesejada) || 100;
+          const precoMinimo = Number(rec.precoVendaSugerido) || calcularLucroEPrecificacao(rec.custoUnitario, margemDesejada).precoSugerido;
+          const precoAbaixoDoMinimo = Number(rec.precoVendaPraticado) > 0 && Number(rec.precoVendaPraticado) < precoMinimo;
           const margemPercentual = rec.custoUnitario > 0 
             ? Math.round((lucroUn / rec.custoUnitario) * 100) 
             : 0;
@@ -4389,6 +4503,9 @@ service cloud.firestore {
                   <span class="receita-metric-val profit">+${formatarMoeda(lucroUn, 2)} <small style="font-size:10px;">(${margemPercentual}%)</small></span>
                 </div>
               </div>
+              ${precoAbaixoDoMinimo
+                ? `<div class="price-warning price-warning-card" role="status">⚠ Preço praticado de ${formatarMoeda(rec.precoVendaPraticado, 2)} abaixo do mínimo de ${formatarMoeda(precoMinimo, 2)} para a margem de ${margemDesejada}%.</div>`
+                : ''}
 
               <!-- Discriminação: Ingredientes vs Embalagens descartáveis -->
               <div class="cost-split-row">
@@ -4404,6 +4521,12 @@ service cloud.firestore {
                   <span>Total:</span>
                   <strong style="color: var(--wheat-deep);">${formatarMoeda(rec.custoTotal, 2)}</strong>
                 </div>
+              </div>
+              <div class="cost-split-row" style="flex-wrap: wrap; gap: 8px;">
+                <div class="cost-split-tag"><span>🔥 Energia:</span><strong>${formatarMoeda(custoEnergia, 2)}</strong></div>
+                <div class="cost-split-tag"><span>👩‍🍳 Mão de obra:</span><strong>${formatarMoeda(custoMaoDeObra, 2)}</strong></div>
+                <div class="cost-split-tag"><span>💧 Água:</span><strong>${formatarMoeda(custoAgua, 2)}</strong></div>
+                <div class="cost-split-tag"><span>Vendáveis:</span><strong>${unidadesVendaveis} ${escapeHtml(rec.rendimentoUnidade || 'unidades')}</strong></div>
               </div>
 
               <!-- Lista de Ingredientes e Sacolas/Formas da Receita -->
@@ -4429,7 +4552,7 @@ service cloud.firestore {
               <div class="card-profit-simulator">
                 <div class="profit-sim-header">
                   <span class="profit-sim-title">⚡ Calculadora Rápida de Precificação</span>
-                  <span class="profit-sim-badge">Lucro Total Fornada: ${formatarMoeda(lucroUn * rec.rendimento, 2)}</span>
+                  <span class="profit-sim-badge">Lucro Fornada: ${formatarMoeda(lucroUn * unidadesVendaveis, 2)}</span>
                 </div>
                 <div class="profit-sim-controls">
                   <div class="profit-input-wrap">
@@ -4552,15 +4675,16 @@ service cloud.firestore {
           custoItem
         }];
 
-        const totais = calcularTotaisReceita(novosItens, receitaAlvo.rendimento);
+        const totais = calcularTotaisReceita(
+          novosItens,
+          receitaAlvo.rendimento,
+          obterCustosIndiretosDaReceita(receitaAlvo)
+        );
         const lucroCalc = calcularLucroEPrecificacao(totais.custoUnitario, receitaAlvo.margemLucroDesejada, receitaAlvo.precoVendaPraticado);
 
         const atualizacoes = {
           itens: novosItens,
-          custoIngredientes: totais.custoIngredientes,
-          custoEmbalagens: totais.custoEmbalagens,
-          custoTotal: totais.custoTotal,
-          custoUnitario: totais.custoUnitario,
+          ...totais,
           precoVendaSugerido: lucroCalc.precoSugerido,
           lucroPorUnidade: lucroCalc.lucroPorUnidade,
           updatedAt: serverTimestamp()
@@ -4602,6 +4726,9 @@ service cloud.firestore {
         }
 
         const lucroCalc = calcularLucroEPrecificacao(receita.custoUnitario, receita.margemLucroDesejada, precoValido);
+        const aviso = lucroCalc.precoAbaixoDoMinimo
+          ? `Preço salvo, mas abaixo do mínimo recomendado de ${formatarMoeda(lucroCalc.precoMinimo, 2)}.`
+          : `Preço de "${receita.nome}" atualizado para ${formatarMoeda(precoValido, 2)}!`;
 
         try {
           if (firestoreDb && !receitaId.startsWith('local-') && !receitaId.startsWith('demo-')) {
@@ -4610,12 +4737,12 @@ service cloud.firestore {
               lucroPorUnidade: lucroCalc.lucroPorUnidade,
               updatedAt: serverTimestamp()
             });
-            showToast(`Preço de "${receita.nome}" atualizado para ${formatarMoeda(precoValido, 2)}!`);
+            showToast(aviso);
           } else {
             receita.precoVendaPraticado = precoValido;
             receita.lucroPorUnidade = lucroCalc.lucroPorUnidade;
             renderizarReceitas();
-            showToast(`Preço atualizado para ${formatarMoeda(precoValido, 2)}!`);
+            showToast(aviso);
           }
         } catch (err) {
           console.error('Erro ao atualizar preço:', err);
@@ -4901,6 +5028,11 @@ service cloud.firestore {
       // Rendimento e margem mudando os cálculos da receita em tempo real
       dom.inputReceitaRendimento.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
       dom.inputReceitaRendimentoUn.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
+      dom.inputTempoPreparo.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
+      dom.inputCustoEnergia.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
+      dom.inputValorHora.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
+      dom.inputCustoAgua.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
+      dom.inputUnidadesPerdidas.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
       dom.inputMargemLucro.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
       dom.inputPrecoPraticado.addEventListener('input', atualizarTotaisReceitaEmElaboracao);
 

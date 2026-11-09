@@ -133,11 +133,58 @@ test('calcularTotaisReceita separa custos de ingredientes e embalagens descartá
   assert.equal(totais.custoUnitario, 4.13);
 });
 
+test('calcularTotaisReceita inclui custos indiretos e calcula unidades vendáveis', () => {
+  const itens: ItemReceita[] = [
+    {
+      insumoId: 'farinha',
+      insumoNome: 'Farinha',
+      categoria: 'ingrediente',
+      quantidadeUsada: 1,
+      unidadeUsada: 'kg',
+      custoUnitarioBase: 30,
+      unidadeBase: 'kg',
+      custoItem: 30
+    },
+    {
+      insumoId: 'sacola',
+      insumoNome: 'Sacola',
+      categoria: 'embalagem',
+      quantidadeUsada: 1,
+      unidadeUsada: 'un',
+      custoUnitarioBase: 5,
+      unidadeBase: 'un',
+      custoItem: 5
+    }
+  ];
+
+  const totais = calcularTotaisReceita(itens, 10, {
+    custoEnergia: 8,
+    custoAgua: 2,
+    tempoPreparoMin: 45,
+    valorHoraMaoDeObra: 20,
+    unidadesPerdidas: 2
+  });
+
+  assert.equal(totais.custoMaoDeObra, 15);
+  assert.equal(totais.custoIndireto, 25);
+  assert.equal(totais.custoTotal, 60);
+  assert.equal(totais.unidadesVendaveis, 8);
+  assert.equal(totais.custoUnitario, 7.5);
+});
+
+test('calcularTotaisReceita não divide por rendimento vendável zero', () => {
+  const totais = calcularTotaisReceita([], 3, { unidadesPerdidas: 3 });
+  assert.equal(totais.unidadesVendaveis, 0);
+  assert.equal(totais.custoUnitario, 0);
+});
+
 test('calcularLucroEPrecificacao projeta preço sugerido e margem real', () => {
   const custoUnitario = 4.13;
   // Margem desejada de 100% => Preço sugerido: R$ 8,26
   const resultado100 = calcularLucroEPrecificacao(custoUnitario, 100);
   assert.equal(resultado100.precoSugerido, 8.26);
+  assert.equal(resultado100.precoMinimo, 8.26);
+  assert.equal(resultado100.precoAbaixoDoMinimo, false);
   assert.equal(resultado100.lucroPorUnidade, 4.13);
   assert.equal(resultado100.margemReal, 100);
 
@@ -145,7 +192,14 @@ test('calcularLucroEPrecificacao projeta preço sugerido e margem real', () => {
   const resultadoPraticado = calcularLucroEPrecificacao(custoUnitario, 100, 10.00);
   assert.equal(resultadoPraticado.precoFinal, 10.00);
   assert.equal(resultadoPraticado.lucroPorUnidade, 5.87); // 10.00 - 4.13
+  assert.equal(resultadoPraticado.precoAbaixoDoMinimo, false);
   assert.ok(resultadoPraticado.margemReal > 140);
+
+  const abaixoDoMinimo = calcularLucroEPrecificacao(4.13, 100, 5);
+  assert.equal(abaixoDoMinimo.precoAbaixoDoMinimo, true);
+
+  const noMinimo = calcularLucroEPrecificacao(100, 60, 160);
+  assert.equal(noMinimo.precoAbaixoDoMinimo, false);
 });
 
 test('formatarMoeda gera string em Real Brasileiro (BRL)', () => {

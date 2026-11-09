@@ -14,6 +14,14 @@ export interface RecipeUnitConversions {
   un?: number;
 }
 
+export interface RecipeIndirectCosts {
+  custoEnergia?: number;
+  custoAgua?: number;
+  tempoPreparoMin?: number;
+  valorHoraMaoDeObra?: number;
+  unidadesPerdidas?: number;
+}
+
 export interface Insumo {
   id?: string;
   nome: string;
@@ -53,6 +61,13 @@ export interface Receita {
   tempoFornoMin?: number | null;
   temperaturaFornoC?: number | null;
   fotoDataUrl?: string | null;
+  custoEnergia?: number;
+  custoAgua?: number;
+  valorHoraMaoDeObra?: number;
+  unidadesPerdidas?: number;
+  unidadesVendaveis?: number;
+  custoMaoDeObra?: number;
+  custoIndireto?: number;
   rendimento: number;
   rendimentoUnidade: string;
   itens: ItemReceita[];
@@ -139,7 +154,11 @@ export function calcularCustoItemReceita(
 /**
  * Consolida os custos de uma receita discriminando ingredientes e embalagens descartáveis
  */
-export function calcularTotaisReceita(itens: ItemReceita[], rendimento = 1) {
+export function calcularTotaisReceita(
+  itens: ItemReceita[],
+  rendimento = 1,
+  custosIndiretos: RecipeIndirectCosts = {}
+) {
   const rendimentoValido = rendimento > 0 ? rendimento : 1;
 
   let custoIngredientes = 0;
@@ -154,13 +173,28 @@ export function calcularTotaisReceita(itens: ItemReceita[], rendimento = 1) {
     }
   }
 
-  const custoTotal = Math.round((custoIngredientes + custoEmbalagens) * 100) / 100;
-  const custoUnitario = Math.round((custoTotal / rendimentoValido) * 100) / 100;
+  const custoEnergia = Math.max(0, Number(custosIndiretos.custoEnergia) || 0);
+  const custoAgua = Math.max(0, Number(custosIndiretos.custoAgua) || 0);
+  const tempoPreparoMin = Math.max(0, Number(custosIndiretos.tempoPreparoMin) || 0);
+  const valorHoraMaoDeObra = Math.max(0, Number(custosIndiretos.valorHoraMaoDeObra) || 0);
+  const custoMaoDeObra = Math.round((tempoPreparoMin * valorHoraMaoDeObra / 60) * 100) / 100;
+  const custoIndireto = Math.round((custoEnergia + custoAgua + custoMaoDeObra) * 100) / 100;
+  const custoTotal = Math.round((custoIngredientes + custoEmbalagens + custoIndireto) * 100) / 100;
+  const unidadesPerdidas = Math.max(0, Number(custosIndiretos.unidadesPerdidas) || 0);
+  const unidadesVendaveis = Math.max(0, rendimentoValido - unidadesPerdidas);
+  const custoUnitario = unidadesVendaveis > 0
+    ? Math.round((custoTotal / unidadesVendaveis) * 100) / 100
+    : 0;
 
   return {
     custoIngredientes: Math.round(custoIngredientes * 100) / 100,
     custoEmbalagens: Math.round(custoEmbalagens * 100) / 100,
+    custoEnergia: Math.round(custoEnergia * 100) / 100,
+    custoMaoDeObra,
+    custoAgua: Math.round(custoAgua * 100) / 100,
+    custoIndireto,
     custoTotal,
+    unidadesVendaveis,
     custoUnitario
   };
 }
@@ -185,12 +219,17 @@ export function calcularLucroEPrecificacao(
     : precoSugerido;
 
   const lucroPorUnidade = Math.round((precoFinal - custo) * 100) / 100;
+  const precoAbaixoDoMinimo = Boolean(
+    precoVendaPraticado && precoVendaPraticado > 0 && precoFinal < precoSugerido
+  );
 
   // Margem real sobre o custo
   const margemReal = custo > 0 ? Math.round(((precoFinal - custo) / custo) * 1000) / 10 : 0;
 
   return {
     precoSugerido,
+    precoMinimo: precoSugerido,
+    precoAbaixoDoMinimo,
     precoFinal,
     lucroPorUnidade,
     margemReal

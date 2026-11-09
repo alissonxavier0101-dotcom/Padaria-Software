@@ -146,6 +146,34 @@
           "type": "number",
           "description": "Custo de produção por unidade produzida"
         },
+        "custoEnergia": {
+          "type": "number",
+          "description": "Custo de gás ou energia por fornada"
+        },
+        "custoMaoDeObra": {
+          "type": "number",
+          "description": "Custo de mão de obra pelo tempo de preparo ativo"
+        },
+        "valorHoraMaoDeObra": {
+          "type": "number",
+          "description": "Valor da hora usado no cálculo da receita"
+        },
+        "custoAgua": {
+          "type": "number",
+          "description": "Custo de água por fornada"
+        },
+        "custoIndireto": {
+          "type": "number",
+          "description": "Soma de energia, mão de obra e água por fornada"
+        },
+        "unidadesPerdidas": {
+          "type": "number",
+          "description": "Unidades descartadas por perda ou quebra"
+        },
+        "unidadesVendaveis": {
+          "type": "number",
+          "description": "Rendimento da fornada menos unidades perdidas"
+        },
         "margemLucroDesejada": {
           "type": "number",
           "description": "Margem de lucro desejada em porcentagem (ex: 100%)"
