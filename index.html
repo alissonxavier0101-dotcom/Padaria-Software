@@ -2388,6 +2388,8 @@ service cloud.firestore {
       import { 
         getAuth, 
         signInWithPopup, 
+        signInWithRedirect,
+        getRedirectResult,
         signInAnonymously,
         updateProfile,
         GoogleAuthProvider, 
@@ -2429,6 +2431,7 @@ service cloud.firestore {
       let firebaseApp = null;
       let firebaseAuth = null;
       let firestoreDb = null;
+      let redirectResultChecked = false;
       let unsubscribeSnapshot = null;
       let unsubscribeReceitasSnapshot = null;
       let isDemoMode = false;
@@ -2945,6 +2948,15 @@ service cloud.firestore {
               }
             });
 
+            if (!redirectResultChecked) {
+              redirectResultChecked = true;
+              getRedirectResult(firebaseAuth)
+                .then(result => {
+                  if (result?.user) showToast(`Bem-vindo(a), ${result.user.displayName || 'Padeiro'}!`);
+                })
+                .catch(tratarErroLoginGoogle);
+            }
+
             dom.syncStatusLabel.textContent = 'Banco: padaria-sistema-6a6b4';
             dom.providerBadgeLabel.textContent = 'Firestore Conectado';
             return true;
@@ -2959,38 +2971,60 @@ service cloud.firestore {
       // 4. AUTENTICAÇÃO E PERFIS DOS 2 PADEIROS
       // -------------------------------------------------------------
       async function handleLoginGoogle() {
-        if (!firebaseAuth) {
-          initFirebase();
-        }
-
         try {
           dom.loginGoogleText.innerHTML = '<span class="loading-spinner"></span> Conectando...';
           dom.btnLoginGoogle.disabled = true;
 
+          if (!firebaseAuth && !initFirebase()) {
+            throw new Error('Não foi possível iniciar o Firebase. Verifique a configuração da conexão.');
+          }
+
           const provider = new GoogleAuthProvider();
           provider.setCustomParameters({ prompt: 'select_account' });
-          
-          const result = await signInWithPopup(firebaseAuth, provider);
+
+          let result;
+          try {
+            result = await signInWithPopup(firebaseAuth, provider);
+          } catch (error) {
+            const popupFallbackCodes = [
+              'auth/popup-blocked',
+              'auth/operation-not-supported-in-this-environment',
+              'auth/cancelled-popup-request'
+            ];
+            if (popupFallbackCodes.includes(error?.code)) {
+              showToast('O navegador bloqueou a janela. Continuando pelo redirecionamento do Google...');
+              await signInWithRedirect(firebaseAuth, provider);
+              return;
+            }
+            throw error;
+          }
+
           showToast(`Bem-vindo(a), ${result.user.displayName || 'Padeiro'}!`);
           iniciarListenerFirestore();
         } catch (error) {
-          console.error('Erro no login com Google:', error);
-          const errCode = error?.code || '';
-          const errMsg = error?.message || '';
-
-          if (errCode === 'auth/unauthorized-domain' || errMsg.includes('auth/unauthorized-domain') || errMsg.includes('unauthorized-domain')) {
-            abrirModalDominioNaoAutorizado();
-            showToast('Domínio não autorizado no Firebase Console. Instruções abertas na tela.');
-          } else if (errCode === 'auth/popup-closed-by-user') {
-            showToast('Janela de login fechada antes de concluir.');
-          } else if (errCode === 'auth/popup-blocked') {
-            showToast('Pop-up bloqueado pelo navegador. Permita pop-ups.');
-          } else {
-            showToast('Erro ao autenticar com Google: ' + (errMsg || errCode));
-          }
+          tratarErroLoginGoogle(error);
         } finally {
           dom.loginGoogleText.textContent = 'Entrar com Google';
           dom.btnLoginGoogle.disabled = false;
+        }
+      }
+
+      function tratarErroLoginGoogle(error) {
+        console.error('Erro no login com Google:', error);
+        const errCode = error?.code || '';
+        const errMsg = error?.message || '';
+
+        if (errCode === 'auth/unauthorized-domain' || errMsg.includes('auth/unauthorized-domain') || errMsg.includes('unauthorized-domain')) {
+          abrirModalDominioNaoAutorizado();
+          showToast('Este domínio precisa ser autorizado no Firebase.');
+        } else if (errCode === 'auth/popup-closed-by-user') {
+          showToast('A janela de login foi fechada antes de concluir.');
+        } else if (errCode === 'auth/operation-not-allowed') {
+          showToast('O login Google está desativado. Ative o provedor Google em Firebase > Authentication > Sign-in method.');
+        } else if (errCode === 'auth/network-request-failed') {
+          showToast('Falha de rede ao conectar ao Google. Verifique sua conexão e tente novamente.');
+        } else {
+          showToast(`Não foi possível entrar com Google${errCode ? ` (${errCode})` : ''}: ${errMsg || 'tente novamente.'}`);
         }
       }
 
