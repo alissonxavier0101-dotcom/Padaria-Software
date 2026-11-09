@@ -39,6 +39,17 @@
           "enum": ["ingrediente", "embalagem", "outro"],
           "description": "Grupo ou categoria do insumo (Ingrediente, Embalagem descartável, Outro)"
         },
+        "conversoes": {
+          "type": "object",
+          "description": "Fatores específicos do ingrediente convertidos para gramas ou mililitros",
+          "properties": {
+            "baseUnit": { "type": "string", "enum": ["g", "ml"] },
+            "xicara": { "type": "number" },
+            "colher_sopa": { "type": "number" },
+            "colher_cha": { "type": "number" },
+            "un": { "type": "number" }
+          }
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time"
@@ -72,9 +83,25 @@
           "minLength": 1,
           "maxLength": 100
         },
+        "categoria": {
+          "type": "string",
+          "enum": ["paes", "bolos", "salgados", "outros"],
+          "description": "Categoria usada para filtrar receitas"
+        },
         "descricao": {
           "type": "string",
           "description": "Observações ou modo de preparo rápido"
+        },
+        "modoPreparo": {
+          "type": "string",
+          "description": "Etapas detalhadas de preparo"
+        },
+        "tempoPreparoMin": { "type": ["number", "null"] },
+        "tempoFornoMin": { "type": ["number", "null"] },
+        "temperaturaFornoC": { "type": ["number", "null"] },
+        "fotoDataUrl": {
+          "type": ["string", "null"],
+          "description": "Foto JPEG redimensionada e comprimida da receita"
         },
         "rendimento": {
           "type": "number",
@@ -86,7 +113,22 @@
         },
         "itens": {
           "type": "array",
-          "description": "Lista de ingredientes e embalagens utilizados na receita"
+          "description": "Lista de ingredientes, embalagens e receitas-base utilizados na receita",
+          "items": {
+            "type": "object",
+            "properties": {
+              "sourceType": { "type": "string", "enum": ["insumo", "receita"] },
+              "insumoId": { "type": ["string", "null"] },
+              "receitaId": { "type": "string" },
+              "insumoNome": { "type": "string" },
+              "quantidadeUsada": { "type": "number" },
+              "unidadeUsada": { "type": "string" },
+              "custoUnitarioBase": { "type": "number" },
+              "unidadeBase": { "type": "string" },
+              "custoItem": { "type": "number" },
+              "conversoes": { "type": "object" }
+            }
+          }
         },
         "custoIngredientes": {
           "type": "number",

@@ -56,6 +56,26 @@ test('calcularCustoItemReceita converte unidades corretamente entre insumo e rec
   assert.equal(custoLeite, 1.25);
 });
 
+test('calcularCustoItemReceita aplica fatores culinários específicos de cada insumo', () => {
+  const conversoesFarinha = {
+    baseUnit: 'g' as const,
+    xicara: 120,
+    colher_sopa: 15,
+    colher_cha: 5
+  };
+  assert.equal(calcularCustoItemReceita(4.70, 'kg', 1, 'xicara', conversoesFarinha), 0.564);
+  assert.equal(calcularCustoItemReceita(4.70, 'kg', 1, 'colher_sopa', conversoesFarinha), 0.0705);
+  assert.equal(calcularCustoItemReceita(4.70, 'kg', 1, 'colher_cha', conversoesFarinha), 0.0235);
+
+  const conversoesOvo = { baseUnit: 'g' as const, un: 50 };
+  assert.equal(calcularCustoItemReceita(1.20, 'un', 1, 'un', conversoesOvo), 1.2);
+  assert.equal(calcularCustoItemReceita(1.20, 'un', 25, 'g', conversoesOvo), 0.6);
+  assert.equal(calcularCustoItemReceita(1.20, 'un', 1, 'xicara', conversoesOvo), 0);
+
+  const conversoesLeite = { baseUnit: 'ml' as const, colher_sopa: 15 };
+  assert.equal(calcularCustoItemReceita(5, 'L', 1, 'colher_sopa', conversoesLeite), 0.075);
+});
+
 test('calcularTotaisReceita separa custos de ingredientes e embalagens descartáveis', () => {
   const itens: ItemReceita[] = [
     {

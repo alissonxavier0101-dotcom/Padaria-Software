@@ -23,97 +23,97 @@
         --border-color: #EBDAC5;
         --border-focus: #C26707;
         --text-primary: #3E2413;
-        --text-secondary: #7A583E;
-        --text-muted: #A3846C;
-        --wheat-gold: #D97706;
-        --wheat-dark: #92400E;
-        --wheat-deep: #451A03;
-        --wheat-accent: #B45309;
-        --wheat-soft: #FEF3C7;
-        --wheat-badge: #FFFBEB;
-        --danger: #DC2626;
-        --danger-soft: #FEE2E2;
-        --success: #059669;
-        --success-soft: #D1FAE5;
-        --shadow-sm: 0 1px 3px rgba(62, 36, 19, 0.06);
-        --shadow-md: 0 4px 14px rgba(62, 36, 19, 0.08);
-        --shadow-lg: 0 10px 25px rgba(62, 36, 19, 0.12);
-        --radius-sm: 10px;
-        --radius-md: 14px;
-        --radius-lg: 20px;
-        --radius-full: 9999px;
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-        -webkit-tap-highlight-color: transparent;
-      }
-
-      body {
-        font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        background-color: var(--bg-main);
-        color: var(--text-primary);
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        line-height: 1.5;
-        overflow-x: hidden;
-      }
-
-      /* Container mobile-first */
-      .app-viewport {
-        width: 100%;
-        max-width: 480px;
-        min-height: 100vh;
-        display: flex;
-        flex-direction: column;
-        position: relative;
-        background-color: var(--bg-main);
-        box-shadow: 0 0 40px rgba(62, 36, 19, 0.05);
-      }
-
-      @media (min-width: 481px) {
-        body {
-          background-color: #F4EBE0;
-          padding: 16px 0;
-        }
-        .app-viewport {
-          border-radius: var(--radius-lg);
-          border: 1px solid var(--border-color);
-          overflow: hidden;
-          min-height: calc(100vh - 32px);
-        }
-      }
-
-      /* Header Superior */
-      .top-navbar {
-        background-color: #FFFFFF;
-        border-bottom: 1px solid var(--border-color);
-        padding: 14px 18px;
-        position: sticky;
-        top: 0;
-        z-index: 40;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      .top-user-info {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        min-width: 0;
-      }
-
-      .user-avatar {
-        width: 42px;
-        height: 42px;
+      .receita-category-badge {
+        display: inline-flex;
+        width: fit-content;
+        padding: 2px 8px;
         border-radius: var(--radius-full);
+        background: #E8F4F1;
+        color: #176B59;
+        font-size: 11px;
+        font-weight: 700;
+      }
+      .recipe-textarea {
+        width: 100%;
+        min-height: 120px;
+        padding: 12px 14px;
+        background: #FFFDF9;
+        border: 1.5px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        color: var(--text-primary);
+        font: inherit;
+        font-size: 15px;
+        line-height: 1.5;
+        resize: vertical;
+      }
+      .recipe-textarea:focus {
+        border-color: var(--wheat-gold);
+        outline: 0;
+        box-shadow: 0 0 0 3px rgba(217, 119, 6, 0.15);
+      }
+      .recipe-photo-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px dashed var(--border-color);
+        border-radius: var(--radius-sm);
+        background: #FFFDF9;
+        color: var(--text-secondary);
+      }
+      .recipe-photo-field {
+        display: flex;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .recipe-photo-preview {
+        width: min(100%, 360px);
+        max-height: 240px;
         object-fit: cover;
+        border-radius: var(--radius-sm);
+        border: 1px solid var(--border-color);
+      }
+      .recipe-card-photo {
+        display: block;
+        width: 100%;
+        max-height: 300px;
+        aspect-ratio: 16 / 9;
+        object-fit: cover;
+        border-radius: var(--radius-sm);
+      }
+      .recipe-technical-sheet {
+        padding: 10px 12px;
+        background: #F2F8F5;
+        border: 1px solid #D4E8DE;
+        border-radius: var(--radius-sm);
+        color: #245345;
+        font-size: 12px;
+      }
+      .recipe-technical-facts {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px 14px;
+        font-weight: 700;
+      }
+      .recipe-preparation {
+        margin-top: 8px;
+        white-space: pre-line;
+        overflow-wrap: anywhere;
+      }
+      .conversion-settings {
+        padding: 12px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm);
+        background: #FFFDF9;
+      }
+      .conversion-settings summary {
+        color: var(--text-secondary);
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .conversion-settings p {
+        margin: 8px 0;
+        color: var(--text-muted);
+        font-size: 12px;
+      }
         border: 2px solid var(--wheat-gold);
         background-color: var(--bg-warm-tint);
         flex-shrink: 0;
@@ -1682,6 +1682,36 @@
                 </div>
               </div>
 
+              <details class="conversion-settings">
+                <summary>Conversões culinárias deste ingrediente</summary>
+                <p>Informe o peso ou volume de cada medida para este material. Exemplo: 1 ovo = 50 g.</p>
+                <div class="form-group">
+                  <label for="select-conversion-base-unit" class="form-label">Base dos fatores</label>
+                  <select id="select-conversion-base-unit">
+                    <option value="g">Gramas (g)</option>
+                    <option value="ml">Mililitros (ml)</option>
+                  </select>
+                </div>
+                <div class="form-grid-2">
+                  <div class="form-group">
+                    <label for="input-conversion-xicara" class="form-label">1 xícara equivale a</label>
+                    <input id="input-conversion-xicara" type="number" min="0.001" step="any" placeholder="Ex: 120" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-conversion-colher-sopa" class="form-label">1 colher de sopa equivale a</label>
+                    <input id="input-conversion-colher-sopa" type="number" min="0.001" step="any" placeholder="Ex: 15" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-conversion-colher-cha" class="form-label">1 colher de chá equivale a</label>
+                    <input id="input-conversion-colher-cha" type="number" min="0.001" step="any" placeholder="Ex: 5" />
+                  </div>
+                  <div class="form-group">
+                    <label for="input-conversion-un" class="form-label">1 unidade equivale a</label>
+                    <input id="input-conversion-un" type="number" min="0.001" step="any" placeholder="Ex: 50 (ovo)" />
+                  </div>
+                </div>
+              </details>
+
               <!-- Preço Pago em R$ -->
               <div class="form-group">
                 <label for="input-preco" class="form-label">
@@ -1834,6 +1864,16 @@
                 </datalist>
               </div>
 
+              <div class="form-group">
+                <label for="select-categoria-receita" class="form-label">Categoria da Receita</label>
+                <select id="select-categoria-receita">
+                  <option value="paes">Pães</option>
+                  <option value="bolos">Bolos</option>
+                  <option value="salgados">Salgados</option>
+                  <option value="outros">Outros</option>
+                </select>
+              </div>
+
               <!-- Rendimento da Receita -->
               <div class="form-grid-2">
                 <div class="form-group">
@@ -1867,13 +1907,43 @@
               <!-- Observações / Descrição -->
               <div class="form-group">
                 <label for="input-receita-descricao" class="form-label">
-                  Observações / Tempo de Forno (opcional):
+                  Observações (opcional):
                 </label>
                 <input
                   id="input-receita-descricao"
                   type="text"
                   placeholder="Ex: Assar a 200°C por 35 minutos com vapor"
                 />
+              </div>
+
+              <div class="form-group">
+                <label for="input-modo-preparo" class="form-label">Modo de preparo</label>
+                <textarea id="input-modo-preparo" class="recipe-textarea" rows="5" maxlength="6000" placeholder="Descreva as etapas, ponto da massa e descanso"></textarea>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="input-tempo-preparo" class="form-label">Tempo de preparo (min)</label>
+                  <input id="input-tempo-preparo" type="number" min="0" step="1" placeholder="Ex: 30" />
+                </div>
+                <div class="form-group">
+                  <label for="input-tempo-forno" class="form-label">Tempo de forno (min)</label>
+                  <input id="input-tempo-forno" type="number" min="0" step="1" placeholder="Ex: 35" />
+                </div>
+                <div class="form-group">
+                  <label for="input-temperatura-forno" class="form-label">Temperatura do forno (°C)</label>
+                  <input id="input-temperatura-forno" type="number" min="0" max="500" step="1" placeholder="Ex: 200" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="input-foto-receita" class="form-label">Foto do produto</label>
+                <input id="input-foto-receita" class="recipe-photo-input" type="file" accept="image/*" />
+                <div class="recipe-photo-field">
+                  <img id="preview-foto-receita" class="recipe-photo-preview hidden" alt="Prévia da foto da receita" />
+                  <button id="btn-remover-foto-receita" class="btn-secondary hidden" type="button" aria-label="Remover foto da receita" title="Remover foto">Remover foto</button>
+                </div>
+                <span class="calc-detail">A imagem é reduzida antes de ser salva.</span>
               </div>
 
               <!-- Construtor de Itens da Receita (Ingredientes + Sacolas + Formas descartáveis) -->
@@ -1920,6 +1990,9 @@
                       <option value="kg">kg (Quilos)</option>
                       <option value="ml">ml (Mililitros)</option>
                       <option value="L">L (Litros)</option>
+                      <option value="xicara">xícara</option>
+                      <option value="colher_sopa">colher de sopa</option>
+                      <option value="colher_cha">colher de chá</option>
                       <option value="un">un (Unidades / Sacolas / Formas)</option>
                     </select>
                   </div>
@@ -2071,6 +2144,14 @@
               <button id="btn-clear-search-receitas" class="btn-clear-search" type="button" aria-label="Limpar busca">✕</button>
             </div>
 
+            <div class="category-pills-bar" id="recipe-category-pills" aria-label="Filtrar receitas por categoria">
+              <button class="category-pill active" data-recipe-category="todos" type="button">Todas</button>
+              <button class="category-pill" data-recipe-category="paes" type="button">Pães</button>
+              <button class="category-pill" data-recipe-category="bolos" type="button">Bolos</button>
+              <button class="category-pill" data-recipe-category="salgados" type="button">Salgados</button>
+              <button class="category-pill" data-recipe-category="outros" type="button">Outros</button>
+            </div>
+
             <!-- Cabeçalho da Listagem de Receitas -->
             <div class="section-heading">
               <h3 class="section-title">Receitas de Pães Cadastradas</h3>
@@ -2133,6 +2214,9 @@
                 <option value="kg">kg (Quilos)</option>
                 <option value="ml">ml (Mililitros)</option>
                 <option value="L">L (Litros)</option>
+                <option value="xicara">xícara</option>
+                <option value="colher_sopa">colher de sopa</option>
+                <option value="colher_cha">colher de chá</option>
                 <option value="un">un (Unidades)</option>
               </select>
             </div>
@@ -2299,6 +2383,7 @@ service cloud.firestore {
 
     <!-- ================= SCRIPT MODULAR FIREBASE V10 VIA CDN ================= -->
     <script type="module">
+      import { calcularCustoItemReceita as calcularCustoItemReceitaValidado } from "./src/utils/costCalculator.ts";
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
       import { 
         getAuth, 
@@ -2356,8 +2441,10 @@ service cloud.firestore {
       let editingInsumoId = null;
       let editingReceitaId = null;
       let activeGroupFilter = 'todos';
+      let activeRecipeCategory = 'todos';
       let activeTab = 'insumos';
       let itensReceitaEmElaboracao = [];
+      let fotoReceitaDataUrl = null;
 
       // Insumos iniciais de exemplo para a padaria caseira (ingredientes + sacolas + formas)
       const DEMO_SEED_INSUMOS = [
@@ -2545,6 +2632,11 @@ service cloud.firestore {
         inputFornecedor: document.getElementById('input-fornecedor'),
         inputQuantidade: document.getElementById('input-quantidade'),
         selectUnidade: document.getElementById('select-unidade'),
+        conversionBaseUnit: document.getElementById('select-conversion-base-unit'),
+        conversionXicara: document.getElementById('input-conversion-xicara'),
+        conversionColherSopa: document.getElementById('input-conversion-colher-sopa'),
+        conversionColherCha: document.getElementById('input-conversion-colher-cha'),
+        conversionUn: document.getElementById('input-conversion-un'),
         inputPreco: document.getElementById('input-preco'),
         previewUnitCost: document.getElementById('preview-unit-cost'),
         previewRecipeCost: document.getElementById('preview-recipe-cost'),
@@ -2573,9 +2665,17 @@ service cloud.firestore {
         formReceitaTitle: document.getElementById('form-receita-title'),
         btnCancelEditReceita: document.getElementById('btn-cancel-edit-receita'),
         inputReceitaNome: document.getElementById('input-receita-nome'),
+        selectCategoriaReceita: document.getElementById('select-categoria-receita'),
         inputReceitaRendimento: document.getElementById('input-receita-rendimento'),
         inputReceitaRendimentoUn: document.getElementById('input-receita-rendimento-un'),
         inputReceitaDescricao: document.getElementById('input-receita-descricao'),
+        inputModoPreparo: document.getElementById('input-modo-preparo'),
+        inputTempoPreparo: document.getElementById('input-tempo-preparo'),
+        inputTempoForno: document.getElementById('input-tempo-forno'),
+        inputTemperaturaForno: document.getElementById('input-temperatura-forno'),
+        inputFotoReceita: document.getElementById('input-foto-receita'),
+        previewFotoReceita: document.getElementById('preview-foto-receita'),
+        btnRemoverFotoReceita: document.getElementById('btn-remover-foto-receita'),
         receitaItemInsumo: document.getElementById('receita-item-insumo'),
         receitaItemQuantidade: document.getElementById('receita-item-quantidade'),
         receitaItemUnidade: document.getElementById('receita-item-unidade'),
@@ -2598,6 +2698,7 @@ service cloud.firestore {
         btnClearSearchReceitas: document.getElementById('btn-clear-search-receitas'),
         receitasCounter: document.getElementById('receitas-counter'),
         receitasContainer: document.getElementById('receitas-container'),
+        recipeCategoryPills: document.getElementById('recipe-category-pills'),
         emptyStateReceitas: document.getElementById('empty-state-receitas'),
         btnEmptyAddReceita: document.getElementById('btn-empty-add-receita'),
 
@@ -2707,24 +2808,37 @@ service cloud.firestore {
         return `Preço por unidade (sacola, forma descartável, etc.)`;
       }
 
-      function calcularCustoItemReceita(custoUnitarioInsumo, unidadeInsumo, quantidadeUsada, unidadeUsada) {
-        if (!custoUnitarioInsumo || !quantidadeUsada || isNaN(custoUnitarioInsumo) || isNaN(quantidadeUsada)) {
-          return 0;
-        }
+      function calcularCustoItemReceita(custoUnitarioInsumo, unidadeInsumo, quantidadeUsada, unidadeUsada, conversoes) {
+        return calcularCustoItemReceitaValidado(
+          Number(custoUnitarioInsumo),
+          unidadeInsumo,
+          Number(quantidadeUsada),
+          unidadeUsada,
+          conversoes
+        );
+      }
 
-        let fatorConversao = 1;
-        if (unidadeInsumo === 'kg' && unidadeUsada === 'g') {
-          fatorConversao = 1 / 1000;
-        } else if (unidadeInsumo === 'g' && unidadeUsada === 'kg') {
-          fatorConversao = 1000;
-        } else if (unidadeInsumo === 'L' && unidadeUsada === 'ml') {
-          fatorConversao = 1 / 1000;
-        } else if (unidadeInsumo === 'ml' && unidadeUsada === 'L') {
-          fatorConversao = 1000;
+      function obterConversoesDoFormulario() {
+        const conversoes = { baseUnit: dom.conversionBaseUnit.value || 'g' };
+        const campos = [
+          ['xicara', dom.conversionXicara],
+          ['colher_sopa', dom.conversionColherSopa],
+          ['colher_cha', dom.conversionColherCha],
+          ['un', dom.conversionUn]
+        ];
+        for (const [unidade, campo] of campos) {
+          const fator = Number(campo.value);
+          if (fator > 0) conversoes[unidade] = fator;
         }
+        return Object.keys(conversoes).length > 1 ? conversoes : null;
+      }
 
-        const custoTotal = custoUnitarioInsumo * fatorConversao * quantidadeUsada;
-        return Math.round(custoTotal * 10000) / 10000;
+      function preencherConversoesDoFormulario(conversoes) {
+        dom.conversionBaseUnit.value = conversoes?.baseUnit || 'g';
+        dom.conversionXicara.value = conversoes?.xicara || '';
+        dom.conversionColherSopa.value = conversoes?.colher_sopa || '';
+        dom.conversionColherCha.value = conversoes?.colher_cha || '';
+        dom.conversionUn.value = conversoes?.un || '';
       }
 
       function calcularTotaisReceita(itens, rendimento = 1) {
@@ -3142,6 +3256,7 @@ service cloud.firestore {
         dom.formInsumo.reset();
         dom.selectCategoriaInsumo.value = 'ingrediente';
         dom.selectUnidade.value = 'kg';
+        preencherConversoesDoFormulario(null);
         dom.formInsumoTitle.textContent = '🌾 Novo Insumo ou Embalagem';
         dom.btnSubmitInsumo.innerHTML = '<span>Salvar no Firestore</span>';
         dom.btnCancelEditInsumo.classList.add('hidden');
@@ -3162,6 +3277,7 @@ service cloud.firestore {
         dom.inputFornecedor.value = insumo.fornecedor || '';
         dom.inputQuantidade.value = insumo.quantidade ?? '';
         dom.selectUnidade.value = insumo.unidade || 'kg';
+        preencherConversoesDoFormulario(insumo.conversoes);
         dom.inputPreco.value = insumo.preco ?? '';
         dom.formInsumoTitle.textContent = '✏️ Editar Insumo ou Material';
         dom.btnSubmitInsumo.innerHTML = '<span>Salvar alterações</span>';
@@ -3188,11 +3304,13 @@ service cloud.firestore {
               categoria: insumo.categoria || 'ingrediente',
               custoUnitarioBase: insumo.custoUnitario,
               unidadeBase: insumo.unidade,
+              conversoes: insumo.conversoes || null,
               custoItem: calcularCustoItemReceita(
                 insumo.custoUnitario,
                 insumo.unidade,
                 item.quantidadeUsada,
-                item.unidadeUsada
+                item.unidadeUsada,
+                insumo.conversoes
               )
             };
           });
@@ -3215,6 +3333,7 @@ service cloud.firestore {
               await updateDoc(doc(firestoreDb, 'receitas', receita.id), atualizacoes);
             }
             Object.assign(receita, atualizacoes);
+            falhas += await atualizarReceitasDependentes(receita.id);
           } catch (err) {
             falhas++;
             console.error(`Erro ao recalcular a receita ${receita.id}:`, err);
@@ -3222,6 +3341,63 @@ service cloud.firestore {
         }
 
         renderizarReceitas();
+        return falhas;
+      }
+
+      async function atualizarReceitasDependentes(receitaBaseId, visitadas = new Set()) {
+        if (visitadas.has(receitaBaseId)) return 0;
+        visitadas.add(receitaBaseId);
+        const receitaBase = cachedReceitas.find(receita => receita.id === receitaBaseId);
+        if (!receitaBase) return 0;
+
+        let falhas = 0;
+        const custoBase = obterCustoPorUnidadeReceita(receitaBase);
+        const unidadeBase = normalizarUnidadeRendimento(receitaBase.rendimentoUnidade);
+
+        for (const receita of cachedReceitas) {
+          if (!(receita.itens || []).some(item => item.receitaId === receitaBaseId)) continue;
+          const itens = receita.itens.map(item => item.receitaId === receitaBaseId
+            ? {
+                ...item,
+                insumoNome: receitaBase.nome,
+                custoUnitarioBase: custoBase,
+                unidadeBase,
+                custoItem: calcularCustoItemReceita(
+                  custoBase,
+                  unidadeBase,
+                  item.quantidadeUsada,
+                  item.unidadeUsada,
+                  item.conversoes
+                )
+              }
+            : item
+          );
+          const totais = calcularTotaisReceita(itens, receita.rendimento);
+          const lucro = calcularLucroEPrecificacao(
+            totais.custoUnitario,
+            receita.margemLucroDesejada,
+            receita.precoVendaPraticado
+          );
+          const atualizacoes = {
+            itens,
+            ...totais,
+            precoVendaSugerido: lucro.precoSugerido,
+            lucroPorUnidade: lucro.lucroPorUnidade,
+            updatedAt: serverTimestamp()
+          };
+
+          try {
+            if (firestoreDb && !receita.id.startsWith('local-') && !receita.id.startsWith('demo-')) {
+              await updateDoc(doc(firestoreDb, 'receitas', receita.id), atualizacoes);
+            }
+            Object.assign(receita, atualizacoes);
+            falhas += await atualizarReceitasDependentes(receita.id, visitadas);
+          } catch (err) {
+            falhas++;
+            console.error(`Erro ao atualizar dependência da receita ${receita.id}:`, err);
+          }
+        }
+
         return falhas;
       }
 
@@ -3234,6 +3410,7 @@ service cloud.firestore {
         const quantidade = parseFloat(dom.inputQuantidade.value);
         const unidade = dom.selectUnidade.value;
         const preco = parseFloat(dom.inputPreco.value);
+        const conversoes = obterConversoesDoFormulario();
 
         if (!nome || !fornecedor || isNaN(quantidade) || quantidade <= 0 || isNaN(preco) || preco <= 0) {
           showToast('Preencha todos os campos com valores válidos.');
@@ -3249,7 +3426,8 @@ service cloud.firestore {
           unidade,
           preco,
           custoUnitario,
-          categoria
+          categoria,
+          ...(conversoes ? { conversoes } : {})
         };
         const insumoExistente = editingInsumoId
           ? cachedInsumos.find(item => item.id === editingInsumoId)
@@ -3536,8 +3714,42 @@ service cloud.firestore {
       // -------------------------------------------------------------
       // 8. MÓDULO RECEITAS: CONSTRUTOR DINÂMICO & PRECIFICAÇÃO
       // -------------------------------------------------------------
+      function normalizarUnidadeRendimento(unidade) {
+        const valor = String(unidade || '').trim().toLowerCase();
+        if (valor === 'kg' || valor.includes('quilo')) return 'kg';
+        if (valor === 'g' || valor.includes('grama')) return 'g';
+        if (valor === 'l' || valor === 'litro' || valor === 'litros') return 'L';
+        if (valor === 'ml' || valor.includes('mililitro')) return 'ml';
+        if (valor === 'xicara' || valor === 'xícara') return 'xicara';
+        if (valor === 'colher_sopa') return 'colher_sopa';
+        if (valor === 'colher_cha') return 'colher_cha';
+        return 'un';
+      }
+
+      function obterCustoPorUnidadeReceita(receita) {
+        const rendimento = Number(receita.rendimento) || 1;
+        return Number(receita.custoUnitario) || Number(receita.custoTotal || 0) / rendimento;
+      }
+
+      function receitaAlcanca(receitaOrigemId, receitaAlvoId, visitadas = new Set()) {
+        if (receitaOrigemId === receitaAlvoId) return true;
+        if (visitadas.has(receitaOrigemId)) return false;
+        visitadas.add(receitaOrigemId);
+        const origem = cachedReceitas.find(receita => receita.id === receitaOrigemId);
+        return (origem?.itens || []).some(item =>
+          item.receitaId && receitaAlcanca(item.receitaId, receitaAlvoId, visitadas)
+        );
+      }
+
+      function criariaCicloReceita(receitaPaiId, receitaBaseId) {
+        return Boolean(receitaPaiId && receitaAlcanca(receitaBaseId, receitaPaiId));
+      }
+
       function atualizarSelectsInsumosParaReceitas() {
         const insumosDisponiveis = cachedInsumos.length > 0 ? cachedInsumos : DEMO_SEED_INSUMOS;
+        const receitasDisponiveis = cachedReceitas.length > 0
+          ? cachedReceitas
+          : (isDemoMode ? DEMO_SEED_RECEITAS : []);
 
         // Monta as opções agrupadas por categoria
         const grupos = {
@@ -3557,7 +3769,7 @@ service cloud.firestore {
         if (grupos.ingrediente.length > 0) {
           optionsHtml += '<optgroup label="🌾 Ingredientes">';
           grupos.ingrediente.forEach(i => {
-            optionsHtml += `<option value="${i.id}" data-cat="ingrediente" data-unit="${i.unidade}" data-cost="${i.custoUnitario}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
+            optionsHtml += `<option value="${i.id}" data-source-type="insumo" data-name="${escapeHtml(i.nome)}" data-cat="ingrediente" data-unit="${i.unidade}" data-cost="${i.custoUnitario}" data-conversions="${escapeHtml(JSON.stringify(i.conversoes || {}))}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
           });
           optionsHtml += '</optgroup>';
         }
@@ -3565,7 +3777,7 @@ service cloud.firestore {
         if (grupos.embalagem.length > 0) {
           optionsHtml += '<optgroup label="🛍️ Embalagens & Formas Descartáveis">';
           grupos.embalagem.forEach(i => {
-            optionsHtml += `<option value="${i.id}" data-cat="embalagem" data-unit="${i.unidade}" data-cost="${i.custoUnitario}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
+            optionsHtml += `<option value="${i.id}" data-source-type="insumo" data-name="${escapeHtml(i.nome)}" data-cat="embalagem" data-unit="${i.unidade}" data-cost="${i.custoUnitario}" data-conversions="${escapeHtml(JSON.stringify(i.conversoes || {}))}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
           });
           optionsHtml += '</optgroup>';
         }
@@ -3573,7 +3785,18 @@ service cloud.firestore {
         if (grupos.outro.length > 0) {
           optionsHtml += '<optgroup label="📦 Outros">';
           grupos.outro.forEach(i => {
-            optionsHtml += `<option value="${i.id}" data-cat="outro" data-unit="${i.unidade}" data-cost="${i.custoUnitario}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
+            optionsHtml += `<option value="${i.id}" data-source-type="insumo" data-name="${escapeHtml(i.nome)}" data-cat="outro" data-unit="${i.unidade}" data-cost="${i.custoUnitario}" data-conversions="${escapeHtml(JSON.stringify(i.conversoes || {}))}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
+          });
+          optionsHtml += '</optgroup>';
+        }
+
+        if (receitasDisponiveis.length > 0) {
+          optionsHtml += '<optgroup label="🍞 Massas e receitas-base">';
+          receitasDisponiveis.forEach(receita => {
+            if (receita.id === editingReceitaId) return;
+            const unidade = normalizarUnidadeRendimento(receita.rendimentoUnidade);
+            const custo = obterCustoPorUnidadeReceita(receita);
+            optionsHtml += `<option value="receita:${receita.id}" data-source-type="receita" data-name="${escapeHtml(receita.nome)}" data-recipe-id="${receita.id}" data-cat="ingrediente" data-unit="${unidade}" data-cost="${custo}" data-conversions="{}">${escapeHtml(receita.nome)} (${formatarCustoComUnidade(custo, unidade)})</option>`;
           });
           optionsHtml += '</optgroup>';
         }
@@ -3602,8 +3825,9 @@ service cloud.firestore {
         const selectedOption = dom.receitaItemInsumo.selectedOptions[0];
         const custoUnitario = parseFloat(selectedOption?.getAttribute('data-cost')) || 0;
         const unidadeBase = selectedOption?.getAttribute('data-unit') || 'kg';
+        const conversoes = JSON.parse(selectedOption?.getAttribute('data-conversions') || '{}');
 
-        const custoItem = calcularCustoItemReceita(custoUnitario, unidadeBase, qtd, unidadeUsada);
+        const custoItem = calcularCustoItemReceita(custoUnitario, unidadeBase, qtd, unidadeUsada, conversoes);
         dom.receitaItemCostPreview.textContent = formatarMoeda(custoItem, 2);
       }
 
@@ -3623,21 +3847,31 @@ service cloud.firestore {
         }
 
         const selectedOption = dom.receitaItemInsumo.selectedOptions[0];
-        const insumoNome = selectedOption ? selectedOption.text.split(' (')[0] : 'Insumo';
+        const sourceType = selectedOption?.getAttribute('data-source-type') || 'insumo';
+        const receitaId = selectedOption?.getAttribute('data-recipe-id') || null;
+        if (sourceType === 'receita' && criariaCicloReceita(editingReceitaId, receitaId)) {
+          showToast('Essa receita-base criaria uma dependência circular.');
+          return;
+        }
+        const insumoNome = selectedOption?.getAttribute('data-name') || 'Insumo';
         const categoria = selectedOption?.getAttribute('data-cat') || 'ingrediente';
         const custoUnitarioBase = parseFloat(selectedOption?.getAttribute('data-cost')) || 0;
         const unidadeBase = selectedOption?.getAttribute('data-unit') || 'kg';
+        const conversoes = JSON.parse(selectedOption?.getAttribute('data-conversions') || '{}');
 
-        const custoItem = calcularCustoItemReceita(custoUnitarioBase, unidadeBase, qtd, unidadeUsada);
+        const custoItem = calcularCustoItemReceita(custoUnitarioBase, unidadeBase, qtd, unidadeUsada, conversoes);
 
         itensReceitaEmElaboracao.push({
-          insumoId,
+          insumoId: sourceType === 'insumo' ? insumoId : null,
+          sourceType,
+          ...(receitaId ? { receitaId } : {}),
           insumoNome,
           categoria,
           quantidadeUsada: qtd,
           unidadeUsada,
           custoUnitarioBase,
           unidadeBase,
+          conversoes,
           custoItem
         });
 
@@ -3665,7 +3899,9 @@ service cloud.firestore {
           `;
         } else {
           dom.tbodyDraftReceitaItens.innerHTML = itensReceitaEmElaboracao.map((item, idx) => {
-            const badge = item.categoria === 'embalagem' 
+            const badge = item.sourceType === 'receita'
+              ? '<span class="badge-category badge-cat-outro">🍞 Receita-base</span>'
+              : item.categoria === 'embalagem'
               ? '<span class="badge-category badge-cat-embalagem">🛍️ Emb.</span>' 
               : '<span class="badge-category badge-cat-ingrediente">🌾 Ingr.</span>';
 
@@ -3723,10 +3959,74 @@ service cloud.firestore {
         dom.textLucroTotalLote.textContent = formatarMoeda(lucroLote, 2);
       }
 
+      function atualizarPreviewFotoReceita(dataUrl) {
+        fotoReceitaDataUrl = dataUrl || null;
+        if (fotoReceitaDataUrl) {
+          dom.previewFotoReceita.src = fotoReceitaDataUrl;
+          dom.previewFotoReceita.classList.remove('hidden');
+          dom.btnRemoverFotoReceita.classList.remove('hidden');
+        } else {
+          dom.previewFotoReceita.removeAttribute('src');
+          dom.previewFotoReceita.classList.add('hidden');
+          dom.btnRemoverFotoReceita.classList.add('hidden');
+          dom.inputFotoReceita.value = '';
+        }
+      }
+
+      function compactarFotoReceita(file) {
+        if (!file || !file.type.startsWith('image/')) {
+          return Promise.reject(new Error('Selecione um arquivo de imagem válido.'));
+        }
+        if (file.size > 20 * 1024 * 1024) {
+          return Promise.reject(new Error('A imagem original deve ter até 20 MB.'));
+        }
+
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onerror = () => reject(new Error('Não foi possível ler a imagem.'));
+          reader.onload = () => {
+            const image = new Image();
+            image.onerror = () => reject(new Error('Não foi possível abrir a imagem.'));
+            image.onload = () => {
+              const canvas = document.createElement('canvas');
+              let scale = Math.min(1, 1280 / Math.max(image.width, image.height));
+              let width = Math.max(1, Math.round(image.width * scale));
+              let height = Math.max(1, Math.round(image.height * scale));
+
+              for (let attempt = 0; attempt < 20; attempt++) {
+                canvas.width = width;
+                canvas.height = height;
+                const context = canvas.getContext('2d');
+                if (!context) {
+                  reject(new Error('Não foi possível processar a imagem.'));
+                  return;
+                }
+                context.drawImage(image, 0, 0, width, height);
+                const quality = Math.max(0.42, 0.84 - (attempt % 5) * 0.1);
+                const dataUrl = canvas.toDataURL('image/jpeg', quality);
+                if (dataUrl.length <= 450 * 1024) {
+                  resolve(dataUrl);
+                  return;
+                }
+                if (attempt % 5 === 4) {
+                  width = Math.max(1, Math.round(width * 0.8));
+                  height = Math.max(1, Math.round(height * 0.8));
+                }
+              }
+              reject(new Error('Não foi possível reduzir a foto para o limite de armazenamento.'));
+            };
+            image.src = String(reader.result);
+          };
+          reader.readAsDataURL(file);
+        });
+      }
+
       function prepararNovaReceita() {
         editingReceitaId = null;
         itensReceitaEmElaboracao = [];
         dom.formReceita.reset();
+        dom.selectCategoriaReceita.value = 'paes';
+        atualizarPreviewFotoReceita(null);
         dom.formReceitaTitle.textContent = '📖 Nova Receita com Custos e Lucro';
         dom.btnSubmitReceita.innerHTML = '<span>Salvar Receita no Firestore</span>';
         dom.btnCancelEditReceita.classList.add('hidden');
@@ -3743,9 +4043,15 @@ service cloud.firestore {
 
         editingReceitaId = id;
         dom.inputReceitaNome.value = receita.nome || '';
+        dom.selectCategoriaReceita.value = receita.categoria || 'paes';
         dom.inputReceitaRendimento.value = receita.rendimento || 1;
         dom.inputReceitaRendimentoUn.value = receita.rendimentoUnidade || 'pães';
         dom.inputReceitaDescricao.value = receita.descricao || '';
+        dom.inputModoPreparo.value = receita.modoPreparo || '';
+        dom.inputTempoPreparo.value = receita.tempoPreparoMin ?? '';
+        dom.inputTempoForno.value = receita.tempoFornoMin ?? '';
+        dom.inputTemperaturaForno.value = receita.temperaturaFornoC ?? '';
+        atualizarPreviewFotoReceita(receita.fotoDataUrl);
         dom.inputMargemLucro.value = receita.margemLucroDesejada ?? 100;
         dom.inputPrecoPraticado.value = receita.precoVendaPraticado ?? '';
         itensReceitaEmElaboracao = (receita.itens || []).map(item => ({ ...item }));
@@ -3756,17 +4062,56 @@ service cloud.firestore {
         dom.toggleFormReceitaIcon.textContent = '▲';
         dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
         dom.btnToggleFormReceita.setAttribute('aria-expanded', 'true');
+        atualizarSelectsInsumosParaReceitas();
         renderizarItensReceitaEmElaboracao();
         dom.formReceita.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function duplicarReceita(id) {
+        const receita = cachedReceitas.find(item => item.id === id);
+        if (!receita) return;
+
+        editingReceitaId = null;
+        dom.inputReceitaNome.value = `${receita.nome} (cópia)`;
+        dom.selectCategoriaReceita.value = receita.categoria || 'paes';
+        dom.inputReceitaRendimento.value = receita.rendimento || 1;
+        dom.inputReceitaRendimentoUn.value = receita.rendimentoUnidade || 'pães';
+        dom.inputReceitaDescricao.value = receita.descricao || '';
+        dom.inputModoPreparo.value = receita.modoPreparo || '';
+        dom.inputTempoPreparo.value = receita.tempoPreparoMin ?? '';
+        dom.inputTempoForno.value = receita.tempoFornoMin ?? '';
+        dom.inputTemperaturaForno.value = receita.temperaturaFornoC ?? '';
+        atualizarPreviewFotoReceita(receita.fotoDataUrl);
+        dom.inputMargemLucro.value = receita.margemLucroDesejada ?? 100;
+        dom.inputPrecoPraticado.value = '';
+        itensReceitaEmElaboracao = (receita.itens || []).map(item => ({ ...item }));
+        dom.formReceitaTitle.textContent = `📖 Variação de ${receita.nome}`;
+        dom.btnSubmitReceita.innerHTML = '<span>Salvar nova receita</span>';
+        dom.btnCancelEditReceita.classList.remove('hidden');
+        dom.formReceita.classList.remove('hidden');
+        dom.toggleFormReceitaIcon.textContent = '▲';
+        dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
+        dom.btnToggleFormReceita.setAttribute('aria-expanded', 'true');
+        atualizarSelectsInsumosParaReceitas();
+        renderizarItensReceitaEmElaboracao();
+        dom.formReceita.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        dom.inputReceitaNome.focus();
+        dom.inputReceitaNome.select();
       }
 
       async function handleFormReceitaSubmit(e) {
         e.preventDefault();
 
         const nome = dom.inputReceitaNome.value.trim();
+        const categoria = dom.selectCategoriaReceita.value || 'paes';
         const rendimento = parseFloat(dom.inputReceitaRendimento.value);
         const rendimentoUnidade = dom.inputReceitaRendimentoUn.value.trim() || 'pães';
         const descricao = dom.inputReceitaDescricao.value.trim();
+        const modoPreparo = dom.inputModoPreparo.value.trim();
+        const optionalNumber = input => input.value === '' ? null : Number(input.value);
+        const tempoPreparoMin = optionalNumber(dom.inputTempoPreparo);
+        const tempoFornoMin = optionalNumber(dom.inputTempoForno);
+        const temperaturaFornoC = optionalNumber(dom.inputTemperaturaForno);
         const margemLucroDesejada = parseFloat(dom.inputMargemLucro.value) || 100;
         const precoVendaPraticado = parseFloat(dom.inputPrecoPraticado.value);
 
@@ -3786,9 +4131,15 @@ service cloud.firestore {
 
         const novaReceita = {
           nome,
+          categoria,
           rendimento,
           rendimentoUnidade,
           descricao,
+          modoPreparo,
+          tempoPreparoMin,
+          tempoFornoMin,
+          temperaturaFornoC,
+          fotoDataUrl: fotoReceitaDataUrl,
           itens: itensReceitaEmElaboracao,
           custoIngredientes: totais.custoIngredientes,
           custoEmbalagens: totais.custoEmbalagens,
@@ -3810,13 +4161,17 @@ service cloud.firestore {
           if (!firestoreDb) initFirebase();
 
           if (editingReceitaId) {
+            const receitaIdAtualizada = editingReceitaId;
             const atualizacoes = { ...novaReceita, updatedAt: serverTimestamp() };
-            if (firestoreDb && !editingReceitaId.startsWith('local-') && !editingReceitaId.startsWith('demo-')) {
-              await updateDoc(doc(firestoreDb, 'receitas', editingReceitaId), atualizacoes);
+            if (firestoreDb && !receitaIdAtualizada.startsWith('local-') && !receitaIdAtualizada.startsWith('demo-')) {
+              await updateDoc(doc(firestoreDb, 'receitas', receitaIdAtualizada), atualizacoes);
             }
             Object.assign(receitaExistente, novaReceita);
             renderizarReceitas();
-            showToast(`Receita "${nome}" atualizada com sucesso!`);
+            const falhas = await atualizarReceitasDependentes(receitaIdAtualizada);
+            showToast(falhas
+              ? `Receita atualizada; houve falha ao recalcular ${falhas} dependência(s).`
+              : `Receita "${nome}" atualizada com sucesso!`);
           } else {
             const receitaComMetadados = {
               ...novaReceita,
@@ -3858,6 +4213,9 @@ service cloud.firestore {
         const querySearch = dom.inputSearchReceitas.value.trim().toLowerCase();
 
         let filtradas = cachedReceitas.length > 0 ? cachedReceitas : (isDemoMode ? DEMO_SEED_RECEITAS : []);
+        if (activeRecipeCategory !== 'todos') {
+          filtradas = filtradas.filter(receita => (receita.categoria || 'paes') === activeRecipeCategory);
+        }
         if (querySearch) {
           filtradas = filtradas.filter(r => 
             (r.nome || '').toLowerCase().includes(querySearch) ||
@@ -3888,6 +4246,7 @@ service cloud.firestore {
 
         const html = filtradas.map(rec => {
           const rendimentoTexto = `Rende ${rec.rendimento} ${rec.rendimentoUnidade || 'pães'}`;
+          const categoriaNome = ({ paes: 'Pães', bolos: 'Bolos', salgados: 'Salgados', outros: 'Outros' })[rec.categoria || 'paes'] || 'Pães';
           const itens = rec.itens || [];
           const countIngredientes = itens.filter(i => (i.categoria || 'ingrediente') === 'ingrediente').length;
           const countEmbalagens = itens.filter(i => i.categoria === 'embalagem').length;
@@ -3896,16 +4255,33 @@ service cloud.firestore {
           const margemPercentual = rec.custoUnitario > 0 
             ? Math.round((lucroUn / rec.custoUnitario) * 100) 
             : 0;
+          const technicalFacts = [];
+          if (rec.tempoPreparoMin !== null && rec.tempoPreparoMin !== undefined) technicalFacts.push(`Preparo: ${rec.tempoPreparoMin} min`);
+          if (rec.tempoFornoMin !== null && rec.tempoFornoMin !== undefined) technicalFacts.push(`Forno: ${rec.tempoFornoMin} min`);
+          if (rec.temperaturaFornoC !== null && rec.temperaturaFornoC !== undefined) technicalFacts.push(`${rec.temperaturaFornoC} °C`);
+          const technicalSheet = technicalFacts.length || rec.modoPreparo
+            ? `<div class="recipe-technical-sheet">
+                ${technicalFacts.length ? `<div class="recipe-technical-facts">${technicalFacts.map(escapeHtml).join('<span aria-hidden="true">·</span>')}</div>` : ''}
+                ${rec.modoPreparo ? `<div class="recipe-preparation"><strong>Modo de preparo:</strong><br>${escapeHtml(rec.modoPreparo)}</div>` : ''}
+              </div>`
+            : '';
+          const recipePhoto = rec.fotoDataUrl
+            ? `<img class="recipe-card-photo" src="${escapeHtml(rec.fotoDataUrl)}" alt="${escapeHtml(rec.nome)}" loading="lazy">`
+            : '';
 
           // Lista de itens formatada
           const itensHtml = itens.map(it => {
+            const isRecipe = it.sourceType === 'receita' || Boolean(it.receitaId);
             const isEmb = it.categoria === 'embalagem';
-            const iconTag = isEmb ? '🛍️' : '🌾';
+            const iconTag = isRecipe ? '🍞' : isEmb ? '🛍️' : '🌾';
+            const detail = isRecipe
+              ? `Receita-base • ${it.quantidadeUsada} ${it.unidadeUsada}`
+              : `${it.quantidadeUsada} ${it.unidadeUsada}`;
             return `
               <div class="receita-item-row">
                 <div class="receita-item-info">
                   <span>${iconTag}</span>
-                  <span><strong>${escapeHtml(it.insumoNome)}</strong> (${it.quantidadeUsada} ${it.unidadeUsada})</span>
+                  <span><strong>${escapeHtml(it.insumoNome)}</strong> (${detail})</span>
                 </div>
                 <span class="receita-item-cost">${formatarMoeda(it.custoItem, 2)}</span>
               </div>
@@ -3917,10 +4293,23 @@ service cloud.firestore {
               <div class="receita-header">
                 <div class="receita-title-wrap">
                   <span class="receita-rendimento-badge">🥖 ${rendimentoTexto}</span>
+                  <span class="receita-category-badge">${categoriaNome}</span>
                   <h3 class="receita-nome">${escapeHtml(rec.nome)}</h3>
                   ${rec.descricao ? `<span style="font-size: 12px; color: var(--text-secondary);">${escapeHtml(rec.descricao)}</span>` : ''}
                 </div>
                 <div class="item-card-actions">
+                  <button
+                    type="button"
+                    class="btn-edit-item"
+                    data-duplicate-receita-id="${rec.id}"
+                    aria-label="Duplicar receita ${escapeHtml(rec.nome)}"
+                    title="Duplicar para criar variação"
+                  >
+                    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <rect x="8" y="8" width="13" height="13" rx="2"></rect>
+                      <path d="M16 8V5a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h3"></path>
+                    </svg>
+                  </button>
                   <button
                     type="button"
                     class="btn-edit-item"
@@ -3947,6 +4336,9 @@ service cloud.firestore {
                   </button>
                 </div>
               </div>
+
+              ${recipePhoto}
+              ${technicalSheet}
 
               <!-- Métricas Principais da Receita -->
               <div class="receita-metrics-grid">
@@ -4066,8 +4458,9 @@ service cloud.firestore {
         const selectedOption = dom.selectModalAddInsumo.selectedOptions[0];
         const custoUnitario = parseFloat(selectedOption?.getAttribute('data-cost')) || 0;
         const unidadeBase = selectedOption?.getAttribute('data-unit') || 'kg';
+        const conversoes = JSON.parse(selectedOption?.getAttribute('data-conversions') || '{}');
 
-        const custo = calcularCustoItemReceita(custoUnitario, unidadeBase, qtd, unidadeUsada);
+        const custo = calcularCustoItemReceita(custoUnitario, unidadeBase, qtd, unidadeUsada, conversoes);
         dom.modalAddCostPreview.textContent = formatarMoeda(custo, 2);
       }
 
@@ -4090,12 +4483,19 @@ service cloud.firestore {
         }
 
         const selectedOption = dom.selectModalAddInsumo.selectedOptions[0];
-        const insumoNome = selectedOption ? selectedOption.text.split(' (')[0] : 'Insumo';
+        const sourceType = selectedOption?.getAttribute('data-source-type') || 'insumo';
+        const receitaBaseId = selectedOption?.getAttribute('data-recipe-id') || null;
+        if (sourceType === 'receita' && criariaCicloReceita(receitaId, receitaBaseId)) {
+          showToast('Essa receita-base criaria uma dependência circular.');
+          return;
+        }
+        const insumoNome = selectedOption?.getAttribute('data-name') || 'Insumo';
         const categoria = selectedOption?.getAttribute('data-cat') || 'ingrediente';
         const custoUnitarioBase = parseFloat(selectedOption?.getAttribute('data-cost')) || 0;
         const unidadeBase = selectedOption?.getAttribute('data-unit') || 'kg';
+        const conversoes = JSON.parse(selectedOption?.getAttribute('data-conversions') || '{}');
 
-        const custoItem = calcularCustoItemReceita(custoUnitarioBase, unidadeBase, qtd, unidadeUsada);
+        const custoItem = calcularCustoItemReceita(custoUnitarioBase, unidadeBase, qtd, unidadeUsada, conversoes);
 
         const receitaAlvo = cachedReceitas.find(r => r.id === receitaId);
         if (!receitaAlvo) {
@@ -4105,13 +4505,16 @@ service cloud.firestore {
         }
 
         const novosItens = [...(receitaAlvo.itens || []), {
-          insumoId,
+          insumoId: sourceType === 'insumo' ? insumoId : null,
+          sourceType,
+          ...(receitaBaseId ? { receitaId: receitaBaseId } : {}),
           insumoNome,
           categoria,
           quantidadeUsada: qtd,
           unidadeUsada,
           custoUnitarioBase,
           unidadeBase,
+          conversoes,
           custoItem
         }];
 
@@ -4137,10 +4540,12 @@ service cloud.firestore {
             await updateDoc(doc(firestoreDb, 'receitas', receitaId), atualizacoes);
             showToast(`Item "${insumoNome}" gravado na receita!`);
           } else {
-            Object.assign(receitaAlvo, atualizacoes);
-            renderizarReceitas();
             showToast(`Item adicionado à receita!`);
           }
+
+          Object.assign(receitaAlvo, atualizacoes);
+          renderizarReceitas();
+          await atualizarReceitasDependentes(receitaId);
 
           fecharModalAddItemReceita();
         } catch (err) {
@@ -4433,12 +4838,15 @@ service cloud.firestore {
       dom.receitaItemInsumo.addEventListener('change', () => {
         const selected = dom.receitaItemInsumo.selectedOptions[0];
         const unit = selected?.getAttribute('data-unit');
+        const conversions = JSON.parse(selected?.getAttribute('data-conversions') || '{}');
         if (unit === 'kg' || unit === 'g') {
           dom.receitaItemUnidade.value = 'g';
         } else if (unit === 'L' || unit === 'ml') {
           dom.receitaItemUnidade.value = 'ml';
         } else if (unit === 'un') {
-          dom.receitaItemUnidade.value = 'un';
+          dom.receitaItemUnidade.value = conversions.baseUnit || 'un';
+        } else if (['xicara', 'colher_sopa', 'colher_cha'].includes(unit)) {
+          dom.receitaItemUnidade.value = conversions.baseUnit || unit;
         }
         atualizarPreviewItemReceita();
       });
@@ -4477,11 +4885,33 @@ service cloud.firestore {
         });
       });
 
+      dom.inputFotoReceita.addEventListener('change', async () => {
+        const file = dom.inputFotoReceita.files?.[0];
+        if (!file) return;
+        const submitLabel = dom.btnSubmitReceita.innerHTML;
+        dom.btnSubmitReceita.disabled = true;
+        dom.btnSubmitReceita.innerHTML = '<span class="loading-spinner"></span> Preparando foto...';
+        try {
+          atualizarPreviewFotoReceita(await compactarFotoReceita(file));
+        } catch (err) {
+          dom.inputFotoReceita.value = '';
+          showToast(err.message || 'Não foi possível usar esta imagem.');
+        } finally {
+          dom.btnSubmitReceita.disabled = false;
+          dom.btnSubmitReceita.innerHTML = submitLabel;
+        }
+      });
+      dom.btnRemoverFotoReceita.addEventListener('click', () => atualizarPreviewFotoReceita(null));
       dom.formReceita.addEventListener('submit', handleFormReceitaSubmit);
       dom.btnCancelEditReceita.addEventListener('click', prepararNovaReceita);
 
       // Delegação de eventos no container de receitas
       dom.receitasContainer.addEventListener('click', (e) => {
+        const btnDuplicateRec = e.target.closest('[data-duplicate-receita-id]');
+        if (btnDuplicateRec) {
+          duplicarReceita(btnDuplicateRec.getAttribute('data-duplicate-receita-id'));
+          return;
+        }
         const btnEditRec = e.target.closest('[data-edit-receita-id]');
         if (btnEditRec) {
           abrirEdicaoReceita(btnEditRec.getAttribute('data-edit-receita-id'));
@@ -4518,16 +4948,31 @@ service cloud.firestore {
         }
       });
 
+      dom.recipeCategoryPills.addEventListener('click', (e) => {
+        const pill = e.target.closest('[data-recipe-category]');
+        if (!pill) return;
+        activeRecipeCategory = pill.getAttribute('data-recipe-category') || 'todos';
+        dom.recipeCategoryPills.querySelectorAll('[data-recipe-category]').forEach(button => {
+          const active = button === pill;
+          button.classList.toggle('active', active);
+          button.setAttribute('aria-pressed', String(active));
+        });
+        renderizarReceitas();
+      });
+
       // Modais de receitas
       dom.selectModalAddInsumo.addEventListener('change', () => {
         const selected = dom.selectModalAddInsumo.selectedOptions[0];
         const unit = selected?.getAttribute('data-unit');
+        const conversions = JSON.parse(selected?.getAttribute('data-conversions') || '{}');
         if (unit === 'kg' || unit === 'g') {
           dom.selectModalAddUn.value = 'g';
         } else if (unit === 'L' || unit === 'ml') {
           dom.selectModalAddUn.value = 'ml';
         } else if (unit === 'un') {
-          dom.selectModalAddUn.value = 'un';
+          dom.selectModalAddUn.value = conversions.baseUnit || 'un';
+        } else if (['xicara', 'colher_sopa', 'colher_cha'].includes(unit)) {
+          dom.selectModalAddUn.value = conversions.baseUnit || unit;
         }
         atualizarPreviewModalAddItem();
       });

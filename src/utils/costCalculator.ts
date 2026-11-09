@@ -2,8 +2,17 @@
  * Funções puras de cálculo de custos para padaria artesanal
  */
 
-export type UnitType = 'kg' | 'g' | 'L' | 'ml' | 'un';
+export type UnitType = 'kg' | 'g' | 'L' | 'ml' | 'un' | 'xicara' | 'colher_sopa' | 'colher_cha';
 export type CategoriaInsumo = 'ingrediente' | 'embalagem' | 'outro';
+export type CategoriaReceita = 'paes' | 'bolos' | 'salgados' | 'outros';
+
+export interface RecipeUnitConversions {
+  baseUnit: 'g' | 'ml';
+  xicara?: number;
+  colher_sopa?: number;
+  colher_cha?: number;
+  un?: number;
+}
 
 export interface Insumo {
   id?: string;
@@ -14,26 +23,36 @@ export interface Insumo {
   preco: number;
   custoUnitario?: number;
   categoria?: CategoriaInsumo;
+  conversoes?: RecipeUnitConversions;
   createdAt?: unknown;
   createdBy?: string;
   createdByName?: string;
 }
 
 export interface ItemReceita {
-  insumoId: string;
+  insumoId?: string | null;
+  sourceType?: 'insumo' | 'receita';
+  receitaId?: string;
   insumoNome: string;
   categoria: CategoriaInsumo;
   quantidadeUsada: number;
   unidadeUsada: UnitType;
   custoUnitarioBase: number;
   unidadeBase: UnitType;
+  conversoes?: RecipeUnitConversions | null;
   custoItem: number;
 }
 
 export interface Receita {
   id?: string;
   nome: string;
+  categoria?: CategoriaReceita;
   descricao?: string;
+  modoPreparo?: string;
+  tempoPreparoMin?: number | null;
+  tempoFornoMin?: number | null;
+  temperaturaFornoC?: number | null;
+  fotoDataUrl?: string | null;
   rendimento: number;
   rendimentoUnidade: string;
   itens: ItemReceita[];
@@ -85,25 +104,35 @@ export function calcularCustoItemReceita(
   custoUnitarioInsumo: number,
   unidadeInsumo: UnitType,
   quantidadeUsada: number,
-  unidadeUsada: UnitType
+  unidadeUsada: UnitType,
+  conversoes?: RecipeUnitConversions
 ): number {
   if (custoUnitarioInsumo <= 0 || quantidadeUsada <= 0 || isNaN(custoUnitarioInsumo) || isNaN(quantidadeUsada)) {
     return 0;
   }
 
-  let fatorConversao = 1;
+  const dimensionFor = (unit: UnitType) => {
+    if (unit === 'kg') return { dimension: 'mass', factor: 1000 };
+    if (unit === 'g') return { dimension: 'mass', factor: 1 };
+    if (unit === 'L') return { dimension: 'volume', factor: 1000 };
+    if (unit === 'ml') return { dimension: 'volume', factor: 1 };
+    if (unit === 'un') {
+      if (conversoes?.un && conversoes.un > 0) {
+        return { dimension: conversoes.baseUnit === 'ml' ? 'volume' : 'mass', factor: conversoes.un };
+      }
+      return { dimension: 'count', factor: 1 };
+    }
 
-  if (unidadeInsumo === 'kg' && unidadeUsada === 'g') {
-    fatorConversao = 1 / 1000;
-  } else if (unidadeInsumo === 'g' && unidadeUsada === 'kg') {
-    fatorConversao = 1000;
-  } else if (unidadeInsumo === 'L' && unidadeUsada === 'ml') {
-    fatorConversao = 1 / 1000;
-  } else if (unidadeInsumo === 'ml' && unidadeUsada === 'L') {
-    fatorConversao = 1000;
-  }
+    const factor = conversoes?.[unit];
+    if (!factor || factor <= 0) return null;
+    return { dimension: conversoes.baseUnit === 'ml' ? 'volume' : 'mass', factor };
+  };
 
-  const custoTotal = custoUnitarioInsumo * fatorConversao * quantidadeUsada;
+  const source = dimensionFor(unidadeInsumo);
+  const target = dimensionFor(unidadeUsada);
+  if (!source || !target || source.dimension !== target.dimension) return 0;
+
+  const custoTotal = (custoUnitarioInsumo / source.factor) * target.factor * quantidadeUsada;
   return Math.round(custoTotal * 10000) / 10000;
 }
 
