@@ -3336,8 +3336,12 @@
               <div class="section-heading">
                 <div>
                   <h3 id="price-comparison-title" class="section-title">Comparativo por ingrediente</h3>
-                  <p class="section-subtitle">Os produtos só são comparados quando compartilham o mesmo ingrediente equivalente e unidade compatível.</p>
+                  <p class="section-subtitle">Pesquise o ingrediente que deseja comparar. Os produtos são comparados quando compartilham o mesmo ingrediente equivalente e unidade compatível.</p>
                 </div>
+              </div>
+              <div style="margin-bottom: 16px;">
+                <label for="price-comparison-search"><strong>Pesquisar ingrediente</strong></label>
+                <input id="price-comparison-search" type="search" placeholder="Digite o nome do ingrediente..." style="margin-top: 8px;">
               </div>
               <div id="price-comparison-container"></div>
             </section>
@@ -4409,6 +4413,7 @@
         btnCancelEditSupplier: document.getElementById('btn-cancel-edit-supplier'),
         suppliersCounter: document.getElementById('suppliers-counter'),
         suppliersContainer: document.getElementById('suppliers-container'),
+        priceComparisonSearch: document.getElementById('price-comparison-search'),
         priceComparisonContainer: document.getElementById('price-comparison-container'),
 
         // Receitas
@@ -5345,13 +5350,29 @@
           }).join('');
         }
 
+        renderizarComparativoIngredientes();
+      }
+
+      function renderizarComparativoIngredientes() {
         const groups = compareSupplierOffers(cachedInsumos);
         if (groups.length === 0) {
           dom.priceComparisonContainer.innerHTML = '<p class="empty-desc">Cadastre ofertas de insumos para comparar preços.</p>';
           return;
         }
 
-        dom.priceComparisonContainer.innerHTML = groups.map(group => `
+        const query = normalizeComparisonName(dom.priceComparisonSearch.value);
+        if (!query) {
+          dom.priceComparisonContainer.innerHTML = '<p class="empty-desc">Digite o nome de um ingrediente para consultar o comparativo de preços.</p>';
+          return;
+        }
+
+        const matchingGroups = groups.filter(group => normalizeComparisonName(group.nome).includes(query));
+        if (matchingGroups.length === 0) {
+          dom.priceComparisonContainer.innerHTML = '<p class="empty-desc">Nenhum comparativo encontrado para essa pesquisa.</p>';
+          return;
+        }
+
+        dom.priceComparisonContainer.innerHTML = matchingGroups.map(group => `
           <section class="recipe-builder-box" style="margin-bottom: 12px;">
             <div class="section-heading">
               <div>
@@ -7878,6 +7899,7 @@
       dom.btnManageSuppliers.addEventListener('click', () => switchTab('fornecedores'));
       dom.formFornecedor.addEventListener('submit', handleFormFornecedorSubmit);
       dom.btnCancelEditSupplier.addEventListener('click', () => prepararNovoFornecedor());
+      dom.priceComparisonSearch.addEventListener('input', renderizarComparativoIngredientes);
       dom.suppliersContainer.addEventListener('click', event => {
         const editButton = event.target.closest('[data-edit-supplier-id]');
         if (editButton) {
