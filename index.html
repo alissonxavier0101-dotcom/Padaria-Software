@@ -3228,7 +3228,7 @@
               ⚙️ Conexão Firebase
             </button>
             <button id="btn-help-domain" class="btn-secondary" style="flex: 1; font-size: 12px; padding: 10px;" type="button">
-              🌐 Domínio Autorizado
+              🌐 Ajuda para entrar
             </button>
           </div>
 
@@ -4782,7 +4782,7 @@
         <div class="modal-box" style="max-width: 440px;">
           <div style="font-size: 38px; text-align: center;" aria-hidden="true">🔐</div>
           <h3 id="modal-unauth-title" class="modal-title" style="text-align: center; color: var(--wheat-deep);">
-            Domínio Não Autorizado no Firebase
+            Configuração do login Google
           </h3>
           <p class="modal-desc" style="font-size: 13px; text-align: left; line-height: 1.5;">
             Para entrar com Google neste site, habilite o provedor Google e cadastre o domínio abaixo em <strong>Domínios autorizados</strong> no Firebase Console. No GitHub Pages, use apenas o domínio, sem protocolo ou caminho do repositório.
@@ -4805,9 +4805,17 @@
             <span>3. O domínio não inclui <strong>https://</strong> nem <strong>/Padaria-Software/</strong>. Salve e tente entrar novamente.</span>
           </div>
 
+          <div role="note" style="background: #FFF8E9; border: 1px solid #E8D6B6; border-radius: 8px; padding: 12px; font-size: 12px; color: var(--text-secondary); text-align: left; line-height: 1.5;">
+            <strong style="color: var(--wheat-deep);">Só uma conta consegue entrar?</strong>
+            <span>Isso normalmente depende do público do app OAuth, não do domínio do site. No Google Cloud Console, abra <strong>Google Auth Platform &gt; Público-alvo</strong>. Se o app estiver em <strong>Teste</strong>, somente os e-mails cadastrados como usuários de teste podem autenticar. Adicione os usuários autorizados ou publique o app. Em contas Google Workspace, o administrador da organização também pode precisar permitir o app.</span>
+          </div>
+
           <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
             <a id="link-firebase-console" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/authentication/settings" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 13px; text-decoration: none; padding: 11px; text-align: center; font-weight: 700;">
               🔗 Abrir Configurações do Firebase Console ↗
+            </a>
+            <a href="https://console.cloud.google.com/auth/audience?project=padaria-sistema-6a6b4" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 13px; text-decoration: none; padding: 11px; text-align: center; font-weight: 700;">
+              🔗 Ver público-alvo do OAuth no Google Cloud ↗
             </a>
             <button id="btn-close-unauth-modal" class="btn-modal-cancel" style="width: 100%; text-align: center;" type="button">
               Fechar
@@ -5769,7 +5777,10 @@
         } else if (errCode === 'auth/popup-closed-by-user') {
           showToast('A janela de login foi fechada antes de concluir.');
         } else if (errCode === 'auth/operation-not-allowed') {
+          abrirModalDominioNaoAutorizado();
           showToast('O login Google está desativado. Ative o provedor Google em Firebase > Authentication > Sign-in method.');
+        } else if (errCode === 'auth/account-exists-with-different-credential') {
+          showToast('Este e-mail já está cadastrado com outro método de login. Entre pelo método original ou peça ajuda ao administrador.');
         } else if (errCode === 'auth/network-request-failed') {
           showToast('Falha de rede ao conectar ao Google. Verifique sua conexão e tente novamente.');
         } else {
