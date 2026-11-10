@@ -26,6 +26,9 @@ export interface Insumo {
   id?: string;
   nome: string;
   fornecedor: string;
+  fornecedorId?: string | null;
+  grupoComparacao?: string;
+  marca?: string;
   quantidade: number;
   unidade: UnitType;
   preco: number;
@@ -39,6 +42,7 @@ export interface Insumo {
 
 export interface ItemReceita {
   insumoId?: string | null;
+  ofertaInsumoId?: string | null;
   sourceType?: 'insumo' | 'receita';
   receitaId?: string;
   insumoNome: string;

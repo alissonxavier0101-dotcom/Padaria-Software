@@ -2986,6 +2986,10 @@
               <span>📦 Estoque & Insumos</span>
               <span id="tab-badge-insumos" class="nav-tab-badge">0</span>
             </button>
+            <button id="tab-nav-fornecedores" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-fornecedores">
+              <span>🏷️ Fornecedores & preços</span>
+              <span id="tab-badge-fornecedores" class="nav-tab-badge">0</span>
+            </button>
             <button id="tab-nav-receitas" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-receitas">
               <span>🥖 Receitas & Lucro</span>
               <span id="tab-badge-receitas" class="nav-tab-badge">0</span>
@@ -3074,18 +3078,37 @@
                 </datalist>
               </div>
 
-              <!-- Fornecedor -->
+              <!-- Ingrediente equivalente usado para comparar marcas e fornecedores -->
               <div class="form-group">
-                <label for="input-fornecedor" class="form-label">
-                  Fornecedor / Mercado <span class="req">*</span>
+                <label for="input-grupo-comparacao" class="form-label">
+                  Ingrediente equivalente para comparação <span class="req">*</span>
                 </label>
                 <input
-                  id="input-fornecedor"
+                  id="input-grupo-comparacao"
                   type="text"
                   required
                   maxlength="100"
-                  placeholder="Ex: Moinho Santa Clara, Atacadão, Gráfica..."
+                  placeholder="Ex: Farinha de trigo"
                 />
+                <span class="calc-detail">Use o mesmo nome para produtos equivalentes, mesmo que tenham marcas diferentes.</span>
+              </div>
+
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="input-marca-insumo" class="form-label">Marca (opcional)</label>
+                  <input id="input-marca-insumo" type="text" maxlength="100" placeholder="Ex: Marca da embalagem" />
+                </div>
+                <div class="form-group">
+                  <label for="input-fornecedor" class="form-label">
+                    Fornecedor / Mercado <span class="req">*</span>
+                  </label>
+                  <select id="input-fornecedor" required>
+                    <option value="">Cadastre ou selecione um fornecedor...</option>
+                  </select>
+                  <button id="btn-manage-suppliers" class="btn-secondary" type="button" style="margin-top: 6px; padding: 7px 10px; font-size: 12px;">
+                    Gerenciar fornecedores e contatos
+                  </button>
+                </div>
               </div>
 
               <!-- Quantidade da Embalagem e Unidade -->
@@ -3259,6 +3282,65 @@
               </button>
               <button id="btn-empty-clear-filters" class="btn-secondary hidden" type="button">Limpar filtros</button>
             </div>
+          </div>
+
+          <!-- ================= ABA 2: FORNECEDORES E COMPARAÇÃO DE PREÇOS ================= -->
+          <div id="view-fornecedores" class="hidden">
+            <div class="section-heading">
+              <div>
+                <h2 class="section-title">Fornecedores e comparação de preços</h2>
+                <p class="section-subtitle">Cadastre contatos e compare ofertas equivalentes pelo menor custo por unidade-base.</p>
+              </div>
+              <span id="suppliers-counter" class="items-count-badge">0 fornecedores</span>
+            </div>
+
+            <form id="form-fornecedor" class="card-form" autocomplete="off">
+              <div class="card-header">
+                <h3 id="supplier-form-title" class="card-title">🏷️ Cadastrar fornecedor</h3>
+                <span class="calc-detail">Fornecedores antigos aparecem na lista; cadastre-os para incluir contatos.</span>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="input-nome-fornecedor" class="form-label">Nome do fornecedor <span class="req">*</span></label>
+                  <input id="input-nome-fornecedor" type="text" required maxlength="100" placeholder="Ex: Moinho Santa Clara" />
+                </div>
+                <div class="form-group">
+                  <label for="input-telefone-fornecedor" class="form-label">Telefone / WhatsApp</label>
+                  <input id="input-telefone-fornecedor" type="tel" maxlength="40" placeholder="Ex: (11) 99999-9999" />
+                </div>
+              </div>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="input-email-fornecedor" class="form-label">E-mail</label>
+                  <input id="input-email-fornecedor" type="email" maxlength="120" placeholder="compras@fornecedor.com" />
+                </div>
+                <div class="form-group">
+                  <label for="input-observacao-fornecedor" class="form-label">Observações</label>
+                  <input id="input-observacao-fornecedor" type="text" maxlength="300" placeholder="Prazo, pedido mínimo, endereço..." />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button id="btn-cancel-edit-supplier" class="btn-secondary hidden" type="button">Cancelar edição</button>
+                <button id="btn-submit-supplier" class="btn-primary" type="submit">Salvar fornecedor</button>
+              </div>
+            </form>
+
+            <section class="card-form" aria-labelledby="supplier-list-title">
+              <div class="section-heading">
+                <h3 id="supplier-list-title" class="section-title">Cadastro de fornecedores</h3>
+              </div>
+              <div id="suppliers-container" class="insumos-list"></div>
+            </section>
+
+            <section class="card-form" aria-labelledby="price-comparison-title">
+              <div class="section-heading">
+                <div>
+                  <h3 id="price-comparison-title" class="section-title">Comparativo por ingrediente</h3>
+                  <p class="section-subtitle">Os produtos só são comparados quando compartilham o mesmo ingrediente equivalente e unidade compatível.</p>
+                </div>
+              </div>
+              <div id="price-comparison-container"></div>
+            </section>
           </div>
 
           <!-- ================= ABA 2: MÓDULO RECEITAS & LUCRO ================= -->
@@ -3446,10 +3528,21 @@
 
                 <!-- Seletor de Insumo Cadastrado -->
                 <div class="form-group">
-                  <label for="receita-item-insumo" class="form-label" style="font-size: 12px;">
+                  <label for="receita-item-busca" class="form-label" style="font-size: 12px;">
                     Escolha a Matéria-Prima ou Embalagem:
                   </label>
-                  <select id="receita-item-insumo">
+                  <input
+                    id="receita-item-busca"
+                    type="search"
+                    role="combobox"
+                    aria-autocomplete="list"
+                    aria-controls="receita-item-resultados"
+                    aria-expanded="false"
+                    placeholder="Digite para buscar um material..."
+                    autocomplete="off"
+                  />
+                  <div id="receita-item-resultados" class="hidden" role="listbox" aria-label="Materiais disponíveis" style="max-height: 220px; overflow-y: auto; margin-top: 4px; border: 1px solid var(--border-color); border-radius: 8px; background: #fff;"></div>
+                  <select id="receita-item-insumo" class="hidden" aria-hidden="true" tabindex="-1">
                     <option value="">Selecione um insumo cadastrado...</option>
                   </select>
                 </div>
@@ -3976,6 +4069,11 @@
         calcularTotaisReceita as calcularTotaisReceitaValidado
       } from "./src/utils/costCalculator.ts";
       import {
+        compareSupplierOffers,
+        getSupplierOfferComparisonKey,
+        normalizeComparisonName
+      } from "./src/utils/supplierComparison.ts";
+      import {
         calcularBaixaEstoque,
         calcularListaComprasReceita,
         convertStockQuantity,
@@ -4031,9 +4129,11 @@
       const LOCAL_DEMO_ITEMS_KEY = 'paniscustos_demo_items';
       const LOCAL_DEMO_RECEITAS_KEY = 'paniscustos_demo_receitas';
       const LOCAL_DEMO_PRODUCOES_KEY = 'paniscustos_demo_producoes';
+      const LOCAL_DEMO_SUPPLIERS_KEY = 'paniscustos_demo_suppliers';
       const TEST_ITEMS_KEY = 'paniscustos_test_items';
       const TEST_RECIPES_KEY = 'paniscustos_test_recipes';
       const TEST_PRODUCTIONS_KEY = 'paniscustos_test_productions';
+      const TEST_SUPPLIERS_KEY = 'paniscustos_test_suppliers';
 
       let firebaseApp = null;
       let firebaseAuth = null;
@@ -4042,12 +4142,14 @@
       let unsubscribeSnapshot = null;
       let unsubscribeReceitasSnapshot = null;
       let unsubscribeProducoesSnapshot = null;
+      let unsubscribeFornecedoresSnapshot = null;
       let isDemoMode = false;
       let isTestStockMode = false;
       let currentUser = null;
       let cachedInsumos = [];
       let cachedReceitas = [];
       let cachedProducoes = [];
+      let cachedFornecedores = [];
       let pendingDeleteId = null;
       let pendingDeleteReceitaId = null;
       let pendingAddItemReceitaId = null;
@@ -4057,6 +4159,7 @@
       let pendingProductionRecipeId = null;
       let pendingEditProductionId = null;
       let pendingDeleteProductionId = null;
+      let editingFornecedorId = null;
       let activeGroupFilter = 'todos';
       let activeRecipeCategory = 'todos';
       let activeTab = 'insumos';
@@ -4231,12 +4334,15 @@
         
         // Abas principais
         tabNavInsumos: document.getElementById('tab-nav-insumos'),
+        tabNavFornecedores: document.getElementById('tab-nav-fornecedores'),
         tabNavReceitas: document.getElementById('tab-nav-receitas'),
         tabNavProducoes: document.getElementById('tab-nav-producoes'),
         tabBadgeInsumos: document.getElementById('tab-badge-insumos'),
+        tabBadgeFornecedores: document.getElementById('tab-badge-fornecedores'),
         tabBadgeReceitas: document.getElementById('tab-badge-receitas'),
         tabBadgeProducoes: document.getElementById('tab-badge-producoes'),
         viewInsumos: document.getElementById('view-insumos'),
+        viewFornecedores: document.getElementById('view-fornecedores'),
         viewReceitas: document.getElementById('view-receitas'),
         viewProducoes: document.getElementById('view-producoes'),
         producoesCounter: document.getElementById('producoes-counter'),
@@ -4257,6 +4363,9 @@
         selectCategoriaInsumo: document.getElementById('select-categoria-insumo'),
         inputNome: document.getElementById('input-nome'),
         inputFornecedor: document.getElementById('input-fornecedor'),
+        inputGrupoComparacao: document.getElementById('input-grupo-comparacao'),
+        inputMarcaInsumo: document.getElementById('input-marca-insumo'),
+        btnManageSuppliers: document.getElementById('btn-manage-suppliers'),
         inputQuantidade: document.getElementById('input-quantidade'),
         selectUnidade: document.getElementById('select-unidade'),
         inputEstoqueAtual: document.getElementById('input-estoque-atual'),
@@ -4290,6 +4399,18 @@
         btnEmptyAdd: document.getElementById('btn-empty-add'),
         btnEmptyClearFilters: document.getElementById('btn-empty-clear-filters'),
 
+        formFornecedor: document.getElementById('form-fornecedor'),
+        supplierFormTitle: document.getElementById('supplier-form-title'),
+        inputNomeFornecedor: document.getElementById('input-nome-fornecedor'),
+        inputTelefoneFornecedor: document.getElementById('input-telefone-fornecedor'),
+        inputEmailFornecedor: document.getElementById('input-email-fornecedor'),
+        inputObservacaoFornecedor: document.getElementById('input-observacao-fornecedor'),
+        btnSubmitSupplier: document.getElementById('btn-submit-supplier'),
+        btnCancelEditSupplier: document.getElementById('btn-cancel-edit-supplier'),
+        suppliersCounter: document.getElementById('suppliers-counter'),
+        suppliersContainer: document.getElementById('suppliers-container'),
+        priceComparisonContainer: document.getElementById('price-comparison-container'),
+
         // Receitas
         statTotalReceitas: document.getElementById('stat-total-receitas'),
         statAvgReceitaCost: document.getElementById('stat-avg-receita-cost'),
@@ -4318,6 +4439,8 @@
         previewFotoReceita: document.getElementById('preview-foto-receita'),
         btnRemoverFotoReceita: document.getElementById('btn-remover-foto-receita'),
         receitaItemInsumo: document.getElementById('receita-item-insumo'),
+        receitaItemBusca: document.getElementById('receita-item-busca'),
+        receitaItemResultados: document.getElementById('receita-item-resultados'),
         receitaItemQuantidade: document.getElementById('receita-item-quantidade'),
         receitaItemUnidade: document.getElementById('receita-item-unidade'),
         receitaItemCostPreview: document.getElementById('receita-item-cost-preview'),
@@ -4868,8 +4991,10 @@
         cachedInsumos = [];
         cachedReceitas = [];
         cachedProducoes = [];
+        cachedFornecedores = [];
         atualizarIndicadorModoEstoque();
         renderizarProducoes();
+        renderizarFornecedores();
         dom.appPanel.classList.add('hidden');
         dom.authScreen.classList.remove('hidden');
       }
@@ -4879,11 +5004,15 @@
           const savedItems = localStorage.getItem(LOCAL_DEMO_ITEMS_KEY);
           const savedRecipes = localStorage.getItem(LOCAL_DEMO_RECEITAS_KEY);
           const savedProductions = localStorage.getItem(LOCAL_DEMO_PRODUCOES_KEY);
+          const savedSuppliers = localStorage.getItem(LOCAL_DEMO_SUPPLIERS_KEY);
           cachedInsumos = savedItems ? JSON.parse(savedItems) : [...DEMO_SEED_INSUMOS];
           cachedReceitas = savedRecipes ? JSON.parse(savedRecipes) : [];
           cachedProducoes = savedProductions ? JSON.parse(savedProductions) : [];
+          cachedFornecedores = savedSuppliers ? JSON.parse(savedSuppliers) : [];
           renderizarInsumos();
+          atualizarSelectFornecedores();
           atualizarSelectsInsumosParaReceitas();
+          renderizarFornecedores();
           renderizarReceitas();
           renderizarProducoes();
         } catch (error) {
@@ -4893,12 +5022,13 @@
       }
 
       function pararListenersFirestore() {
-        [unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeProducoesSnapshot].forEach(unsubscribe => {
+        [unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot].forEach(unsubscribe => {
           if (unsubscribe) unsubscribe();
         });
         unsubscribeSnapshot = null;
         unsubscribeReceitasSnapshot = null;
         unsubscribeProducoesSnapshot = null;
+        unsubscribeFornecedoresSnapshot = null;
       }
 
       function carregarDadosTeste() {
@@ -4906,11 +5036,15 @@
           const savedItems = localStorage.getItem(TEST_ITEMS_KEY);
           const savedRecipes = localStorage.getItem(TEST_RECIPES_KEY);
           const savedProductions = localStorage.getItem(TEST_PRODUCTIONS_KEY);
+          const savedSuppliers = localStorage.getItem(TEST_SUPPLIERS_KEY);
           cachedInsumos = savedItems ? JSON.parse(savedItems) : JSON.parse(JSON.stringify(DEMO_SEED_INSUMOS));
           cachedReceitas = savedRecipes ? JSON.parse(savedRecipes) : JSON.parse(JSON.stringify(DEMO_SEED_RECEITAS));
           cachedProducoes = savedProductions ? JSON.parse(savedProductions) : [];
+          cachedFornecedores = savedSuppliers ? JSON.parse(savedSuppliers) : [];
           renderizarInsumos();
+          atualizarSelectFornecedores();
           atualizarSelectsInsumosParaReceitas();
+          renderizarFornecedores();
           renderizarReceitas();
           renderizarProducoes();
           atualizarIndicadorModoEstoque();
@@ -4930,6 +5064,10 @@
 
       function salvarDadosProducoesLocais() {
         localStorage.setItem(isTestStockMode ? TEST_PRODUCTIONS_KEY : LOCAL_DEMO_PRODUCOES_KEY, JSON.stringify(cachedProducoes));
+      }
+
+      function salvarDadosFornecedoresLocais() {
+        localStorage.setItem(isTestStockMode ? TEST_SUPPLIERS_KEY : LOCAL_DEMO_SUPPLIERS_KEY, JSON.stringify(cachedFornecedores));
       }
 
       function atualizarIndicadorModoEstoque() {
@@ -4964,7 +5102,9 @@
           cachedInsumos = [];
           cachedReceitas = [];
           cachedProducoes = [];
+          cachedFornecedores = [];
           renderizarInsumos();
+          renderizarFornecedores();
           renderizarReceitas();
           renderizarProducoes();
           iniciarListenerFirestore();
@@ -5018,7 +5158,9 @@
 
             cachedInsumos = itens;
             renderizarInsumos();
+            atualizarSelectFornecedores();
             atualizarSelectsInsumosParaReceitas();
+            renderizarFornecedores();
             if (dom.syncStatusLabel) {
               dom.syncStatusLabel.textContent = `Firestore: ${itens.length} insumos • ${cachedReceitas.length} receitas`;
             }
@@ -5035,8 +5177,36 @@
         }
 
         // Listener da coleção de Receitas
+        iniciarListenerFornecedores();
         iniciarListenerReceitas();
         iniciarListenerProducoes();
+      }
+
+      function iniciarListenerFornecedores() {
+        if (!firestoreDb) return;
+        if (unsubscribeFornecedoresSnapshot) {
+          unsubscribeFornecedoresSnapshot();
+          unsubscribeFornecedoresSnapshot = null;
+        }
+
+        try {
+          unsubscribeFornecedoresSnapshot = onSnapshot(collection(firestoreDb, 'fornecedores'), (snapshot) => {
+            if (isTestStockMode) return;
+            cachedFornecedores = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            cachedFornecedores.sort((left, right) => String(left.nome || '').localeCompare(String(right.nome || ''), 'pt-BR'));
+            atualizarSelectFornecedores();
+            renderizarFornecedores();
+          }, (error) => {
+            console.error('Erro ao carregar fornecedores:', error);
+            if (error?.code === 'permission-denied') {
+              abrirModalRegrasFirestore();
+              showToast('Publique as regras atualizadas do Firestore para usar o cadastro de fornecedores.');
+            }
+          });
+        } catch (error) {
+          console.error('Falha ao conectar fornecedores no Firestore:', error);
+          showToast('Não foi possível carregar o cadastro de fornecedores.');
+        }
       }
 
       function iniciarListenerReceitas() {
@@ -5101,6 +5271,190 @@
         } catch (error) {
           console.error('Falha ao conectar o histórico de produção:', error);
           showToast('Não foi possível carregar o histórico de produção.');
+        }
+      }
+
+      function obterFornecedoresDisponiveis() {
+        const fornecedores = [...cachedFornecedores];
+        const nomesCadastrados = new Set(fornecedores.map(item => normalizeComparisonName(item.nome || '')));
+        const nomesLegados = new Map();
+        cachedInsumos.forEach(item => {
+          const nome = String(item.fornecedor || '').trim();
+          const chave = normalizeComparisonName(nome);
+          const fornecedorVinculado = item.fornecedorId && fornecedores.some(supplier => supplier.id === item.fornecedorId);
+          if (nome && chave && !fornecedorVinculado && !nomesCadastrados.has(chave) && !nomesLegados.has(chave)) {
+            nomesLegados.set(chave, { id: `legacy:${encodeURIComponent(nome)}`, nome, legado: true });
+          }
+        });
+        return [...fornecedores, ...nomesLegados.values()];
+      }
+
+      function obterFornecedorDoInsumo(insumo) {
+        return cachedFornecedores.find(item => insumo.fornecedorId && item.id === insumo.fornecedorId) ||
+          cachedFornecedores.find(item =>
+            normalizeComparisonName(item.nome || '') === normalizeComparisonName(insumo.fornecedor || '')
+          ) || null;
+      }
+
+      function atualizarSelectFornecedores() {
+        if (!dom.inputFornecedor) return;
+        const selecionado = dom.inputFornecedor.value;
+        const fornecedores = obterFornecedoresDisponiveis();
+        dom.inputFornecedor.innerHTML = '<option value="">Selecione um fornecedor...</option>' +
+          fornecedores.map(fornecedor => {
+            const id = String(fornecedor.id || '');
+            const optionValue = fornecedor.legado ? id : `supplier:${id}`;
+            const suffix = fornecedor.legado ? ' (cadastro antigo)' : '';
+            return `<option value="${escapeHtml(optionValue)}" data-name="${escapeHtml(fornecedor.nome)}" data-supplier-id="${escapeHtml(fornecedor.legado ? '' : id)}">${escapeHtml(fornecedor.nome)}${suffix}</option>`;
+          }).join('');
+        if (fornecedores.some(item => item.id === selecionado)) {
+          dom.inputFornecedor.value = selecionado;
+        } else if (selecionado.startsWith('supplier:') || selecionado.startsWith('legacy:')) {
+          dom.inputFornecedor.value = selecionado;
+        }
+      }
+
+      function renderizarFornecedores() {
+        if (!dom.suppliersContainer) return;
+        const fornecedores = obterFornecedoresDisponiveis();
+        dom.suppliersCounter.textContent = `${fornecedores.length} ${fornecedores.length === 1 ? 'fornecedor' : 'fornecedores'}`;
+        dom.tabBadgeFornecedores.textContent = fornecedores.length;
+
+        if (fornecedores.length === 0) {
+          dom.suppliersContainer.innerHTML = '<p class="empty-desc">Nenhum fornecedor cadastrado. Cadastre um fornecedor para associar ofertas e registrar contatos.</p>';
+        } else {
+          dom.suppliersContainer.innerHTML = fornecedores.map(fornecedor => {
+            if (fornecedor.legado) {
+              return `<article class="insumo-card">
+                <div class="insumo-top"><div class="insumo-name-wrap">
+                  <h4 class="insumo-nome">${escapeHtml(fornecedor.nome)}</h4>
+                  <span class="calc-detail">Encontrado nos insumos existentes. Cadastre a ficha para adicionar contato.</span>
+                </div></div>
+                <button class="btn-secondary" type="button" data-register-legacy-supplier="${escapeHtml(fornecedor.nome)}">Adicionar contato</button>
+              </article>`;
+            }
+            return `<article class="insumo-card">
+              <div class="insumo-top"><div class="insumo-name-wrap">
+                <h4 class="insumo-nome">${escapeHtml(fornecedor.nome)}</h4>
+                <span class="insumo-fornecedor">${escapeHtml(fornecedor.telefone || 'Sem telefone')}
+                  ${fornecedor.email ? ` · ${escapeHtml(fornecedor.email)}` : ''}
+                </span>
+                ${fornecedor.observacoes ? `<span class="calc-detail">${escapeHtml(fornecedor.observacoes)}</span>` : ''}
+              </div><button class="btn-secondary" type="button" data-edit-supplier-id="${escapeHtml(fornecedor.id)}">Editar</button></div>
+            </article>`;
+          }).join('');
+        }
+
+        const groups = compareSupplierOffers(cachedInsumos);
+        if (groups.length === 0) {
+          dom.priceComparisonContainer.innerHTML = '<p class="empty-desc">Cadastre ofertas de insumos para comparar preços.</p>';
+          return;
+        }
+
+        dom.priceComparisonContainer.innerHTML = groups.map(group => `
+          <section class="recipe-builder-box" style="margin-bottom: 12px;">
+            <div class="section-heading">
+              <div>
+                <h4 class="section-title">${escapeHtml(group.nome)}</h4>
+                <p class="section-subtitle">Comparação em R$ / ${escapeHtml(group.baseUnit)} · ${group.offers.length} ${group.offers.length === 1 ? 'oferta' : 'ofertas'}</p>
+              </div>
+              <strong>${formatarMoeda(group.offers[0].pricePerBaseUnit, 4)} / ${escapeHtml(group.baseUnit)}</strong>
+            </div>
+            ${group.offers.map((entry, index) => {
+              const offer = entry.offer;
+              const supplier = obterFornecedorDoInsumo(offer);
+              return `<div class="insumo-values" style="margin-top: 8px; ${index === 0 ? 'border: 1px solid var(--wheat-accent);' : ''}">
+                <div class="value-item">
+                  <span class="value-caption">${index === 0 ? '⭐ Menor custo' : 'Oferta'}</span>
+                  <span class="value-text">${escapeHtml(offer.nome)}${offer.marca ? ` · ${escapeHtml(offer.marca)}` : ''}</span>
+                </div>
+                <div class="value-item"><span class="value-caption">Fornecedor</span><span class="value-text">${escapeHtml(supplier?.nome || offer.fornecedor || 'Não informado')}</span></div>
+                <div class="value-item"><span class="value-caption">Embalagem</span><span class="value-text">${formatarMoeda(offer.preco, 2)} / ${offer.quantidade} ${escapeHtml(offer.unidade)}</span></div>
+                <div class="value-item"><span class="value-caption">Custo comparável</span><span class="value-text">${formatarMoeda(entry.pricePerBaseUnit, 4)} / ${escapeHtml(entry.baseUnit)}</span></div>
+              </div>`;
+            }).join('')}
+          </section>
+        `).join('');
+      }
+
+      function prepararNovoFornecedor(nome = '') {
+        editingFornecedorId = null;
+        dom.formFornecedor.reset();
+        dom.inputNomeFornecedor.value = nome;
+        dom.supplierFormTitle.textContent = '🏷️ Cadastrar fornecedor';
+        dom.btnSubmitSupplier.textContent = 'Salvar fornecedor';
+        dom.btnCancelEditSupplier.classList.add('hidden');
+      }
+
+      function abrirEdicaoFornecedor(id) {
+        const fornecedor = cachedFornecedores.find(item => item.id === id);
+        if (!fornecedor) return;
+        editingFornecedorId = id;
+        dom.inputNomeFornecedor.value = fornecedor.nome || '';
+        dom.inputTelefoneFornecedor.value = fornecedor.telefone || '';
+        dom.inputEmailFornecedor.value = fornecedor.email || '';
+        dom.inputObservacaoFornecedor.value = fornecedor.observacoes || '';
+        dom.supplierFormTitle.textContent = '✏️ Editar fornecedor';
+        dom.btnSubmitSupplier.textContent = 'Salvar alterações';
+        dom.btnCancelEditSupplier.classList.remove('hidden');
+        dom.inputNomeFornecedor.focus();
+      }
+
+      async function handleFormFornecedorSubmit(event) {
+        event.preventDefault();
+        const nome = dom.inputNomeFornecedor.value.trim();
+        const fornecedorExistente = cachedFornecedores.find(item =>
+          normalizeComparisonName(item.nome || '') === normalizeComparisonName(nome) &&
+          item.id !== editingFornecedorId
+        );
+        if (fornecedorExistente) {
+          showToast('Já existe um fornecedor cadastrado com esse nome.');
+          return;
+        }
+
+        const dadosFornecedor = {
+          nome,
+          telefone: dom.inputTelefoneFornecedor.value.trim(),
+          email: dom.inputEmailFornecedor.value.trim(),
+          observacoes: dom.inputObservacaoFornecedor.value.trim()
+        };
+
+        try {
+          dom.btnSubmitSupplier.disabled = true;
+          if (!firestoreDb && !isTestStockMode) initFirebase();
+          if (editingFornecedorId) {
+            const atualizacoes = { ...dadosFornecedor, updatedAt: isTestStockMode ? new Date().toISOString() : serverTimestamp() };
+            const index = cachedFornecedores.findIndex(item => item.id === editingFornecedorId);
+            if (firestoreDb && !isTestStockMode && !editingFornecedorId.startsWith('local-supplier-')) {
+              await updateDoc(doc(firestoreDb, 'fornecedores', editingFornecedorId), atualizacoes);
+            }
+            if (index >= 0) cachedFornecedores[index] = { ...cachedFornecedores[index], ...dadosFornecedor };
+            if (!firestoreDb || isTestStockMode || editingFornecedorId.startsWith('local-supplier-')) salvarDadosFornecedoresLocais();
+            showToast(`Fornecedor "${nome}" atualizado.`);
+          } else {
+            const novoFornecedor = {
+              ...dadosFornecedor,
+              createdBy: currentUser?.uid || 'anon',
+              createdByName: currentUser?.displayName || 'Padeiro',
+              createdAt: isTestStockMode || !firestoreDb ? new Date().toISOString() : serverTimestamp()
+            };
+            if (firestoreDb && !isTestStockMode) {
+              const reference = await addDoc(collection(firestoreDb, 'fornecedores'), novoFornecedor);
+              cachedFornecedores.push({ id: reference.id, ...dadosFornecedor });
+            } else {
+              cachedFornecedores.push({ id: `local-supplier-${Date.now()}`, ...novoFornecedor });
+              salvarDadosFornecedoresLocais();
+            }
+            showToast(`Fornecedor "${nome}" cadastrado.`);
+          }
+          prepararNovoFornecedor();
+          atualizarSelectFornecedores();
+          renderizarFornecedores();
+        } catch (error) {
+          console.error('Erro ao salvar fornecedor:', error);
+          showToast(`Erro ao salvar fornecedor: ${error?.message || 'Tente novamente.'}`);
+        } finally {
+          dom.btnSubmitSupplier.disabled = false;
         }
       }
 
@@ -5169,6 +5523,7 @@
         dom.formInsumo.reset();
         dom.selectCategoriaInsumo.value = 'ingrediente';
         dom.selectUnidade.value = 'kg';
+        dom.inputGrupoComparacao.dataset.touched = 'false';
         stockFormUnit = 'kg';
         dom.inputEstoqueAtual.value = '';
         dom.inputEstoqueMinimo.value = '0';
@@ -5189,9 +5544,18 @@
         if (!insumo) return;
 
         editingInsumoId = id;
+        atualizarSelectFornecedores();
         dom.selectCategoriaInsumo.value = insumo.categoria || 'ingrediente';
         dom.inputNome.value = insumo.nome || '';
-        dom.inputFornecedor.value = insumo.fornecedor || '';
+        dom.inputGrupoComparacao.value = insumo.grupoComparacao || insumo.nome || '';
+        dom.inputGrupoComparacao.dataset.touched = 'true';
+        dom.inputMarcaInsumo.value = insumo.marca || '';
+        const supplier = obterFornecedorDoInsumo(insumo);
+        const supplierOption = Array.from(dom.inputFornecedor.options).find(option =>
+          option.getAttribute('data-supplier-id') === (supplier?.id || '') ||
+          normalizeComparisonName(option.getAttribute('data-name') || '') === normalizeComparisonName(insumo.fornecedor || '')
+        );
+        dom.inputFornecedor.value = supplierOption?.value || '';
         dom.inputQuantidade.value = insumo.quantidade ?? '';
         dom.selectUnidade.value = insumo.unidade || 'kg';
         stockFormUnit = dom.selectUnidade.value;
@@ -5329,7 +5693,11 @@
 
         const categoria = dom.selectCategoriaInsumo.value || 'ingrediente';
         const nome = dom.inputNome.value.trim();
-        const fornecedor = dom.inputFornecedor.value.trim();
+        const fornecedorSelecionado = dom.inputFornecedor.selectedOptions[0];
+        const fornecedor = fornecedorSelecionado?.getAttribute('data-name') || '';
+        const fornecedorId = fornecedorSelecionado?.getAttribute('data-supplier-id') || '';
+        const grupoComparacao = dom.inputGrupoComparacao.value.trim();
+        const marca = dom.inputMarcaInsumo.value.trim();
         const quantidade = parseFloat(dom.inputQuantidade.value);
         const unidade = dom.selectUnidade.value;
         const preco = parseFloat(dom.inputPreco.value);
@@ -5337,7 +5705,7 @@
         const estoqueMinimo = parseFloat(dom.inputEstoqueMinimo.value);
         const conversoes = obterConversoesDoFormulario();
 
-        if (!nome || !fornecedor || isNaN(quantidade) || quantidade <= 0 || isNaN(preco) || preco <= 0 ||
+        if (!nome || !fornecedor || !grupoComparacao || isNaN(quantidade) || quantidade <= 0 || isNaN(preco) || preco <= 0 ||
             !Number.isFinite(estoqueAtual) || estoqueAtual < 0 ||
             !Number.isFinite(estoqueMinimo) || estoqueMinimo < 0) {
           showToast('Preencha todos os campos com valores válidos. O estoque atual e o mínimo não podem ser negativos.');
@@ -5349,6 +5717,9 @@
         const novoInsumo = {
           nome,
           fornecedor,
+          fornecedorId: fornecedorId || null,
+          grupoComparacao,
+          ...(marca ? { marca } : {}),
           quantidade,
           unidade,
           preco,
@@ -5382,6 +5753,8 @@
               salvarDadosInsumosLocais();
             }
             renderizarInsumos();
+            renderizarFornecedores();
+            atualizarSelectsInsumosParaReceitas();
             const falhas = await atualizarReceitasDoInsumo(insumoAtualizado);
             showToast(falhas
               ? `Insumo atualizado; não foi possível recalcular ${falhas} receita(s).`
@@ -5404,6 +5777,8 @@
               });
               salvarDadosInsumosLocais();
               renderizarInsumos();
+              renderizarFornecedores();
+              atualizarSelectsInsumosParaReceitas();
               showToast(`"${nome}" cadastrado localmente.`);
             }
           }
@@ -5704,11 +6079,42 @@
         return Boolean(receitaPaiId && receitaAlcanca(receitaBaseId, receitaPaiId));
       }
 
+      function renderizarResultadosBuscaInsumosReceita() {
+        const termo = normalizarTextoBusca(dom.receitaItemBusca.value.trim());
+        const options = Array.from(dom.receitaItemInsumo.options)
+          .filter(option => option.value)
+          .filter(option => !termo || normalizarTextoBusca(option.textContent || '').includes(termo));
+
+        if (options.length === 0) {
+          dom.receitaItemResultados.innerHTML = '<div role="status" style="padding: 10px 12px; color: var(--text-muted); font-size: 13px;">Nenhum material encontrado.</div>';
+        } else {
+          dom.receitaItemResultados.innerHTML = options.map(option => {
+            const group = option.parentElement?.tagName === 'OPTGROUP'
+              ? option.parentElement.label
+              : 'Material';
+            return `<button type="button" role="option" aria-selected="false" data-recipe-material-value="${escapeHtml(option.value)}" style="display: block; width: 100%; padding: 9px 12px; border: 0; border-bottom: 1px solid var(--border-color); background: #fff; color: var(--text-primary); text-align: left; cursor: pointer;">
+              <span style="display: block; color: var(--text-muted); font-size: 10px;">${escapeHtml(group)}</span>
+              <span style="font-size: 13px;">${escapeHtml(option.textContent || '')}</span>
+            </button>`;
+          }).join('');
+        }
+
+        const aberto = document.activeElement === dom.receitaItemBusca;
+        dom.receitaItemResultados.classList.toggle('hidden', !aberto);
+        dom.receitaItemBusca.setAttribute('aria-expanded', String(aberto));
+      }
+
       function atualizarSelectsInsumosParaReceitas() {
         const insumosDisponiveis = cachedInsumos.length > 0 ? cachedInsumos : DEMO_SEED_INSUMOS;
         const receitasDisponiveis = cachedReceitas.length > 0
           ? cachedReceitas
           : (isDemoMode ? DEMO_SEED_RECEITAS : []);
+        const melhoresOfertas = new Set(
+          compareSupplierOffers(insumosDisponiveis)
+            .filter(group => group.offers.length > 1)
+            .map(group => group.offers[0]?.offer.id)
+            .filter(Boolean)
+        );
 
         // Monta as opções agrupadas por categoria
         const grupos = {
@@ -5725,10 +6131,18 @@
 
         let optionsHtml = '<option value="">Selecione a matéria-prima ou embalagem...</option>';
 
+        const criarOpcaoInsumo = i => {
+          const supplierName = obterFornecedorDoInsumo(i)?.nome || i.fornecedor || 'Fornecedor não informado';
+          const description = `${i.nome}${i.marca ? ` · ${i.marca}` : ''} — ${supplierName}`;
+          const cheapest = melhoresOfertas.has(i.id);
+          const cost = formatarCustoComUnidade(i.custoUnitario, i.unidade);
+          return `<option value="${i.id}" data-source-type="insumo" data-name="${escapeHtml(i.nome)}" data-cat="${escapeHtml(i.categoria || 'ingrediente')}" data-unit="${escapeHtml(i.unidade)}" data-cost="${i.custoUnitario}" data-conversions="${escapeHtml(JSON.stringify(i.conversoes || {}))}" data-offer-id="${escapeHtml(i.id)}" data-group-key="${escapeHtml(getSupplierOfferComparisonKey(i))}">${escapeHtml(description)} (${cost})${cheapest ? ' · ⭐ Menor custo equivalente' : ''}</option>`;
+        };
+
         if (grupos.ingrediente.length > 0) {
           optionsHtml += '<optgroup label="🌾 Ingredientes">';
           grupos.ingrediente.forEach(i => {
-            optionsHtml += `<option value="${i.id}" data-source-type="insumo" data-name="${escapeHtml(i.nome)}" data-cat="ingrediente" data-unit="${i.unidade}" data-cost="${i.custoUnitario}" data-conversions="${escapeHtml(JSON.stringify(i.conversoes || {}))}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
+            optionsHtml += criarOpcaoInsumo(i);
           });
           optionsHtml += '</optgroup>';
         }
@@ -5736,7 +6150,7 @@
         if (grupos.embalagem.length > 0) {
           optionsHtml += '<optgroup label="🛍️ Embalagens & Formas Descartáveis">';
           grupos.embalagem.forEach(i => {
-            optionsHtml += `<option value="${i.id}" data-source-type="insumo" data-name="${escapeHtml(i.nome)}" data-cat="embalagem" data-unit="${i.unidade}" data-cost="${i.custoUnitario}" data-conversions="${escapeHtml(JSON.stringify(i.conversoes || {}))}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
+            optionsHtml += criarOpcaoInsumo(i);
           });
           optionsHtml += '</optgroup>';
         }
@@ -5744,7 +6158,7 @@
         if (grupos.outro.length > 0) {
           optionsHtml += '<optgroup label="📦 Outros">';
           grupos.outro.forEach(i => {
-            optionsHtml += `<option value="${i.id}" data-source-type="insumo" data-name="${escapeHtml(i.nome)}" data-cat="outro" data-unit="${i.unidade}" data-cost="${i.custoUnitario}" data-conversions="${escapeHtml(JSON.stringify(i.conversoes || {}))}">${escapeHtml(i.nome)} (${formatarCustoComUnidade(i.custoUnitario, i.unidade)})</option>`;
+            optionsHtml += criarOpcaoInsumo(i);
           });
           optionsHtml += '</optgroup>';
         }
@@ -5769,6 +6183,7 @@
         if (dom.calcSelectInsumo) {
           dom.calcSelectInsumo.innerHTML = optionsHtml;
         }
+        renderizarResultadosBuscaInsumosReceita();
         if (dom.recipeShoppingList && itensReceitaEmElaboracao.length > 0) {
           renderizarListaComprasReceita();
         }
@@ -5820,11 +6235,13 @@
         const custoUnitarioBase = parseFloat(selectedOption?.getAttribute('data-cost')) || 0;
         const unidadeBase = selectedOption?.getAttribute('data-unit') || 'kg';
         const conversoes = JSON.parse(selectedOption?.getAttribute('data-conversions') || '{}');
+        const ofertaInsumoId = selectedOption?.getAttribute('data-offer-id') || insumoId;
 
         const custoItem = calcularCustoItemReceita(custoUnitarioBase, unidadeBase, qtd, unidadeUsada, conversoes);
 
         itensReceitaEmElaboracao.push({
           insumoId: sourceType === 'insumo' ? insumoId : null,
+          ofertaInsumoId: sourceType === 'insumo' ? ofertaInsumoId : null,
           sourceType,
           ...(receitaId ? { receitaId } : {}),
           insumoNome,
@@ -7166,6 +7583,7 @@
         const custoUnitarioBase = parseFloat(selectedOption?.getAttribute('data-cost')) || 0;
         const unidadeBase = selectedOption?.getAttribute('data-unit') || 'kg';
         const conversoes = JSON.parse(selectedOption?.getAttribute('data-conversions') || '{}');
+        const ofertaInsumoId = selectedOption?.getAttribute('data-offer-id') || insumoId;
 
         const custoItem = calcularCustoItemReceita(custoUnitarioBase, unidadeBase, qtd, unidadeUsada, conversoes);
 
@@ -7178,6 +7596,7 @@
 
         const novosItens = [...(receitaAlvo.itens || []), {
           insumoId: sourceType === 'insumo' ? insumoId : null,
+          ofertaInsumoId: sourceType === 'insumo' ? ofertaInsumoId : null,
           sourceType,
           ...(receitaBaseId ? { receitaId: receitaBaseId } : {}),
           insumoNome,
@@ -7312,6 +7731,7 @@
         activeTab = tab;
         const tabs = [
           ['insumos', dom.tabNavInsumos, dom.viewInsumos],
+          ['fornecedores', dom.tabNavFornecedores, dom.viewFornecedores],
           ['receitas', dom.tabNavReceitas, dom.viewReceitas],
           ['producoes', dom.tabNavProducoes, dom.viewProducoes]
         ];
@@ -7325,7 +7745,10 @@
         if (tab === 'insumos') {
           return;
         }
-        if (tab === 'receitas') {
+        if (tab === 'fornecedores') {
+          atualizarSelectFornecedores();
+          renderizarFornecedores();
+        } else if (tab === 'receitas') {
           atualizarSelectsInsumosParaReceitas();
           renderizarReceitas();
         } else if (tab === 'producoes') {
@@ -7392,6 +7815,7 @@
 
       // Navegação por abas
       dom.tabNavInsumos.addEventListener('click', () => switchTab('insumos'));
+      dom.tabNavFornecedores.addEventListener('click', () => switchTab('fornecedores'));
       dom.tabNavReceitas.addEventListener('click', () => switchTab('receitas'));
       dom.tabNavProducoes.addEventListener('click', () => switchTab('producoes'));
       dom.btnProducoesVerReceitas.addEventListener('click', () => switchTab('receitas'));
@@ -7449,6 +7873,31 @@
         dom.btnToggleForm.setAttribute('aria-expanded', 'true');
         dom.inputNome.focus();
         dom.formInsumo.scrollIntoView({ behavior: 'smooth' });
+      });
+
+      dom.btnManageSuppliers.addEventListener('click', () => switchTab('fornecedores'));
+      dom.formFornecedor.addEventListener('submit', handleFormFornecedorSubmit);
+      dom.btnCancelEditSupplier.addEventListener('click', () => prepararNovoFornecedor());
+      dom.suppliersContainer.addEventListener('click', event => {
+        const editButton = event.target.closest('[data-edit-supplier-id]');
+        if (editButton) {
+          abrirEdicaoFornecedor(editButton.getAttribute('data-edit-supplier-id'));
+          return;
+        }
+        const registerButton = event.target.closest('[data-register-legacy-supplier]');
+        if (registerButton) {
+          prepararNovoFornecedor(registerButton.getAttribute('data-register-legacy-supplier') || '');
+          dom.inputTelefoneFornecedor.focus();
+        }
+      });
+
+      dom.inputNome.addEventListener('input', () => {
+        if (dom.inputGrupoComparacao.dataset.touched !== 'true') {
+          dom.inputGrupoComparacao.value = dom.inputNome.value;
+        }
+      });
+      dom.inputGrupoComparacao.addEventListener('input', () => {
+        dom.inputGrupoComparacao.dataset.touched = 'true';
       });
 
       dom.btnEmptyClearFilters.addEventListener('click', () => {
@@ -7547,6 +7996,9 @@
       // Construtor de Itens de Receita
       dom.receitaItemInsumo.addEventListener('change', () => {
         const selected = dom.receitaItemInsumo.selectedOptions[0];
+        dom.receitaItemBusca.value = selected?.value ? selected.textContent.trim() : '';
+        dom.receitaItemResultados.classList.add('hidden');
+        dom.receitaItemBusca.setAttribute('aria-expanded', 'false');
         const unit = selected?.getAttribute('data-unit');
         const conversions = JSON.parse(selected?.getAttribute('data-conversions') || '{}');
         if (unit === 'kg' || unit === 'g') {
@@ -7559,6 +8011,42 @@
           dom.receitaItemUnidade.value = conversions.baseUnit || unit;
         }
         atualizarPreviewItemReceita();
+      });
+
+      dom.receitaItemBusca.addEventListener('focus', () => {
+        if (dom.receitaItemInsumo.value) dom.receitaItemBusca.value = '';
+        renderizarResultadosBuscaInsumosReceita();
+      });
+      dom.receitaItemBusca.addEventListener('input', () => {
+        if (dom.receitaItemInsumo.value) {
+          dom.receitaItemInsumo.value = '';
+          atualizarPreviewItemReceita();
+        }
+        renderizarResultadosBuscaInsumosReceita();
+      });
+      dom.receitaItemBusca.addEventListener('keydown', event => {
+        if (event.key === 'ArrowDown') {
+          const firstResult = dom.receitaItemResultados.querySelector('[data-recipe-material-value]');
+          if (firstResult) {
+            event.preventDefault();
+            firstResult.focus();
+          }
+        } else if (event.key === 'Escape') {
+          dom.receitaItemResultados.classList.add('hidden');
+          dom.receitaItemBusca.setAttribute('aria-expanded', 'false');
+        } else if (event.key === 'Enter') {
+          const firstResult = dom.receitaItemResultados.querySelector('[data-recipe-material-value]');
+          if (firstResult) {
+            event.preventDefault();
+            firstResult.click();
+          }
+        }
+      });
+      dom.receitaItemResultados.addEventListener('click', event => {
+        const result = event.target.closest('[data-recipe-material-value]');
+        if (!result) return;
+        dom.receitaItemInsumo.value = result.getAttribute('data-recipe-material-value');
+        dom.receitaItemInsumo.dispatchEvent(new Event('change', { bubbles: true }));
       });
 
       dom.receitaItemQuantidade.addEventListener('input', atualizarPreviewItemReceita);

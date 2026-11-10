@@ -13,8 +13,22 @@
         },
         "fornecedor": {
           "type": "string",
-          "description": "Nome do fornecedor ou mercado",
+          "description": "Nome do fornecedor para compatibilidade com registros antigos",
           "minLength": 1,
+          "maxLength": 100
+        },
+        "fornecedorId": {
+          "type": ["string", "null"],
+          "description": "Referência ao cadastro separado de fornecedores"
+        },
+        "grupoComparacao": {
+          "type": "string",
+          "description": "Ingrediente equivalente usado para comparar marcas e fornecedores",
+          "maxLength": 100
+        },
+        "marca": {
+          "type": "string",
+          "description": "Marca da oferta de compra",
           "maxLength": 100
         },
         "quantidade": {
@@ -82,6 +96,21 @@
         "custoUnitario"
       ]
     },
+    "fornecedor": {
+      "title": "Fornecedor",
+      "description": "Cadastro independente de contatos e condições de fornecedores de insumos",
+      "type": "object",
+      "properties": {
+        "nome": { "type": "string", "minLength": 1, "maxLength": 100 },
+        "telefone": { "type": "string", "maxLength": 40 },
+        "email": { "type": "string", "maxLength": 120 },
+        "observacoes": { "type": "string", "maxLength": 300 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "createdBy": { "type": "string" },
+        "createdByName": { "type": "string" }
+      },
+      "required": ["nome"]
+    },
     "receita": {
       "title": "Receita",
       "description": "Receita de panificação caseira com ingredientes, embalagens e cálculo de custos e lucro",
@@ -129,6 +158,7 @@
             "properties": {
               "sourceType": { "type": "string", "enum": ["insumo", "receita"] },
               "insumoId": { "type": ["string", "null"] },
+              "ofertaInsumoId": { "type": ["string", "null"], "description": "Oferta de compra selecionada para este ingrediente" },
               "receitaId": { "type": "string" },
               "insumoNome": { "type": "string" },
               "quantidadeUsada": { "type": "number" },
@@ -289,6 +319,10 @@
     "/insumos/{insumoId}": {
       "schema": "insumo",
       "description": "Coleção de insumos da padaria artesanal compartilhada entre padeiros autenticados"
+    },
+    "/fornecedores/{fornecedorId}": {
+      "schema": "fornecedor",
+      "description": "Cadastro de fornecedores com contatos, vinculado às ofertas de insumos"
     },
     "/receitas/{receitaId}": {
       "schema": "receita",

@@ -22,6 +22,12 @@ service cloud.firestore {
       return data.keys().hasAll(['nome', 'fornecedor', 'quantidade', 'unidade', 'preco', 'custoUnitario']) &&
         data.nome is string && data.nome.size() >= 1 && data.nome.size() <= 100 &&
         data.fornecedor is string && data.fornecedor.size() >= 1 && data.fornecedor.size() <= 100 &&
+        (!data.keys().hasAny(['fornecedorId']) ||
+          data.fornecedorId == null || (data.fornecedorId is string && data.fornecedorId.size() <= 128)) &&
+        (!data.keys().hasAny(['grupoComparacao']) ||
+          (data.grupoComparacao is string && data.grupoComparacao.size() >= 1 && data.grupoComparacao.size() <= 100)) &&
+        (!data.keys().hasAny(['marca']) ||
+          (data.marca is string && data.marca.size() <= 100)) &&
         data.quantidade is number && data.quantidade > 0 &&
         data.unidade is string && data.unidade in ['kg', 'g', 'L', 'ml', 'un'] &&
         data.preco is number && data.preco >= 0 &&
@@ -30,6 +36,14 @@ service cloud.firestore {
           (data.estoqueAtual is number && data.estoqueAtual >= 0)) &&
         (!data.keys().hasAny(['estoqueMinimo']) ||
           (data.estoqueMinimo is number && data.estoqueMinimo >= 0));
+    }
+
+    function isValidFornecedor(data) {
+      return data.keys().hasAll(['nome']) &&
+        data.nome is string && data.nome.size() >= 1 && data.nome.size() <= 100 &&
+        (!data.keys().hasAny(['telefone']) || (data.telefone is string && data.telefone.size() <= 40)) &&
+        (!data.keys().hasAny(['email']) || (data.email is string && data.email.size() <= 120)) &&
+        (!data.keys().hasAny(['observacoes']) || (data.observacoes is string && data.observacoes.size() <= 300));
     }
 
     function isValidReceita(data) {
@@ -70,6 +84,13 @@ service cloud.firestore {
       allow create: if isSignedIn() && isValidId(insumoId) && isValidInsumo(incoming());
       allow update: if isSignedIn() && isValidId(insumoId) && isValidInsumo(incoming());
       allow delete: if isSignedIn() && isValidId(insumoId);
+    }
+
+    match /fornecedores/{fornecedorId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(fornecedorId) && isValidFornecedor(incoming());
+      allow update: if isSignedIn() && isValidId(fornecedorId) && isValidFornecedor(incoming());
+      allow delete: if isSignedIn() && isValidId(fornecedorId);
     }
 
     // Coleção de receitas de pães e produtos da padaria
