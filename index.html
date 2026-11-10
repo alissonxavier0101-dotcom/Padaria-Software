@@ -3219,6 +3219,9 @@
             </svg>
             <span id="login-google-text">Entrar com Google</span>
           </button>
+          <button id="btn-login-google-redirect" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px;" type="button">
+            Problemas com a janela? Continuar com Google
+          </button>
 
           <div style="display: flex; gap: 8px; width: 100%;">
             <button id="btn-open-config" class="btn-secondary" style="flex: 1; font-size: 12px; padding: 10px;" type="button">
@@ -5133,6 +5136,7 @@
         authScreen: document.getElementById('auth-screen'),
         appPanel: document.getElementById('app-panel'),
         btnLoginGoogle: document.getElementById('btn-login-google'),
+        btnLoginGoogleRedirect: document.getElementById('btn-login-google-redirect'),
         loginGoogleText: document.getElementById('login-google-text'),
         btnLogout: document.getElementById('btn-logout'),
         headerUserPhoto: document.getElementById('header-user-photo'),
@@ -5708,10 +5712,11 @@
       // -------------------------------------------------------------
       // 4. AUTENTICAÇÃO GOOGLE
       // -------------------------------------------------------------
-      async function handleLoginGoogle() {
+      async function handleLoginGoogle(forceRedirect = false) {
         try {
           dom.loginGoogleText.innerHTML = '<span class="loading-spinner"></span> Conectando...';
           dom.btnLoginGoogle.disabled = true;
+          dom.btnLoginGoogleRedirect.disabled = true;
 
           if (!firebaseAuth && !initFirebase()) {
             throw new Error('Não foi possível iniciar o Firebase. Verifique a configuração da conexão.');
@@ -5720,7 +5725,7 @@
           const provider = new GoogleAuthProvider();
           provider.setCustomParameters({ prompt: 'select_account' });
 
-          if (window.matchMedia('(pointer: coarse)').matches) {
+          if (forceRedirect || window.matchMedia('(pointer: coarse)').matches) {
             await signInWithRedirect(firebaseAuth, provider);
             return;
           }
@@ -5749,6 +5754,7 @@
         } finally {
           dom.loginGoogleText.textContent = 'Entrar com Google';
           dom.btnLoginGoogle.disabled = false;
+          dom.btnLoginGoogleRedirect.disabled = false;
         }
       }
 
@@ -10548,6 +10554,7 @@
       // -------------------------------------------------------------
       // Login e Sessão
       dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
+      dom.btnLoginGoogleRedirect.addEventListener('click', () => handleLoginGoogle(true));
       dom.btnLogout.addEventListener('click', handleLogout);
       dom.btnStockModeReal.addEventListener('click', () => alterarModoEstoque(false));
       dom.btnStockModeTest.addEventListener('click', () => alterarModoEstoque(true));
