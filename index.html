@@ -5733,7 +5733,7 @@
           const provider = new GoogleAuthProvider();
           provider.setCustomParameters({ prompt: 'select_account' });
 
-          if (forceRedirect || window.matchMedia('(pointer: coarse)').matches) {
+          if (forceRedirect) {
             await signInWithRedirect(firebaseAuth, provider);
             return;
           }
@@ -5748,8 +5748,7 @@
               'auth/cancelled-popup-request'
             ];
             if (popupFallbackCodes.includes(error?.code)) {
-              showToast('O navegador bloqueou a janela. Continuando pelo redirecionamento do Google...');
-              await signInWithRedirect(firebaseAuth, provider);
+              showToast('O navegador bloqueou a janela de login. Permita pop-ups para este site ou tente “Continuar com Google”.');
               return;
             }
             throw error;
