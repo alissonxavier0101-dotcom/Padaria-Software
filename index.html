@@ -3997,7 +3997,7 @@
             Domínio Não Autorizado no Firebase
           </h3>
           <p class="modal-desc" style="font-size: 13px; text-align: left; line-height: 1.5;">
-            O Google Sign-In do Firebase exige que este endereço esteja cadastrado em <strong>Domínios Autorizados</strong> no seu Firebase Console:
+            Para entrar com Google neste site, habilite o provedor Google e cadastre o domínio abaixo em <strong>Domínios autorizados</strong> no Firebase Console. No GitHub Pages, use apenas o domínio, sem protocolo ou caminho do repositório.
           </p>
           
           <div style="background: #FDF6EC; border: 1.5px dashed var(--wheat-gold); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
@@ -4011,14 +4011,14 @@
           </div>
 
           <div style="background: #FFFDF9; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--text-secondary); text-align: left; display: flex; flex-direction: column; gap: 6px;">
-            <strong style="color: var(--wheat-deep);">Como liberar em 3 passos simples:</strong>
-            <span>1. Abra o <strong>Firebase Console</strong> > <strong>Authentication</strong> > <strong>Settings</strong> > <strong>Authorized domains</strong>.</span>
-            <span>2. Clique em <strong>Add domain (Adicionar domínio)</strong> e cole o domínio copiado acima.</span>
-            <span>3. Salve e o login com Google funcionará imediatamente!</span>
+            <strong style="color: var(--wheat-deep);">Como liberar o acesso:</strong>
+            <span>1. Em <strong>Authentication</strong> &gt; <strong>Sign-in method</strong>, habilite o provedor <strong>Google</strong>.</span>
+            <span>2. Em <strong>Authentication</strong> &gt; <strong>Settings</strong> &gt; <strong>Authorized domains</strong>, adicione <strong>alissonxavier0101-dotcom.github.io</strong>.</span>
+            <span>3. O domínio não inclui <strong>https://</strong> nem <strong>/Padaria-Software/</strong>. Salve e tente entrar novamente.</span>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
-            <a id="link-firebase-console" href="https://console.firebase.google.com" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 13px; text-decoration: none; padding: 11px; text-align: center; font-weight: 700;">
+            <a id="link-firebase-console" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/authentication/settings" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 13px; text-decoration: none; padding: 11px; text-align: center; font-weight: 700;">
               🔗 Abrir Configurações do Firebase Console ↗
             </a>
             <button id="btn-unauth-enter-now" class="btn-demo-login" type="button" style="font-size: 13px; padding: 11px;">
