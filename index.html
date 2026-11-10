@@ -3223,6 +3223,19 @@
             Problemas com a janela? Continuar com Google
           </button>
 
+          <div style="display: flex; align-items: center; gap: 10px; width: 100%; margin: 4px 0; color: var(--text-muted); font-size: 12px;">
+            <span style="height: 1px; flex: 1; background: var(--border-color);"></span>
+            <span>ou entre com usuário e senha</span>
+            <span style="height: 1px; flex: 1; background: var(--border-color);"></span>
+          </div>
+          <form id="form-login-password" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+            <label for="login-identifier" class="form-label">Usuário ou e-mail</label>
+            <input id="login-identifier" name="username" type="text" autocomplete="username" placeholder="robakery ou seu e-mail" required />
+            <label for="login-password" class="form-label">Senha</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" required />
+            <button id="btn-login-password" class="btn-primary" style="width: 100%; padding: 12px;" type="submit">Entrar</button>
+          </form>
+
           <div style="display: flex; gap: 8px; width: 100%;">
             <button id="btn-open-config" class="btn-secondary" style="flex: 1; font-size: 12px; padding: 10px;" type="button">
               ⚙️ Conexão Firebase
@@ -4886,6 +4899,7 @@
         getAuth, 
         signInWithPopup, 
         signInWithRedirect,
+        signInWithEmailAndPassword,
         getRedirectResult,
         GoogleAuthProvider, 
         signOut, 
@@ -5146,6 +5160,10 @@
         btnLoginGoogle: document.getElementById('btn-login-google'),
         btnLoginGoogleRedirect: document.getElementById('btn-login-google-redirect'),
         loginGoogleText: document.getElementById('login-google-text'),
+        formLoginPassword: document.getElementById('form-login-password'),
+        loginIdentifier: document.getElementById('login-identifier'),
+        loginPassword: document.getElementById('login-password'),
+        btnLoginPassword: document.getElementById('btn-login-password'),
         btnLogout: document.getElementById('btn-logout'),
         headerUserPhoto: document.getElementById('header-user-photo'),
         headerUserAvatarInitials: document.getElementById('header-user-avatar-initials'),
@@ -5671,18 +5689,20 @@
             
             onAuthStateChanged(firebaseAuth, (user) => {
               if (user) {
-                const authenticatedWithGoogle = user.providerData.some(provider => provider.providerId === 'google.com');
-                if (!authenticatedWithGoogle) {
+                const authenticatedWithSupportedProvider = user.providerData.some(provider =>
+                  provider.providerId === 'google.com' || provider.providerId === 'password'
+                );
+                if (!authenticatedWithSupportedProvider) {
                   onUserLoggedOut();
                   signOut(firebaseAuth).catch(error => {
                     console.error('Não foi possível encerrar uma sessão que não usa Google:', error);
                   });
-                  showToast('Acesse o sistema usando sua conta Google.');
+                  showToast('Use uma conta Google ou usuário e senha cadastrados.');
                   return;
                 }
                 onUserLoggedIn({
                   uid: user.uid,
-                  displayName: user.displayName || 'Padeiro(a)',
+                  displayName: user.displayName || user.email?.split('@')[0] || 'Padeiro(a)',
                   email: user.email || '',
                   photoURL: user.photoURL || null
                 });
@@ -5762,6 +5782,43 @@
           dom.loginGoogleText.textContent = 'Entrar com Google';
           dom.btnLoginGoogle.disabled = false;
           dom.btnLoginGoogleRedirect.disabled = false;
+        }
+      }
+
+      async function handleLoginWithPassword(event) {
+        event.preventDefault();
+        const identifier = dom.loginIdentifier.value.trim().toLowerCase();
+        const password = dom.loginPassword.value;
+        const email = identifier === 'robakery' ? 'robakery@adm.com' : identifier;
+
+        if (!firebaseAuth && !initFirebase()) {
+          showToast('Não foi possível iniciar o Firebase. Verifique a configuração da conexão.');
+          return;
+        }
+
+        dom.btnLoginPassword.disabled = true;
+        dom.btnLoginPassword.textContent = 'Conectando...';
+        try {
+          const result = await signInWithEmailAndPassword(firebaseAuth, email, password);
+          showToast(`Bem-vindo(a), ${result.user.displayName || result.user.email?.split('@')[0] || 'Padeiro'}!`);
+        } catch (error) {
+          console.error('Erro no login com usuário e senha:', error);
+          if (error?.code === 'auth/invalid-credential' ||
+              error?.code === 'auth/user-not-found' ||
+              error?.code === 'auth/wrong-password') {
+            showToast('Usuário/e-mail ou senha inválidos.');
+          } else if (error?.code === 'auth/operation-not-allowed') {
+            showToast('Ative o provedor E-mail/senha em Firebase > Authentication > Sign-in method.');
+          } else if (error?.code === 'auth/invalid-email') {
+            showToast('Informe um usuário ou e-mail válido.');
+          } else if (error?.code === 'auth/network-request-failed') {
+            showToast('Falha de rede ao conectar. Verifique sua conexão e tente novamente.');
+          } else {
+            showToast(`Não foi possível entrar${error?.code ? ` (${error.code})` : ''}. Tente novamente.`);
+          }
+        } finally {
+          dom.btnLoginPassword.disabled = false;
+          dom.btnLoginPassword.textContent = 'Entrar';
         }
       }
 
@@ -10565,6 +10622,7 @@
       // Login e Sessão
       dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       dom.btnLoginGoogleRedirect.addEventListener('click', () => handleLoginGoogle(true));
+      dom.formLoginPassword.addEventListener('submit', handleLoginWithPassword);
       dom.btnLogout.addEventListener('click', handleLogout);
       dom.btnStockModeReal.addEventListener('click', () => alterarModoEstoque(false));
       dom.btnStockModeTest.addEventListener('click', () => alterarModoEstoque(true));
