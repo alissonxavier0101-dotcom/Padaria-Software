@@ -53,7 +53,19 @@ service cloud.firestore {
         data.rendimentoUnidade is string && data.rendimentoUnidade.size() <= 50 &&
         data.itens is list && data.itens.size() <= 100 &&
         data.custoTotal is number && data.custoTotal >= 0 &&
-        data.custoUnitario is number && data.custoUnitario >= 0;
+        data.custoUnitario is number && data.custoUnitario >= 0 &&
+        (!data.keys().hasAny(['gruposIngredientes']) ||
+          (data.gruposIngredientes is list &&
+            data.gruposIngredientes.size() <= 30));
+    }
+
+    function isValidGrupoReceita(data) {
+      return data.keys().hasAll(['nome', 'itens', 'createdBy']) &&
+        data.nome is string && data.nome.size() >= 1 && data.nome.size() <= 60 &&
+        data.itens is list && data.itens.size() > 0 && data.itens.size() <= 100 &&
+        data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128 &&
+        (!data.keys().hasAny(['descricao']) ||
+          (data.descricao is string && data.descricao.size() <= 200));
     }
 
     function isValidProducao(data) {
@@ -75,7 +87,92 @@ service cloud.firestore {
         data.insumos is list && data.insumos.size() > 0 && data.insumos.size() <= 100 &&
         data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128 &&
         (!data.keys().hasAny(['precoVendaUnitario']) ||
-          (data.precoVendaUnitario is number && data.precoVendaUnitario >= 0));
+          (data.precoVendaUnitario is number && data.precoVendaUnitario >= 0)) &&
+        (!data.keys().hasAny(['clienteId']) ||
+          (data.clienteId is string && data.clienteId.size() <= 128)) &&
+        (!data.keys().hasAny(['clienteNome']) ||
+          (data.clienteNome is string && data.clienteNome.size() >= 1 && data.clienteNome.size() <= 100)) &&
+        (!data.keys().hasAny(['formaPagamento']) ||
+          (data.formaPagamento is string &&
+            data.formaPagamento in ['nao_informado', 'pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia'])) &&
+        (!data.keys().hasAny(['status']) ||
+          (data.status is string && data.status in [
+            'pago', 'aguardando_pagamento', 'em_processo', 'pronto', 'entregue', 'cancelado'
+          ])) &&
+        (!data.keys().hasAny(['vendaId']) ||
+          (data.vendaId is string && data.vendaId.size() > 0 && data.vendaId.size() <= 128));
+    }
+
+    function isValidCliente(data) {
+      return data.keys().hasAll(['nome', 'telefone', 'createdBy']) &&
+        data.nome is string && data.nome.size() >= 1 && data.nome.size() <= 100 &&
+        data.telefone is string && data.telefone.size() >= 8 && data.telefone.size() <= 30 &&
+        data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128;
+    }
+
+    function isValidVenda(data) {
+      return data.keys().hasAll([
+          'produtoId', 'produtoNome', 'clienteId', 'clienteNome', 'quantidade',
+          'valorUnitario', 'valorTotal', 'formaPagamento', 'data', 'createdBy'
+        ]) &&
+        data.produtoId is string && data.produtoId.size() > 0 && data.produtoId.size() <= 128 &&
+        data.produtoNome is string && data.produtoNome.size() >= 1 && data.produtoNome.size() <= 100 &&
+        data.clienteId is string && data.clienteId.size() <= 128 &&
+        data.clienteNome is string && data.clienteNome.size() >= 1 && data.clienteNome.size() <= 100 &&
+        data.quantidade is number && data.quantidade > 0 &&
+        data.valorUnitario is number && data.valorUnitario >= 0 &&
+        data.valorTotal is number && data.valorTotal >= 0 &&
+        data.formaPagamento is string &&
+        data.formaPagamento in ['nao_informado', 'pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia'] &&
+        data.data is string && data.data.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+        data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128 &&
+        (!data.keys().hasAny(['custoUnitario']) ||
+          (data.custoUnitario is number && data.custoUnitario >= 0)) &&
+        (!data.keys().hasAny(['custosInsumos']) ||
+          (data.custosInsumos is list && data.custosInsumos.size() <= 100)) &&
+        (!data.keys().hasAny(['status']) ||
+          (data.status is string && data.status in [
+            'pago', 'aguardando_pagamento', 'em_processo', 'pronto', 'entregue', 'cancelado'
+          ])) &&
+        (!data.keys().hasAny(['origem']) ||
+          (data.origem == 'producao' &&
+            data.producaoId is string && data.producaoId.size() > 0 && data.producaoId.size() <= 128));
+    }
+
+    function isValidPedido(data) {
+      return data.keys().hasAll([
+          'clienteId', 'clienteNome', 'produtoId', 'produtoNome', 'quantidade',
+          'dataEntrega', 'status', 'observacoes', 'createdBy'
+        ]) &&
+        data.clienteId is string && data.clienteId.size() > 0 && data.clienteId.size() <= 128 &&
+        data.clienteNome is string && data.clienteNome.size() >= 1 && data.clienteNome.size() <= 100 &&
+        data.produtoId is string && data.produtoId.size() > 0 && data.produtoId.size() <= 128 &&
+        data.produtoNome is string && data.produtoNome.size() >= 1 && data.produtoNome.size() <= 100 &&
+        data.quantidade is number && data.quantidade >= 1 && data.quantidade % 1 == 0 &&
+        data.dataEntrega is string && data.dataEntrega.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+        data.status is string && data.status in ['pendente', 'produzido', 'entregue', 'pago'] &&
+        data.observacoes is string && data.observacoes.size() <= 300 &&
+        data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128;
+    }
+
+    function isValidMovimentacaoFinanceira(data) {
+      return data.keys().hasAll(['tipo', 'categoria', 'descricao', 'valor', 'data', 'createdBy']) &&
+        data.tipo is string && data.tipo in ['entrada', 'saida'] &&
+        data.categoria is string &&
+        ((data.tipo == 'entrada' && data.categoria == 'outra_entrada') ||
+          (data.tipo == 'saida' && data.categoria in ['despesa_variavel', 'despesa_fixa', 'retirada'])) &&
+        data.descricao is string && data.descricao.size() >= 1 && data.descricao.size() <= 120 &&
+        data.valor is number && data.valor > 0 &&
+        data.data is string && data.data.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$') &&
+        data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128;
+    }
+
+    function isValidDespesaFixa(data) {
+      return data.keys().hasAll(['nome', 'valorMensal', 'diaVencimento', 'createdBy']) &&
+        data.nome is string && data.nome.size() >= 1 && data.nome.size() <= 100 &&
+        data.valorMensal is number && data.valorMensal > 0 &&
+        data.diaVencimento is number && data.diaVencimento >= 1 && data.diaVencimento <= 31 &&
+        data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128;
     }
 
     // Coleção de insumos para os 2 padeiros da padaria artesanal
@@ -101,15 +198,93 @@ service cloud.firestore {
       allow delete: if isSignedIn() && isValidId(receitaId);
     }
 
+    match /gruposReceita/{grupoId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(grupoId) && isValidGrupoReceita(incoming());
+      allow update: if isSignedIn() && isValidId(grupoId) && isValidGrupoReceita(incoming());
+      allow delete: if isSignedIn() && isValidId(grupoId);
+    }
+
     match /producoes/{producaoId} {
       allow get, list: if isSignedIn();
       allow create: if isSignedIn() && isValidId(producaoId) && isValidProducao(incoming());
       allow update: if isSignedIn() && isValidId(producaoId) &&
         isValidProducao(incoming()) &&
         request.resource.data.diff(resource.data).affectedKeys().hasOnly([
-          'data', 'quantidadeProduzida', 'precoVendaUnitario', 'custoUnitarioReal', 'updatedAt'
-        ]);
+          'data', 'quantidadeProduzida', 'precoVendaUnitario', 'custoUnitarioReal',
+          'clienteId', 'clienteNome', 'formaPagamento', 'status', 'vendaId', 'updatedAt'
+        ]) &&
+        (!request.resource.data.keys().hasAny(['vendaId']) ||
+          (getAfter(/databases/$(database)/documents/vendas/$(request.resource.data.vendaId)).data.producaoId == producaoId &&
+            getAfter(/databases/$(database)/documents/vendas/$(request.resource.data.vendaId)).data.data == request.resource.data.data &&
+            getAfter(/databases/$(database)/documents/vendas/$(request.resource.data.vendaId)).data.quantidade == request.resource.data.quantidadeProduzida &&
+            getAfter(/databases/$(database)/documents/vendas/$(request.resource.data.vendaId)).data.valorUnitario == request.resource.data.precoVendaUnitario &&
+            getAfter(/databases/$(database)/documents/vendas/$(request.resource.data.vendaId)).data.clienteId == request.resource.data.clienteId &&
+            getAfter(/databases/$(database)/documents/vendas/$(request.resource.data.vendaId)).data.clienteNome == request.resource.data.clienteNome &&
+            getAfter(/databases/$(database)/documents/vendas/$(request.resource.data.vendaId)).data.formaPagamento == request.resource.data.formaPagamento &&
+            getAfter(/databases/$(database)/documents/vendas/$(request.resource.data.vendaId)).data.status == request.resource.data.status));
       allow delete: if isSignedIn() && isValidId(producaoId);
+    }
+
+    match /clientes/{clienteId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(clienteId) && isValidCliente(incoming());
+    }
+
+    match /vendas/{vendaId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(vendaId) && isValidVenda(incoming());
+      allow update: if isSignedIn() && isValidId(vendaId) &&
+        isValidVenda(incoming()) &&
+        (
+          (resource.data.keys().hasAny(['origem']) &&
+            resource.data.origem == 'producao' &&
+            request.resource.data.origem == resource.data.origem &&
+            request.resource.data.producaoId == resource.data.producaoId &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'clienteId', 'clienteNome', 'quantidade', 'valorUnitario', 'valorTotal',
+              'formaPagamento', 'data', 'custoUnitario', 'custosInsumos', 'status', 'updatedAt'
+            ]) &&
+            getAfter(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.vendaId == vendaId &&
+            getAfter(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.data == request.resource.data.data &&
+            getAfter(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.quantidadeProduzida == request.resource.data.quantidade &&
+            getAfter(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.precoVendaUnitario == request.resource.data.valorUnitario &&
+            getAfter(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.clienteId == request.resource.data.clienteId &&
+            getAfter(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.clienteNome == request.resource.data.clienteNome &&
+            getAfter(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.formaPagamento == request.resource.data.formaPagamento &&
+            getAfter(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.status == request.resource.data.status) ||
+          (!resource.data.keys().hasAny(['origem']) &&
+            !request.resource.data.keys().hasAny(['origem']) &&
+            request.resource.data.diff(resource.data).affectedKeys().hasOnly([
+              'produtoId', 'produtoNome', 'clienteId', 'clienteNome', 'quantidade',
+              'valorUnitario', 'valorTotal', 'formaPagamento', 'data',
+              'custoUnitario', 'custosInsumos', 'status', 'updatedAt'
+            ]))
+        );
+      allow delete: if isSignedIn() &&
+        resource.data.origem == 'producao' &&
+        resource.data.producaoId is string &&
+        get(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.vendaId == vendaId;
+    }
+
+    match /pedidos/{pedidoId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(pedidoId) && isValidPedido(incoming());
+      allow update: if isSignedIn() && isValidId(pedidoId) &&
+        isValidPedido(incoming()) &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status', 'updatedAt']);
+    }
+
+    match /movimentacoesFinanceiras/{movimentacaoId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(movimentacaoId) && isValidMovimentacaoFinanceira(incoming());
+      allow delete: if isSignedIn() && isValidId(movimentacaoId);
+    }
+
+    match /despesasFixas/{despesaId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(despesaId) && isValidDespesaFixa(incoming());
+      allow delete: if isSignedIn() && isValidId(despesaId);
     }
   }
 }
