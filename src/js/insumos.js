@@ -1,8 +1,12 @@
 import { cachedInsumos, cachedReceitas, cachedFornecedores, editingInsumoId, stockFormUnit, isTestStockMode, firestoreDb, currentUser, activeGroupFilter, pendingDeleteId, LOCAL_DEMO_ITEMS_KEY, TEST_ITEMS_KEY, DEMO_SEED_INSUMOS, setActiveGroupFilter, setCachedInsumos, setEditingInsumoId, setPendingDeleteId, setStockFormUnit } from './state.js';
 import { dom } from './dom.js';
-import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda, correspondeBusca } from './helpers.js';
-import { initFirebase } from './firebaseAuth.js';
-import { collection, onSnapshot, doc, addDoc, deleteDoc, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda, correspondeBusca, formatarCustoComUnidade, calcularEquivalenciaReceita, preencherConversoesDoFormulario, calcularCustoItemReceita, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, obterConversoesDoFormulario } from './helpers.js';
+import { initFirebase, salvarDadosReceitasLocais, salvarDadosInsumosLocais, abrirModalRegrasFirestore } from './firebaseAuth.js';
+import { collection, onSnapshot, doc, addDoc, deleteDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
+import { convertStockQuantity, isBelowMinimum } from '../utils/inventory.ts';
+import { atualizarSelectFornecedores, obterFornecedorDoInsumo, renderizarFornecedores } from './firestoreData.js';
+import { normalizeComparisonName } from '../utils/supplierComparison.ts';
+import { renderizarReceitas, obterCustoPorUnidadeReceita, normalizarUnidadeRendimento, atualizarSelectsInsumosParaReceitas } from './receitas.js';
 
 export function obterEstoqueAtual(insumo) {
         return Number.isFinite(insumo?.estoqueAtual)

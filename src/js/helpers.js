@@ -1,3 +1,5 @@
+import { calcularCustoItemReceita as calcularCustoItemReceitaValidado, calcularTotaisReceita as calcularTotaisReceitaValidado } from '../utils/costCalculator.ts';
+import { dom } from './dom.js';
 export function calcularCustoUnitario(preco, quantidade) {
         const p = parseFloat(preco);
         const q = parseFloat(quantidade);
