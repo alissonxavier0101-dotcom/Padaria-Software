@@ -1,4 +1,4 @@
-import { cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, editingReceitaId, editingFornecedorId, pendingProductionRecipeId, pendingEditProductionId, pendingDeleteProductionId, pendingDeleteReceitaId, pendingAddItemReceitaId, pendingEditSaleId, activeGroupFilter, activeRecipeCategory, activeTab, itensReceitaEmElaboracao, gruposReceitaEmElaboracao, grupoReceitaSelecionadoId, itensGrupoModeloEmEdicao, editingRecipeGroupId, activeRecipePanel, fotoReceitaDataUrl, listasReceitaRecolhidas, currentUser, isTestStockMode, firestoreDb, DEMO_SEED_INSUMOS, setActiveRecipePanel, setActiveTab, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setEditingReceitaId, setEditingRecipeGroupId, setFotoReceitaDataUrl, setGrupoReceitaSelecionadoId, setGruposReceitaEmElaboracao, setItensGrupoModeloEmEdicao, setItensReceitaEmElaboracao, setPendingAddItemReceitaId, setPendingDeleteProductionId, setPendingDeleteReceitaId, setPendingEditProductionId, setPendingEditSaleId, setPendingProductionRecipeId, cachedInsumos, TEST_RECIPE_GROUPS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, TEST_ITEMS_KEY, LOCAL_DEMO_ITEMS_KEY, TEST_PRODUCTIONS_KEY, LOCAL_DEMO_PRODUCOES_KEY, TEST_SALES_KEY, LOCAL_DEMO_SALES_KEY, TEST_ORDERS_KEY, LOCAL_DEMO_ORDERS_KEY, TEST_CUSTOMERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, TEST_CASHFLOW_KEY, LOCAL_DEMO_CASHFLOW_KEY, TEST_FIXED_EXPENSES_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY } from './state.js';
+import { cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, editingReceitaId, editingFornecedorId, pendingProductionRecipeId, pendingEditProductionId, pendingDeleteProductionId, pendingDeleteReceitaId, pendingAddItemReceitaId, pendingEditSaleId, activeGroupFilter, activeRecipeCategory, activeTab, itensReceitaEmElaboracao, gruposReceitaEmElaboracao, grupoReceitaSelecionadoId, itensGrupoModeloEmEdicao, editingRecipeGroupId, activeRecipePanel, fotoReceitaDataUrl, listasReceitaRecolhidas, currentUser, isTestStockMode, firestoreDb, DEMO_SEED_INSUMOS, setActiveRecipePanel, setActiveTab, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setEditingReceitaId, setEditingRecipeGroupId, setFotoReceitaDataUrl, setGrupoReceitaSelecionadoId, setGruposReceitaEmElaboracao, setItensGrupoModeloEmEdicao, setItensReceitaEmElaboracao, setPendingAddItemReceitaId, setPendingDeleteProductionId, setPendingDeleteReceitaId, setPendingEditProductionId, setPendingEditSaleId, setPendingProductionRecipeId, cachedInsumos, TEST_RECIPE_GROUPS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, TEST_ITEMS_KEY, LOCAL_DEMO_ITEMS_KEY, TEST_PRODUCTIONS_KEY, LOCAL_DEMO_PRODUCOES_KEY, TEST_SALES_KEY, LOCAL_DEMO_SALES_KEY, TEST_ORDERS_KEY, LOCAL_DEMO_ORDERS_KEY, TEST_CUSTOMERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, TEST_CASHFLOW_KEY, LOCAL_DEMO_CASHFLOW_KEY, TEST_FIXED_EXPENSES_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY, setCachedInsumos } from './state.js';
 import { dom } from './dom.js';
 import { showToast, escapeHtml, formatarMoeda, calcularCustoUnitario, normalizarTextoBusca, correspondeBusca, formatarCustoComUnidade, calcularEquivalenciaReceita, calcularCustoItemReceita, calcularTotaisReceita, obterCustosIndiretosDoFormulario, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao } from './helpers.js';
 import { initFirebase, salvarDadosReceitasLocais, salvarDadosInsumosLocais, salvarDadosProducoesLocais } from './firebaseAuth.js';
@@ -1360,7 +1360,7 @@ export async function confirmarProducao() {
             };
             const producoesAtualizadas = [registro, ...cachedProducoes];
             const vendasAtualizadas = [venda, ...cachedVendas];
-            cachedInsumos = atualizados;
+            setCachedInsumos(atualizados);
             setCachedProducoes(producoesAtualizadas);
             setCachedVendas(vendasAtualizadas);
             salvarDadosInsumosLocais();
@@ -2171,7 +2171,7 @@ export async function confirmarExclusaoProducao() {
               isTestStockMode ? TEST_SALES_KEY : LOCAL_DEMO_SALES_KEY,
               JSON.stringify(updatedSales)
             );
-            cachedInsumos = updatedItems;
+            setCachedInsumos(updatedItems);
             setCachedProducoes(updatedProductions);
             setCachedVendas(updatedSales);
             renderizarInsumos();

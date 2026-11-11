@@ -5,7 +5,7 @@ import { switchTab, switchRecipePanel, renderizarReceitas, renderizarResultadosB
 import { abrirModalConfig, fecharModalConfig, salvarConfigFirebaseModal } from './firebaseConfigModal.js';
 import { showToast } from './helpers.js';
 import { dom } from './dom.js';
-import { itensGrupoModeloEmEdicao, cachedReceitas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas } from './state.js';
+import { itensGrupoModeloEmEdicao, cachedReceitas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas, setActiveRecipeCategory, setGrupoReceitaSelecionadoId } from './state.js';
 
 // 11. REGISTRO DE EVENTOS E INTERATIVIDADE
 // -------------------------------------------------------------
@@ -250,7 +250,7 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       dom.btnEmptyClearFiltersReceitas.addEventListener('click', () => {
         dom.inputSearchReceitas.value = '';
         dom.btnClearSearchReceitas.style.display = 'none';
-        activeRecipeCategory = 'todos';
+        setActiveRecipeCategory('todos');
         dom.recipeCategoryPills.querySelectorAll('[data-recipe-category]').forEach(button => {
           const active = button.getAttribute('data-recipe-category') === 'todos';
           button.classList.toggle('active', active);
@@ -325,7 +325,7 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
         });
       });
       dom.receitaItemGrupo.addEventListener('change', () => {
-        grupoReceitaSelecionadoId = dom.receitaItemGrupo.value;
+        setGrupoReceitaSelecionadoId(dom.receitaItemGrupo.value);
         atualizarModoOrganizacaoGrupoReceita(grupoReceitaSelecionadoId ? 'existing' : 'standalone');
       });
       dom.btnAddGrupoReceita.addEventListener('click', adicionarGrupoReceita);
@@ -482,7 +482,7 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       dom.recipeCategoryPills.addEventListener('click', (e) => {
         const pill = e.target.closest('[data-recipe-category]');
         if (!pill) return;
-        activeRecipeCategory = pill.getAttribute('data-recipe-category') || 'todos';
+        setActiveRecipeCategory(pill.getAttribute('data-recipe-category') || 'todos');
         dom.recipeCategoryPills.querySelectorAll('[data-recipe-category]').forEach(button => {
           const active = button === pill;
           button.classList.toggle('active', active);

@@ -1,4 +1,4 @@
-import { isTestStockMode, firestoreDb, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, LOCAL_CONFIG_KEY, LOCAL_DEMO_ITEMS_KEY, LOCAL_DEMO_RECEITAS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, LOCAL_DEMO_PRODUCOES_KEY, LOCAL_DEMO_SUPPLIERS_KEY, LOCAL_DEMO_SALES_KEY, LOCAL_DEMO_ORDERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, LOCAL_DEMO_CASHFLOW_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY, setCachedCashflow, setCachedClientes, setCachedFixedExpenses, setCachedFornecedores, setCachedInsumos, setCachedPedidos, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setUnsubscribeCashflowSnapshot, setUnsubscribeClientesSnapshot, setUnsubscribeFixedExpensesSnapshot, setUnsubscribeFornecedoresSnapshot, setUnsubscribePedidosSnapshot, setUnsubscribeProducoesSnapshot, setUnsubscribeReceitasSnapshot, setUnsubscribeRecipeGroupsSnapshot, setUnsubscribeSnapshot, setUnsubscribeVendasSnapshot, editingFornecedorId, currentUser } from './state.js';
+import { isTestStockMode, firestoreDb, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, LOCAL_CONFIG_KEY, LOCAL_DEMO_ITEMS_KEY, LOCAL_DEMO_RECEITAS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, LOCAL_DEMO_PRODUCOES_KEY, LOCAL_DEMO_SUPPLIERS_KEY, LOCAL_DEMO_SALES_KEY, LOCAL_DEMO_ORDERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, LOCAL_DEMO_CASHFLOW_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY, setCachedCashflow, setCachedClientes, setCachedFixedExpenses, setCachedFornecedores, setCachedInsumos, setCachedPedidos, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setUnsubscribeCashflowSnapshot, setUnsubscribeClientesSnapshot, setUnsubscribeFixedExpensesSnapshot, setUnsubscribeFornecedoresSnapshot, setUnsubscribePedidosSnapshot, setUnsubscribeProducoesSnapshot, setUnsubscribeReceitasSnapshot, setUnsubscribeRecipeGroupsSnapshot, setUnsubscribeSnapshot, setUnsubscribeVendasSnapshot, editingFornecedorId, currentUser, setEditingFornecedorId } from './state.js';
 import { dom } from './dom.js';
 import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda } from './helpers.js';
 import { initFirebase, abrirModalRegrasFirestore, salvarDadosFornecedoresLocais } from './firebaseAuth.js';
@@ -421,7 +421,7 @@ export function renderizarComparativoIngredientes() {
       }
 
 export function prepararNovoFornecedor(nome = '') {
-        editingFornecedorId = null;
+        setEditingFornecedorId(null);
         dom.formFornecedor.reset();
         dom.inputNomeFornecedor.value = nome;
         dom.supplierFormTitle.textContent = '🏷️ Cadastrar fornecedor';
@@ -432,7 +432,7 @@ export function prepararNovoFornecedor(nome = '') {
 export function abrirEdicaoFornecedor(id) {
         const fornecedor = cachedFornecedores.find(item => item.id === id);
         if (!fornecedor) return;
-        editingFornecedorId = id;
+        setEditingFornecedorId(id);
         dom.inputNomeFornecedor.value = fornecedor.nome || '';
         dom.inputTelefoneFornecedor.value = fornecedor.telefone || '';
         dom.inputEmailFornecedor.value = fornecedor.email || '';
