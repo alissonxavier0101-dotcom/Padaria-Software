@@ -3,7 +3,11 @@ import { dom } from './dom.js';
 import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda } from './helpers.js';
 import { initFirebase, abrirModalRegrasFirestore, salvarDadosFornecedoresLocais } from './firebaseAuth.js';
 import { renderizarInsumos } from './insumos.js';
-import { renderizarReceitas, renderizarFinanceiro, renderizarGruposModeloReceita, renderizarProducoes, renderizarVendas, renderizarClientes, renderizarPedidos, atualizarSelectClientes, atualizarSelectsInsumosParaReceitas, atualizarSelectProdutos } from './receitas.js';
+import { renderizarReceitas, renderizarGruposModeloReceita, atualizarSelectClientes, atualizarSelectsInsumosParaReceitas, atualizarSelectProdutos } from './receitas.js';
+import { renderizarFinanceiro } from './financeiro.js';
+import { renderizarProducoes } from './producao.js';
+import { renderizarVendas, renderizarPedidos } from './vendas.js';
+import { renderizarClientes } from './clientes.js';
 import { collection, onSnapshot, doc, addDoc, deleteDoc, updateDoc, query, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { normalizeComparisonName, compareSupplierOffers } from '../utils/supplierComparison.ts';
 

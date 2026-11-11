@@ -5,7 +5,11 @@ import { iniciarListenerFirestore, renderizarFornecedores, atualizarSelectFornec
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, signInWithPopup, signInWithRedirect, signInWithEmailAndPassword, GoogleAuthProvider, signOut, onAuthStateChanged, getRedirectResult } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 import { getFirestore } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
-import { renderizarProducoes, renderizarGruposModeloReceita, renderizarVendas, renderizarPedidos, renderizarClientes, renderizarFinanceiro, atualizarSelectsInsumosParaReceitas, renderizarReceitas, atualizarSelectProdutos, atualizarSelectClientes } from './receitas.js';
+import { renderizarGruposModeloReceita, atualizarSelectsInsumosParaReceitas, renderizarReceitas, atualizarSelectProdutos, atualizarSelectClientes } from './receitas.js';
+import { renderizarProducoes } from './producao.js';
+import { renderizarVendas, renderizarPedidos } from './vendas.js';
+import { renderizarClientes } from './clientes.js';
+import { renderizarFinanceiro } from './financeiro.js';
 import { renderizarInsumos } from './insumos.js';
 
 export function obterFirebaseConfig() {

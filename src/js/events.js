@@ -1,11 +1,15 @@
 import { handleLoginGoogle, handleLoginWithPassword, handleLogout, alterarModoEstoque, copiarDominio, carregarDadosLocais, pararListenersFirestore, abrirModalDominioNaoAutorizado, fecharModalDominioNaoAutorizado, abrirModalRegrasFirestore, fecharModalRegrasFirestore } from './firebaseAuth.js';
-import { abrirEdicaoFornecedor, prepararNovoFornecedor, handleFormFornecedorSubmit, obterFornecedoresDisponiveis, renderizarComparativoIngredientes } from './firestoreData.js';
+import { abrirEdicaoFornecedor, prepararNovoFornecedor, handleFormFornecedorSubmit, obterFornecedoresDisponiveis, renderizarComparativoIngredientes, renderizarFornecedores, atualizarSelectFornecedores } from './firestoreData.js';
 import { renderizarInsumos, abrirEdicaoInsumo, prepararNovoInsumo, cancelarEdicaoInsumo, handleFormSubmit, confirmarExclusao, handleStockUnitChange, setGroupFilter, atualizarPreviewCalculo, abrirModalExcluir, fecharModalExcluir } from './insumos.js';
-import { switchTab, switchRecipePanel, renderizarReceitas, renderizarResultadosBuscaInsumosReceita, renderizarGruposReceitaEmElaboracao, renderizarItensGrupoModelo, adicionarGrupoReceita, atualizarModoOrganizacaoGrupoReceita, atualizarNomeGrupoReceita, removerGrupoReceita, selecionarGrupoReceita, copiarItensGrupoModeloParaReceita, moverItemParaGrupo, adicionarItemReceitaEmElaboracao, removerItemReceitaEmElaboracao, renderizarItensReceitaEmElaboracao, atualizarPreviewItemReceita, atualizarTotaisReceitaEmElaboracao, atualizarCalculadoraLucroReceita, atualizarPreviewFotoReceita, compactarFotoReceita, prepararNovaReceita, abrirEdicaoReceita, duplicarReceita, handleFormReceitaSubmit, abrirModalProducao, fecharModalProducao, renderizarPreviaProducao, confirmarProducao, abrirEdicaoProducao, fecharEdicaoProducao, atualizarPreviaEdicaoProducao, salvarEdicaoProducao, abrirExclusaoProducao, fecharExclusaoProducao, confirmarExclusaoProducao, abrirModalAddItemReceita, fecharModalAddItemReceita, atualizarPreviewModalAddItem, confirmarModalAddItemReceita, salvarNovoPrecoReceita, atualizarSelectProdutos, atualizarSelectClientes, atualizarPrecoVendaProduto, abrirEdicaoVenda, fecharEdicaoVenda, salvarEdicaoVenda, salvarVenda, salvarPedido, salvarCliente, salvarMovimentacaoFinanceira, salvarDespesaFixa, excluirRegistroFinanceiro, atualizarStatusPedido, salvarGrupoModeloReceita, adicionarItemGrupoModelo, prepararNovoGrupoModelo, editarGrupoModeloReceita, excluirGrupoModeloReceita, atualizarCategoriasMovimentacao, renderizarFinanceiro, usarGrupoCatalogoNaReceita, abrirModalExcluirReceita, fecharModalExcluirReceita, confirmarExclusaoReceita } from './receitas.js';
+import { switchRecipePanel, renderizarReceitas, renderizarResultadosBuscaInsumosReceita, renderizarGruposReceitaEmElaboracao, renderizarItensGrupoModelo, renderizarGruposModeloReceita, adicionarGrupoReceita, atualizarModoOrganizacaoGrupoReceita, atualizarNomeGrupoReceita, removerGrupoReceita, selecionarGrupoReceita, copiarItensGrupoModeloParaReceita, moverItemParaGrupo, adicionarItemReceitaEmElaboracao, removerItemReceitaEmElaboracao, renderizarItensReceitaEmElaboracao, atualizarPreviewItemReceita, atualizarTotaisReceitaEmElaboracao, atualizarCalculadoraLucroReceita, atualizarPreviewFotoReceita, compactarFotoReceita, prepararNovaReceita, abrirEdicaoReceita, duplicarReceita, handleFormReceitaSubmit, salvarNovoPrecoReceita, atualizarSelectProdutos, atualizarSelectClientes, atualizarPrecoVendaProduto, abrirEdicaoVenda, fecharEdicaoVenda, salvarEdicaoVenda, salvarVenda, salvarPedido, salvarCliente, salvarMovimentacaoFinanceira, salvarDespesaFixa, excluirRegistroFinanceiro, atualizarStatusPedido, salvarGrupoModeloReceita, adicionarItemGrupoModelo, prepararNovoGrupoModelo, editarGrupoModeloReceita, excluirGrupoModeloReceita, atualizarCategoriasMovimentacao, usarGrupoCatalogoNaReceita, abrirModalExcluirReceita, fecharModalExcluirReceita, confirmarExclusaoReceita } from './receitas.js';
+import { abrirModalProducao, fecharModalProducao, renderizarPreviaProducao, confirmarProducao, abrirEdicaoProducao, fecharEdicaoProducao, atualizarPreviaEdicaoProducao, salvarEdicaoProducao, abrirExclusaoProducao, fecharExclusaoProducao, confirmarExclusaoProducao, abrirModalAddItemReceita, fecharModalAddItemReceita, atualizarPreviewModalAddItem, confirmarModalAddItemReceita, renderizarProducoes } from './producao.js';
+import { renderizarFinanceiro } from './financeiro.js';
+import { renderizarVendas, renderizarPedidos } from './vendas.js';
+import { renderizarClientes } from './clientes.js';
 import { abrirModalConfig, fecharModalConfig, salvarConfigFirebaseModal } from './firebaseConfigModal.js';
 import { showToast } from './helpers.js';
 import { dom } from './dom.js';
-import { itensGrupoModeloEmEdicao, cachedReceitas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas, setActiveRecipeCategory, setGrupoReceitaSelecionadoId } from './state.js';
+import { itensGrupoModeloEmEdicao, cachedReceitas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas, setActiveRecipeCategory, setGrupoReceitaSelecionadoId, setActiveTab } from './state.js';
 
 // 11. REGISTRO DE EVENTOS E INTERATIVIDADE
 // -------------------------------------------------------------
@@ -554,4 +558,51 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
         renderizarReceitas();
         dom.inputSearchReceitas.focus();
       });
+
+export function switchTab(tab) {
+  setActiveTab(tab);
+  const tabs = [
+    ['insumos', dom.tabNavInsumos, dom.viewInsumos],
+    ['fornecedores', dom.tabNavFornecedores, dom.viewFornecedores],
+    ['receitas', dom.tabNavReceitas, dom.viewReceitas],
+    ['producoes', dom.tabNavProducoes, dom.viewProducoes],
+    ['vendas', dom.tabNavVendas, dom.viewVendas],
+    ['pedidos', dom.tabNavPedidos, dom.viewPedidos],
+    ['clientes', dom.tabNavClientes, dom.viewClientes],
+    ['financeiro', dom.tabNavFinanceiro, dom.viewFinanceiro]
+  ];
+  tabs.forEach(([name, button, view]) => {
+    const isActive = name === tab;
+    button.classList.toggle('active', isActive);
+    button.setAttribute('aria-selected', String(isActive));
+    view.classList.toggle('hidden', !isActive);
+  });
+
+  if (tab === 'insumos') {
+    renderizarInsumos();
+    return;
+  }
+  if (tab === 'fornecedores') {
+    atualizarSelectFornecedores();
+    renderizarFornecedores();
+  } else if (tab === 'receitas') {
+    atualizarSelectsInsumosParaReceitas();
+    renderizarReceitas();
+    renderizarGruposModeloReceita();
+  } else if (tab === 'producoes') {
+    renderizarProducoes();
+  } else if (tab === 'vendas') {
+    atualizarSelectProdutos();
+    atualizarSelectClientes();
+    renderizarVendas();
+  } else if (tab === 'pedidos') {
+    atualizarSelectProdutos();
+    atualizarSelectClientes();
+    renderizarPedidos();
+  } else if (tab === 'clientes') {
+    renderizarClientes();
+  } else if (tab === 'financeiro') {
+    renderizarFinanceiro();
+  }
+}
 
