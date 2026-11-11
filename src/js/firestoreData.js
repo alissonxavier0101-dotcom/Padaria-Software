@@ -1,4 +1,4 @@
-import { isTestStockMode, firestoreDb, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, LOCAL_CONFIG_KEY, LOCAL_DEMO_ITEMS_KEY, LOCAL_DEMO_RECEITAS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, LOCAL_DEMO_PRODUCOES_KEY, LOCAL_DEMO_SUPPLIERS_KEY, LOCAL_DEMO_SALES_KEY, LOCAL_DEMO_ORDERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, LOCAL_DEMO_CASHFLOW_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY } from './state.js';
+import { isTestStockMode, firestoreDb, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, LOCAL_CONFIG_KEY, LOCAL_DEMO_ITEMS_KEY, LOCAL_DEMO_RECEITAS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, LOCAL_DEMO_PRODUCOES_KEY, LOCAL_DEMO_SUPPLIERS_KEY, LOCAL_DEMO_SALES_KEY, LOCAL_DEMO_ORDERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, LOCAL_DEMO_CASHFLOW_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY, setCachedCashflow, setCachedClientes, setCachedFixedExpenses, setCachedFornecedores, setCachedInsumos, setCachedPedidos, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setUnsubscribeCashflowSnapshot, setUnsubscribeClientesSnapshot, setUnsubscribeFixedExpensesSnapshot, setUnsubscribeFornecedoresSnapshot, setUnsubscribePedidosSnapshot, setUnsubscribeProducoesSnapshot, setUnsubscribeReceitasSnapshot, setUnsubscribeRecipeGroupsSnapshot, setUnsubscribeSnapshot, setUnsubscribeVendasSnapshot } from './state.js';
 import { dom } from './dom.js';
 import { showToast, calcularCustoUnitario } from './helpers.js';
 import { initFirebase, abrirModalRegrasFirestore } from './firebaseAuth.js';
@@ -16,12 +16,12 @@ export function iniciarListenerFirestore() {
         // Listener da coleção de Insumos
         if (unsubscribeSnapshot) {
           unsubscribeSnapshot();
-          unsubscribeSnapshot = null;
+          setUnsubscribeSnapshot(null);
         }
 
         try {
           const insumosColl = collection(firestoreDb, 'insumos');
-          unsubscribeSnapshot = onSnapshot(insumosColl, (snapshot) => {
+          setUnsubscribeSnapshot(onSnapshot(insumosColl, (snapshot) => {
             if (isTestStockMode) return;
             const itens = [];
             snapshot.forEach((docSnap) => {
@@ -42,7 +42,7 @@ export function iniciarListenerFirestore() {
               return dateB - dateA;
             });
 
-            cachedInsumos = itens;
+            setCachedInsumos(itens);
             renderizarInsumos();
             atualizarSelectFornecedores();
             atualizarSelectsInsumosParaReceitas();
@@ -57,7 +57,7 @@ export function iniciarListenerFirestore() {
               abrirModalRegrasFirestore();
               showToast('Permissão pendente no Firestore: configure as regras de segurança.');
             }
-          });
+          }));
         } catch (err) {
           console.error('Falha ao conectar insumos no Firestore:', err);
         }
@@ -78,13 +78,13 @@ export function iniciarListenerFornecedores() {
         if (!firestoreDb) return;
         if (unsubscribeFornecedoresSnapshot) {
           unsubscribeFornecedoresSnapshot();
-          unsubscribeFornecedoresSnapshot = null;
+          setUnsubscribeFornecedoresSnapshot(null);
         }
 
         try {
-          unsubscribeFornecedoresSnapshot = onSnapshot(collection(firestoreDb, 'fornecedores'), (snapshot) => {
+          setUnsubscribeFornecedoresSnapshot(onSnapshot(collection(firestoreDb, 'fornecedores'), (snapshot) => {
             if (isTestStockMode) return;
-            cachedFornecedores = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            setCachedFornecedores(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
             cachedFornecedores.sort((left, right) => String(left.nome || '').localeCompare(String(right.nome || ''), 'pt-BR'));
             atualizarSelectFornecedores();
             renderizarFornecedores();
@@ -94,7 +94,7 @@ export function iniciarListenerFornecedores() {
               abrirModalRegrasFirestore();
               showToast('Publique as regras atualizadas do Firestore para usar o cadastro de fornecedores.');
             }
-          });
+          }));
         } catch (error) {
           console.error('Falha ao conectar fornecedores no Firestore:', error);
           showToast('Não foi possível carregar o cadastro de fornecedores.');
@@ -105,12 +105,12 @@ export function iniciarListenerReceitas() {
         if (!firestoreDb) return;
         if (unsubscribeReceitasSnapshot) {
           unsubscribeReceitasSnapshot();
-          unsubscribeReceitasSnapshot = null;
+          setUnsubscribeReceitasSnapshot(null);
         }
 
         try {
           const receitasColl = collection(firestoreDb, 'receitas');
-          unsubscribeReceitasSnapshot = onSnapshot(receitasColl, (snapshot) => {
+          setUnsubscribeReceitasSnapshot(onSnapshot(receitasColl, (snapshot) => {
             if (isTestStockMode) return;
             const receitas = [];
             snapshot.forEach((docSnap) => {
@@ -128,7 +128,7 @@ export function iniciarListenerReceitas() {
               return dateB - dateA;
             });
 
-            cachedReceitas = receitas;
+            setCachedReceitas(receitas);
             atualizarSelectsInsumosParaReceitas();
             atualizarSelectProdutos();
             renderizarReceitas();
@@ -138,7 +138,7 @@ export function iniciarListenerReceitas() {
             }
           }, (error) => {
             console.error('Erro no snapshot de receitas:', error);
-          });
+          }));
         } catch (err) {
           console.error('Falha ao conectar receitas no Firestore:', err);
         }
@@ -148,12 +148,12 @@ export function iniciarListenerGruposReceita() {
         if (!firestoreDb) return;
         if (unsubscribeRecipeGroupsSnapshot) {
           unsubscribeRecipeGroupsSnapshot();
-          unsubscribeRecipeGroupsSnapshot = null;
+          setUnsubscribeRecipeGroupsSnapshot(null);
         }
         try {
-          unsubscribeRecipeGroupsSnapshot = onSnapshot(collection(firestoreDb, 'gruposReceita'), snapshot => {
+          setUnsubscribeRecipeGroupsSnapshot(onSnapshot(collection(firestoreDb, 'gruposReceita'), snapshot => {
             if (isTestStockMode) return;
-            cachedRecipeGroups = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            setCachedRecipeGroups(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
             cachedRecipeGroups.sort((left, right) => String(left.nome || '').localeCompare(String(right.nome || ''), 'pt-BR'));
             renderizarGruposModeloReceita();
           }, error => {
@@ -164,7 +164,7 @@ export function iniciarListenerGruposReceita() {
             } else {
               showToast('Não foi possível carregar os grupos de ingredientes.');
             }
-          });
+          }));
         } catch (error) {
           console.error('Falha ao conectar o catálogo de grupos:', error);
           showToast('Não foi possível conectar o catálogo de grupos.');
@@ -175,13 +175,13 @@ export function iniciarListenerProducoes() {
         if (!firestoreDb) return;
         if (unsubscribeProducoesSnapshot) {
           unsubscribeProducoesSnapshot();
-          unsubscribeProducoesSnapshot = null;
+          setUnsubscribeProducoesSnapshot(null);
         }
 
         try {
-          unsubscribeProducoesSnapshot = onSnapshot(collection(firestoreDb, 'producoes'), (snapshot) => {
+          setUnsubscribeProducoesSnapshot(onSnapshot(collection(firestoreDb, 'producoes'), (snapshot) => {
             if (isTestStockMode) return;
-            cachedProducoes = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            setCachedProducoes(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
             cachedProducoes.sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
             renderizarProducoes();
           }, (error) => {
@@ -189,7 +189,7 @@ export function iniciarListenerProducoes() {
             if (error?.code === 'permission-denied') {
               showToast('Sem permissão para consultar o histórico de produção.');
             }
-          });
+          }));
         } catch (error) {
           console.error('Falha ao conectar o histórico de produção:', error);
           showToast('Não foi possível carregar o histórico de produção.');
@@ -200,9 +200,9 @@ export function iniciarListenerVendas() {
         if (!firestoreDb) return;
         if (unsubscribeVendasSnapshot) unsubscribeVendasSnapshot();
         try {
-          unsubscribeVendasSnapshot = onSnapshot(collection(firestoreDb, 'vendas'), (snapshot) => {
+          setUnsubscribeVendasSnapshot(onSnapshot(collection(firestoreDb, 'vendas'), (snapshot) => {
             if (isTestStockMode) return;
-            cachedVendas = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            setCachedVendas(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
             cachedVendas.sort((left, right) => String(right.data || '').localeCompare(String(left.data || '')));
             renderizarVendas();
             renderizarClientes();
@@ -211,7 +211,7 @@ export function iniciarListenerVendas() {
             console.error('Erro ao carregar vendas:', error);
             if (error?.code === 'permission-denied') abrirModalRegrasFirestore();
             showToast('Não foi possível carregar as vendas. Verifique as regras do Firestore.');
-          });
+          }));
         } catch (error) {
           console.error('Falha ao conectar vendas no Firestore:', error);
           showToast('Não foi possível conectar o histórico de vendas.');
@@ -222,16 +222,16 @@ export function iniciarListenerPedidos() {
         if (!firestoreDb) return;
         if (unsubscribePedidosSnapshot) unsubscribePedidosSnapshot();
         try {
-          unsubscribePedidosSnapshot = onSnapshot(collection(firestoreDb, 'pedidos'), (snapshot) => {
+          setUnsubscribePedidosSnapshot(onSnapshot(collection(firestoreDb, 'pedidos'), (snapshot) => {
             if (isTestStockMode) return;
-            cachedPedidos = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            setCachedPedidos(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
             cachedPedidos.sort((left, right) => String(left.dataEntrega || '').localeCompare(String(right.dataEntrega || '')));
             renderizarPedidos();
           }, (error) => {
             console.error('Erro ao carregar encomendas:', error);
             if (error?.code === 'permission-denied') abrirModalRegrasFirestore();
             showToast('Não foi possível carregar as encomendas. Verifique as regras do Firestore.');
-          });
+          }));
         } catch (error) {
           console.error('Falha ao conectar encomendas no Firestore:', error);
           showToast('Não foi possível conectar o histórico de encomendas.');
@@ -242,9 +242,9 @@ export function iniciarListenerClientes() {
         if (!firestoreDb) return;
         if (unsubscribeClientesSnapshot) unsubscribeClientesSnapshot();
         try {
-          unsubscribeClientesSnapshot = onSnapshot(collection(firestoreDb, 'clientes'), (snapshot) => {
+          setUnsubscribeClientesSnapshot(onSnapshot(collection(firestoreDb, 'clientes'), (snapshot) => {
             if (isTestStockMode) return;
-            cachedClientes = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            setCachedClientes(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
             cachedClientes.sort((left, right) => String(left.nome || '').localeCompare(String(right.nome || ''), 'pt-BR'));
             atualizarSelectClientes();
             renderizarClientes();
@@ -253,7 +253,7 @@ export function iniciarListenerClientes() {
             console.error('Erro ao carregar clientes:', error);
             if (error?.code === 'permission-denied') abrirModalRegrasFirestore();
             showToast('Não foi possível carregar os clientes. Verifique as regras do Firestore.');
-          });
+          }));
         } catch (error) {
           console.error('Falha ao conectar clientes no Firestore:', error);
           showToast('Não foi possível conectar o cadastro de clientes.');
@@ -264,16 +264,16 @@ export function iniciarListenerCashflow() {
         if (!firestoreDb) return;
         if (unsubscribeCashflowSnapshot) unsubscribeCashflowSnapshot();
         try {
-          unsubscribeCashflowSnapshot = onSnapshot(collection(firestoreDb, 'movimentacoesFinanceiras'), (snapshot) => {
+          setUnsubscribeCashflowSnapshot(onSnapshot(collection(firestoreDb, 'movimentacoesFinanceiras'), (snapshot) => {
             if (isTestStockMode) return;
-            cachedCashflow = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            setCachedCashflow(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
             cachedCashflow.sort((left, right) => String(right.data || '').localeCompare(String(left.data || '')));
             renderizarFinanceiro();
           }, (error) => {
             console.error('Erro ao carregar o fluxo de caixa:', error);
             if (error?.code === 'permission-denied') abrirModalRegrasFirestore();
             showToast('Não foi possível carregar o fluxo de caixa. Verifique as regras do Firestore.');
-          });
+          }));
         } catch (error) {
           console.error('Falha ao conectar o fluxo de caixa no Firestore:', error);
           showToast('Não foi possível conectar o fluxo de caixa.');
@@ -284,16 +284,16 @@ export function iniciarListenerDespesasFixas() {
         if (!firestoreDb) return;
         if (unsubscribeFixedExpensesSnapshot) unsubscribeFixedExpensesSnapshot();
         try {
-          unsubscribeFixedExpensesSnapshot = onSnapshot(collection(firestoreDb, 'despesasFixas'), (snapshot) => {
+          setUnsubscribeFixedExpensesSnapshot(onSnapshot(collection(firestoreDb, 'despesasFixas'), (snapshot) => {
             if (isTestStockMode) return;
-            cachedFixedExpenses = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+            setCachedFixedExpenses(snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() })));
             cachedFixedExpenses.sort((left, right) => String(left.nome || '').localeCompare(String(right.nome || ''), 'pt-BR'));
             renderizarFinanceiro();
           }, (error) => {
             console.error('Erro ao carregar despesas fixas:', error);
             if (error?.code === 'permission-denied') abrirModalRegrasFirestore();
             showToast('Não foi possível carregar as despesas fixas. Verifique as regras do Firestore.');
-          });
+          }));
         } catch (error) {
           console.error('Falha ao conectar despesas fixas no Firestore:', error);
           showToast('Não foi possível conectar as despesas fixas.');

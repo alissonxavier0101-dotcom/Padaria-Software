@@ -1,4 +1,4 @@
-import { LOCAL_CONFIG_KEY, DEFAULT_FIREBASE_CONFIG, firebaseApp, firebaseAuth, firestoreDb, redirectResultChecked, isTestStockMode, currentUser, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot } from './state.js';
+import { LOCAL_CONFIG_KEY, DEFAULT_FIREBASE_CONFIG, firebaseApp, firebaseAuth, firestoreDb, redirectResultChecked, isTestStockMode, currentUser, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, setCachedCashflow, setCachedClientes, setCachedFixedExpenses, setCachedFornecedores, setCachedInsumos, setCachedPedidos, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setCurrentUser, setFirebaseApp, setFirebaseAuth, setFirestoreDb, setIsTestStockMode, setRedirectResultChecked, setUnsubscribeCashflowSnapshot, setUnsubscribeClientesSnapshot, setUnsubscribeFixedExpensesSnapshot, setUnsubscribeFornecedoresSnapshot, setUnsubscribePedidosSnapshot, setUnsubscribeProducoesSnapshot, setUnsubscribeReceitasSnapshot, setUnsubscribeRecipeGroupsSnapshot, setUnsubscribeSnapshot, setUnsubscribeVendasSnapshot } from './state.js';
 import { dom } from './dom.js';
 import { showToast } from './helpers.js';
 import { iniciarListenerFirestore } from './firestoreData.js';
@@ -30,13 +30,13 @@ export function initFirebase() {
         if (cfg && cfg.apiKey && cfg.projectId) {
           try {
             if (!firebaseApp) {
-              firebaseApp = initializeApp(cfg);
+              setFirebaseApp(initializeApp(cfg));
             }
             if (!firebaseAuth) {
-              firebaseAuth = getAuth(firebaseApp);
+              setFirebaseAuth(getAuth(firebaseApp));
             }
             if (!firestoreDb) {
-              firestoreDb = getFirestore(firebaseApp);
+              setFirestoreDb(getFirestore(firebaseApp));
             }
             
             onAuthStateChanged(firebaseAuth, (user) => {
@@ -71,7 +71,7 @@ export function initFirebase() {
             });
 
             if (!redirectResultChecked) {
-              redirectResultChecked = true;
+              setRedirectResultChecked(true);
               getRedirectResult(firebaseAuth)
                 .then(result => {
                   if (result?.user) showToast(`Bem-vindo(a), ${result.user.displayName || 'Padeiro'}!`);
@@ -244,7 +244,7 @@ export async function handleLogout() {
       }
 
 export function onUserLoggedIn(user) {
-        currentUser = user;
+        setCurrentUser(user);
         dom.authScreen.classList.add('hidden');
         dom.appPanel.classList.remove('hidden');
         atualizarIndicadorModoEstoque();
@@ -268,18 +268,18 @@ export function onUserLoggedIn(user) {
       }
 
 export function onUserLoggedOut() {
-        currentUser = null;
-        isTestStockMode = false;
-        cachedInsumos = [];
-        cachedReceitas = [];
-        cachedRecipeGroups = [];
-        cachedProducoes = [];
-        cachedFornecedores = [];
-        cachedVendas = [];
-        cachedPedidos = [];
-        cachedClientes = [];
-        cachedCashflow = [];
-        cachedFixedExpenses = [];
+        setCurrentUser(null);
+        setIsTestStockMode(false);
+        setCachedInsumos([]);
+        setCachedReceitas([]);
+        setCachedRecipeGroups([]);
+        setCachedProducoes([]);
+        setCachedFornecedores([]);
+        setCachedVendas([]);
+        setCachedPedidos([]);
+        setCachedClientes([]);
+        setCachedCashflow([]);
+        setCachedFixedExpenses([]);
         atualizarIndicadorModoEstoque();
         renderizarProducoes();
         renderizarFornecedores();
@@ -304,16 +304,16 @@ export function carregarDadosLocais() {
           const savedCustomers = localStorage.getItem(LOCAL_DEMO_CUSTOMERS_KEY);
           const savedCashflow = localStorage.getItem(LOCAL_DEMO_CASHFLOW_KEY);
           const savedFixedExpenses = localStorage.getItem(LOCAL_DEMO_FIXED_EXPENSES_KEY);
-          cachedInsumos = savedItems ? JSON.parse(savedItems) : [...DEMO_SEED_INSUMOS];
-          cachedReceitas = savedRecipes ? JSON.parse(savedRecipes) : [];
-          cachedRecipeGroups = savedRecipeGroups ? JSON.parse(savedRecipeGroups) : [];
-          cachedProducoes = savedProductions ? JSON.parse(savedProductions) : [];
-          cachedFornecedores = savedSuppliers ? JSON.parse(savedSuppliers) : [];
-          cachedVendas = savedSales ? JSON.parse(savedSales) : [];
-          cachedPedidos = savedOrders ? JSON.parse(savedOrders) : [];
-          cachedClientes = savedCustomers ? JSON.parse(savedCustomers) : [];
-          cachedCashflow = savedCashflow ? JSON.parse(savedCashflow) : [];
-          cachedFixedExpenses = savedFixedExpenses ? JSON.parse(savedFixedExpenses) : [];
+          setCachedInsumos(savedItems ? JSON.parse(savedItems) : [...DEMO_SEED_INSUMOS]);
+          setCachedReceitas(savedRecipes ? JSON.parse(savedRecipes) : []);
+          setCachedRecipeGroups(savedRecipeGroups ? JSON.parse(savedRecipeGroups) : []);
+          setCachedProducoes(savedProductions ? JSON.parse(savedProductions) : []);
+          setCachedFornecedores(savedSuppliers ? JSON.parse(savedSuppliers) : []);
+          setCachedVendas(savedSales ? JSON.parse(savedSales) : []);
+          setCachedPedidos(savedOrders ? JSON.parse(savedOrders) : []);
+          setCachedClientes(savedCustomers ? JSON.parse(savedCustomers) : []);
+          setCachedCashflow(savedCashflow ? JSON.parse(savedCashflow) : []);
+          setCachedFixedExpenses(savedFixedExpenses ? JSON.parse(savedFixedExpenses) : []);
           renderizarInsumos();
           atualizarSelectFornecedores();
           atualizarSelectsInsumosParaReceitas();
@@ -348,16 +348,16 @@ export function pararListenersFirestore() {
         ].forEach(unsubscribe => {
           if (unsubscribe) unsubscribe();
         });
-        unsubscribeSnapshot = null;
-        unsubscribeReceitasSnapshot = null;
-        unsubscribeRecipeGroupsSnapshot = null;
-        unsubscribeProducoesSnapshot = null;
-        unsubscribeFornecedoresSnapshot = null;
-        unsubscribeVendasSnapshot = null;
-        unsubscribePedidosSnapshot = null;
-        unsubscribeClientesSnapshot = null;
-        unsubscribeCashflowSnapshot = null;
-        unsubscribeFixedExpensesSnapshot = null;
+        setUnsubscribeSnapshot(null);
+        setUnsubscribeReceitasSnapshot(null);
+        setUnsubscribeRecipeGroupsSnapshot(null);
+        setUnsubscribeProducoesSnapshot(null);
+        setUnsubscribeFornecedoresSnapshot(null);
+        setUnsubscribeVendasSnapshot(null);
+        setUnsubscribePedidosSnapshot(null);
+        setUnsubscribeClientesSnapshot(null);
+        setUnsubscribeCashflowSnapshot(null);
+        setUnsubscribeFixedExpensesSnapshot(null);
       }
 
 export function carregarDadosTeste() {
@@ -372,16 +372,16 @@ export function carregarDadosTeste() {
           const savedCustomers = localStorage.getItem(TEST_CUSTOMERS_KEY);
           const savedCashflow = localStorage.getItem(TEST_CASHFLOW_KEY);
           const savedFixedExpenses = localStorage.getItem(TEST_FIXED_EXPENSES_KEY);
-          cachedInsumos = savedItems ? JSON.parse(savedItems) : JSON.parse(JSON.stringify(DEMO_SEED_INSUMOS));
-          cachedReceitas = savedRecipes ? JSON.parse(savedRecipes) : JSON.parse(JSON.stringify(DEMO_SEED_RECEITAS));
-          cachedRecipeGroups = savedRecipeGroups ? JSON.parse(savedRecipeGroups) : [];
-          cachedProducoes = savedProductions ? JSON.parse(savedProductions) : [];
-          cachedFornecedores = savedSuppliers ? JSON.parse(savedSuppliers) : [];
-          cachedVendas = savedSales ? JSON.parse(savedSales) : [];
-          cachedPedidos = savedOrders ? JSON.parse(savedOrders) : [];
-          cachedClientes = savedCustomers ? JSON.parse(savedCustomers) : [];
-          cachedCashflow = savedCashflow ? JSON.parse(savedCashflow) : [];
-          cachedFixedExpenses = savedFixedExpenses ? JSON.parse(savedFixedExpenses) : [];
+          setCachedInsumos(savedItems ? JSON.parse(savedItems) : JSON.parse(JSON.stringify(DEMO_SEED_INSUMOS)));
+          setCachedReceitas(savedRecipes ? JSON.parse(savedRecipes) : JSON.parse(JSON.stringify(DEMO_SEED_RECEITAS)));
+          setCachedRecipeGroups(savedRecipeGroups ? JSON.parse(savedRecipeGroups) : []);
+          setCachedProducoes(savedProductions ? JSON.parse(savedProductions) : []);
+          setCachedFornecedores(savedSuppliers ? JSON.parse(savedSuppliers) : []);
+          setCachedVendas(savedSales ? JSON.parse(savedSales) : []);
+          setCachedPedidos(savedOrders ? JSON.parse(savedOrders) : []);
+          setCachedClientes(savedCustomers ? JSON.parse(savedCustomers) : []);
+          setCachedCashflow(savedCashflow ? JSON.parse(savedCashflow) : []);
+          setCachedFixedExpenses(savedFixedExpenses ? JSON.parse(savedFixedExpenses) : []);
           renderizarInsumos();
           atualizarSelectFornecedores();
           atualizarSelectsInsumosParaReceitas();
@@ -442,21 +442,21 @@ export function atualizarIndicadorModoEstoque() {
 export function alterarModoEstoque(test) {
         if (test === isTestStockMode) return;
         pararListenersFirestore();
-        isTestStockMode = test;
+        setIsTestStockMode(test);
         if (test) {
           carregarDadosTeste();
           showToast('Modo de testes ativado. O estoque real permanece protegido.');
         } else if (firestoreDb && currentUser) {
-          cachedInsumos = [];
-          cachedReceitas = [];
-          cachedRecipeGroups = [];
-          cachedProducoes = [];
-          cachedFornecedores = [];
-          cachedVendas = [];
-          cachedPedidos = [];
-          cachedClientes = [];
-          cachedCashflow = [];
-          cachedFixedExpenses = [];
+          setCachedInsumos([]);
+          setCachedReceitas([]);
+          setCachedRecipeGroups([]);
+          setCachedProducoes([]);
+          setCachedFornecedores([]);
+          setCachedVendas([]);
+          setCachedPedidos([]);
+          setCachedClientes([]);
+          setCachedCashflow([]);
+          setCachedFixedExpenses([]);
           renderizarInsumos();
           renderizarFornecedores();
           renderizarReceitas();

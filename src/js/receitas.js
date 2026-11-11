@@ -1,6 +1,6 @@
-import { cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, editingReceitaId, editingFornecedorId, pendingProductionRecipeId, pendingEditProductionId, pendingDeleteProductionId, pendingDeleteReceitaId, pendingAddItemReceitaId, pendingEditSaleId, activeGroupFilter, activeRecipeCategory, activeTab, itensReceitaEmElaboracao, gruposReceitaEmElaboracao, grupoReceitaSelecionadoId, itensGrupoModeloEmEdicao, editingRecipeGroupId, activeRecipePanel, fotoReceitaDataUrl, listasReceitaRecolhidas, currentUser, isTestStockMode, firestoreDb, DEMO_SEED_INSUMOS } from './state.js';
+import { cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, editingReceitaId, editingFornecedorId, pendingProductionRecipeId, pendingEditProductionId, pendingDeleteProductionId, pendingDeleteReceitaId, pendingAddItemReceitaId, pendingEditSaleId, activeGroupFilter, activeRecipeCategory, activeTab, itensReceitaEmElaboracao, gruposReceitaEmElaboracao, grupoReceitaSelecionadoId, itensGrupoModeloEmEdicao, editingRecipeGroupId, activeRecipePanel, fotoReceitaDataUrl, listasReceitaRecolhidas, currentUser, isTestStockMode, firestoreDb, DEMO_SEED_INSUMOS, setActiveRecipePanel, setActiveTab, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setEditingReceitaId, setEditingRecipeGroupId, setFotoReceitaDataUrl, setGrupoReceitaSelecionadoId, setGruposReceitaEmElaboracao, setItensGrupoModeloEmEdicao, setItensReceitaEmElaboracao, setPendingAddItemReceitaId, setPendingDeleteProductionId, setPendingDeleteReceitaId, setPendingEditProductionId, setPendingEditSaleId, setPendingProductionRecipeId } from './state.js';
 import { dom } from './dom.js';
-import { showToast, escapeHtml, formatarMoeda, calcularCustoUnitario, normalizarTextoBusca, correspondeBusca, formatarCustoComUnidade, calcularEquivalenciaReceita, calcularCustoItemReceita, calcularTotaisReceita, obterCustosIndiretosDoFormulario, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, formatarDataModulo, dataISOValida, obterDataLocalAtual, obterChaveStorageModulo } from './helpers.js';
+import { showToast, escapeHtml, formatarMoeda, calcularCustoUnitario, normalizarTextoBusca, correspondeBusca, formatarCustoComUnidade, calcularEquivalenciaReceita, calcularCustoItemReceita, calcularTotaisReceita, obterCustosIndiretosDoFormulario, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao } from './helpers.js';
 import { initFirebase } from './firebaseAuth.js';
 import { renderizarInsumos } from './insumos.js';
 import { atualizarSelectFornecedores, renderizarFornecedores } from './firestoreData.js';
@@ -214,8 +214,8 @@ export function salvarGruposReceitaLocais() {
       }
 
 export function prepararNovoGrupoModelo() {
-        editingRecipeGroupId = null;
-        itensGrupoModeloEmEdicao = [];
+        setEditingRecipeGroupId(null);
+        setItensGrupoModeloEmEdicao([]);
         dom.recipeGroupTemplateForm.reset();
         dom.recipeGroupTemplateUnit.value = 'g';
         dom.recipeGroupTemplateFormTitle.textContent = 'Cadastrar grupo de ingredientes';
@@ -320,10 +320,10 @@ export function renderizarGruposModeloReceita() {
 export function editarGrupoModeloReceita(grupoId) {
         const grupo = cachedRecipeGroups.find(item => item.id === grupoId);
         if (!grupo) return;
-        editingRecipeGroupId = grupoId;
+        setEditingRecipeGroupId(grupoId);
         dom.recipeGroupTemplateName.value = grupo.nome || '';
         dom.recipeGroupTemplateDescription.value = grupo.descricao || '';
-        itensGrupoModeloEmEdicao = Array.isArray(grupo.itens) ? grupo.itens.map(item => ({ ...item })) : [];
+        setItensGrupoModeloEmEdicao(Array.isArray(grupo.itens) ? grupo.itens.map(item => ({ ...item })) : []);
         dom.recipeGroupTemplateFormTitle.textContent = `Editar grupo: ${grupo.nome}`;
         dom.btnSaveRecipeGroupTemplate.textContent = 'Salvar alterações';
         dom.btnCancelRecipeGroupTemplate.classList.remove('hidden');
@@ -408,7 +408,7 @@ export async function excluirGrupoModeloReceita(grupoId) {
           if (firestoreDb && !isTestStockMode && !grupoId.startsWith('local-') && !grupoId.startsWith('demo-')) {
             await deleteDoc(doc(firestoreDb, 'gruposReceita', grupoId));
           }
-          cachedRecipeGroups = cachedRecipeGroups.filter(item => item.id !== grupoId);
+          setCachedRecipeGroups(cachedRecipeGroups.filter(item => item.id !== grupoId));
           if (!firestoreDb || isTestStockMode || grupoId.startsWith('local-') || grupoId.startsWith('demo-')) salvarGruposReceitaLocais();
           if (editingRecipeGroupId === grupoId) prepararNovoGrupoModelo();
           renderizarGruposModeloReceita();
@@ -426,7 +426,7 @@ export function atualizarModoOrganizacaoGrupoReceita(modo) {
         });
         dom.recipeGroupExistingPanel.classList.toggle('hidden', modoSelecionado !== 'existing');
         dom.recipeGroupNewPanel.classList.toggle('hidden', modoSelecionado !== 'new');
-        if (modoSelecionado === 'standalone') grupoReceitaSelecionadoId = '';
+        if (modoSelecionado === 'standalone') setGrupoReceitaSelecionadoId('');
       }
 
 export function adicionarGrupoReceita(nomeInformado = dom.inputNovoGrupoReceita.value.trim()) {
@@ -449,7 +449,7 @@ export function adicionarGrupoReceita(nomeInformado = dom.inputNovoGrupoReceita.
         );
         const grupo = criarGrupoReceita(nome);
         gruposReceitaEmElaboracao.push(grupo);
-        grupoReceitaSelecionadoId = grupo.id;
+        setGrupoReceitaSelecionadoId(grupo.id);
         atualizarModoOrganizacaoGrupoReceita('new');
         dom.inputNovoGrupoReceita.value = '';
         dom.selectGrupoCatalogoReceita.value = '';
@@ -486,7 +486,7 @@ export function usarGrupoCatalogoNaReceita() {
         gruposReceitaEmElaboracao.push(grupo);
         const itensCopiados = copiarItensGrupoModeloParaReceita(modelo, grupo.id);
         itensReceitaEmElaboracao.push(...itensCopiados);
-        grupoReceitaSelecionadoId = grupo.id;
+        setGrupoReceitaSelecionadoId(grupo.id);
         atualizarModoOrganizacaoGrupoReceita('existing');
         dom.selectGrupoCatalogoReceita.value = '';
         renderizarItensReceitaEmElaboracao();
@@ -520,15 +520,15 @@ export function removerGrupoReceita(grupoId) {
           showToast('Mova os ingredientes deste grupo para outro grupo antes de removê-lo.');
           return;
         }
-        gruposReceitaEmElaboracao = gruposReceitaEmElaboracao.filter(item => item.id !== grupoId);
-        if (grupoReceitaSelecionadoId === grupoId) grupoReceitaSelecionadoId = '';
+        setGruposReceitaEmElaboracao(gruposReceitaEmElaboracao.filter(item => item.id !== grupoId));
+        if (grupoReceitaSelecionadoId === grupoId) setGrupoReceitaSelecionadoId('');
         renderizarGruposReceitaEmElaboracao();
       }
 
 export function selecionarGrupoReceita(grupoId) {
         const grupo = gruposReceitaEmElaboracao.find(item => item.id === grupoId);
         if (!grupo) return;
-        grupoReceitaSelecionadoId = grupo.id;
+        setGrupoReceitaSelecionadoId(grupo.id);
         atualizarModoOrganizacaoGrupoReceita('existing');
         renderizarGruposReceitaEmElaboracao();
         dom.receitaItemGrupo.focus();
@@ -572,7 +572,7 @@ export function moverItemParaGrupo(index, grupoId) {
         const item = itensReceitaEmElaboracao[index];
         if (!item || (grupoId && !gruposReceitaEmElaboracao.some(grupo => grupo.id === grupoId))) return;
         item.grupoId = grupoId || null;
-        grupoReceitaSelecionadoId = grupoId || '';
+        setGrupoReceitaSelecionadoId(grupoId || '');
         atualizarModoOrganizacaoGrupoReceita(grupoId ? 'existing' : 'standalone');
         renderizarItensReceitaEmElaboracao();
       }
@@ -580,7 +580,7 @@ export function moverItemParaGrupo(index, grupoId) {
 export function renderizarGruposReceitaEmElaboracao() {
         atualizarModoOrganizacaoGrupoReceita();
         if (!gruposReceitaEmElaboracao.some(grupo => grupo.id === grupoReceitaSelecionadoId)) {
-          grupoReceitaSelecionadoId = '';
+          setGrupoReceitaSelecionadoId('');
         }
 
         dom.receitaItemGrupo.innerHTML = [
@@ -831,7 +831,7 @@ export function atualizarCalculadoraLucroReceita(custoUnitario, rendimento = 1) 
       }
 
 export function atualizarPreviewFotoReceita(dataUrl) {
-        fotoReceitaDataUrl = dataUrl || null;
+        setFotoReceitaDataUrl(dataUrl || null);
         if (fotoReceitaDataUrl) {
           dom.previewFotoReceita.src = fotoReceitaDataUrl;
           dom.previewFotoReceita.classList.remove('hidden');
@@ -893,10 +893,10 @@ export function compactarFotoReceita(file) {
       }
 
 export function prepararNovaReceita() {
-        editingReceitaId = null;
-        itensReceitaEmElaboracao = [];
-        gruposReceitaEmElaboracao = [];
-        grupoReceitaSelecionadoId = '';
+        setEditingReceitaId(null);
+        setItensReceitaEmElaboracao([]);
+        setGruposReceitaEmElaboracao([]);
+        setGrupoReceitaSelecionadoId('');
         dom.formReceita.reset();
         dom.recipeCostDetails.open = false;
         dom.recipeTechDetails.open = false;
@@ -917,7 +917,7 @@ export function abrirEdicaoReceita(id) {
         const receita = cachedReceitas.find(item => item.id === id);
         if (!receita) return;
 
-        editingReceitaId = id;
+        setEditingReceitaId(id);
         dom.inputReceitaNome.value = receita.nome || '';
         dom.selectCategoriaReceita.value = receita.categoria || 'paes';
         dom.inputReceitaRendimento.value = receita.rendimento || 1;
@@ -943,9 +943,9 @@ export function abrirEdicaoReceita(id) {
           receita.tempoFornoMin != null || receita.temperaturaFornoC != null || receita.fotoDataUrl
         );
         const gruposEItens = obterGruposEItensReceita(receita);
-        gruposReceitaEmElaboracao = gruposEItens.grupos;
-        itensReceitaEmElaboracao = gruposEItens.itens;
-        grupoReceitaSelecionadoId = '';
+        setGruposReceitaEmElaboracao(gruposEItens.grupos);
+        setItensReceitaEmElaboracao(gruposEItens.itens);
+        setGrupoReceitaSelecionadoId('');
         dom.formReceitaTitle.textContent = '✏️ Editar Receita';
         dom.btnSubmitReceita.innerHTML = '<span>Salvar alterações</span>';
         dom.btnCancelEditReceita.classList.remove('hidden');
@@ -963,7 +963,7 @@ export function duplicarReceita(id) {
         const receita = cachedReceitas.find(item => item.id === id);
         if (!receita) return;
 
-        editingReceitaId = null;
+        setEditingReceitaId(null);
         dom.inputReceitaNome.value = `${receita.nome} (cópia)`;
         dom.selectCategoriaReceita.value = receita.categoria || 'paes';
         dom.inputReceitaRendimento.value = receita.rendimento || 1;
@@ -989,9 +989,9 @@ export function duplicarReceita(id) {
           receita.tempoFornoMin != null || receita.temperaturaFornoC != null || receita.fotoDataUrl
         );
         const gruposEItens = obterGruposEItensReceita(receita);
-        gruposReceitaEmElaboracao = gruposEItens.grupos.map(grupo => ({ ...grupo }));
-        itensReceitaEmElaboracao = gruposEItens.itens;
-        grupoReceitaSelecionadoId = '';
+        setGruposReceitaEmElaboracao(gruposEItens.grupos.map(grupo => ({ ...grupo })));
+        setItensReceitaEmElaboracao(gruposEItens.itens);
+        setGrupoReceitaSelecionadoId('');
         dom.formReceitaTitle.textContent = `📖 Variação de ${receita.nome}`;
         dom.btnSubmitReceita.innerHTML = '<span>Salvar nova receita</span>';
         dom.btnCancelEditReceita.classList.remove('hidden');
@@ -1143,7 +1143,7 @@ export function abrirModalProducao(receitaId) {
           showToast('A receita selecionada não foi encontrada.');
           return;
         }
-        pendingProductionRecipeId = receitaId;
+        setPendingProductionRecipeId(receitaId);
         dom.productionTitle.textContent = `Produzir: ${receita.nome}`;
         dom.productionBatches.value = '1';
         dom.productionDate.value = new Date(Date.now() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 10);
@@ -1156,7 +1156,7 @@ export function abrirModalProducao(receitaId) {
       }
 
 export function fecharModalProducao() {
-        pendingProductionRecipeId = null;
+        setPendingProductionRecipeId(null);
         dom.productionModal.classList.remove('active');
         dom.productionPreview.textContent = '';
       }
@@ -1361,8 +1361,8 @@ export async function confirmarProducao() {
             const producoesAtualizadas = [registro, ...cachedProducoes];
             const vendasAtualizadas = [venda, ...cachedVendas];
             cachedInsumos = atualizados;
-            cachedProducoes = producoesAtualizadas;
-            cachedVendas = vendasAtualizadas;
+            setCachedProducoes(producoesAtualizadas);
+            setCachedVendas(vendasAtualizadas);
             salvarDadosInsumosLocais();
             salvarDadosProducoesLocais();
             localStorage.setItem(obterChaveStorageModulo('vendas'), JSON.stringify(cachedVendas));
@@ -1873,7 +1873,7 @@ export function abrirEdicaoProducao(producaoId) {
           return;
         }
         const receita = cachedReceitas.find(item => item.id === producao.receitaId);
-        pendingEditProductionId = producaoId;
+        setPendingEditProductionId(producaoId);
         dom.editProductionTitle.textContent = `Editar produção: ${producao.receitaNome || 'Receita'}`;
         dom.editProductionDate.value = producao.data || '';
         dom.editProductionQuantity.value = Number(producao.quantidadeProduzida) || '';
@@ -1889,7 +1889,7 @@ export function abrirEdicaoProducao(producaoId) {
       }
 
 export function fecharEdicaoProducao() {
-        pendingEditProductionId = null;
+        setPendingEditProductionId(null);
         dom.editProductionModal.classList.remove('active');
         dom.editProductionPreview.textContent = '';
       }
@@ -2022,7 +2022,7 @@ export async function salvarEdicaoProducao() {
               ...(vendaExistente?.createdAt ? { createdAt: vendaExistente.createdAt } : {}),
               updatedAt: new Date().toISOString()
             };
-            cachedVendas = [updatedSale, ...cachedVendas.filter(venda => venda.id !== vendaId)];
+            setCachedVendas([updatedSale, ...cachedVendas.filter(venda => venda.id !== vendaId)]);
             renderizarProducoes();
             renderizarVendas();
             renderizarClientes();
@@ -2035,7 +2035,7 @@ export async function salvarEdicaoProducao() {
               ...(vendaExistente?.createdAt ? { createdAt: vendaExistente.createdAt } : {}),
               updatedAt: new Date().toISOString()
             };
-            cachedVendas = [vendaAtualizada, ...cachedVendas.filter(venda => venda.id !== vendaId)];
+            setCachedVendas([vendaAtualizada, ...cachedVendas.filter(venda => venda.id !== vendaId)]);
             salvarDadosProducoesLocais();
             localStorage.setItem(obterChaveStorageModulo('vendas'), JSON.stringify(cachedVendas));
             renderizarProducoes();
@@ -2067,7 +2067,7 @@ export function abrirExclusaoProducao(producaoId) {
           return;
         }
 
-        pendingDeleteProductionId = producaoId;
+        setPendingDeleteProductionId(producaoId);
         const podeRestaurarEstoque = Array.isArray(producao.insumos) && producao.insumos.length > 0;
         dom.deleteProductionDescription.textContent = podeRestaurarEstoque
           ? `A produção de ${producao.receitaNome || 'Receita'} e sua venda vinculada serão removidas, e os insumos consumidos serão devolvidos ao estoque. Esta ação não pode ser desfeita.`
@@ -2077,7 +2077,7 @@ export function abrirExclusaoProducao(producaoId) {
       }
 
 export function fecharExclusaoProducao() {
-        pendingDeleteProductionId = null;
+        setPendingDeleteProductionId(null);
         dom.deleteProductionModal.classList.remove('active');
         dom.btnConfirmDeleteProduction.disabled = false;
         dom.btnConfirmDeleteProduction.textContent = 'Excluir produção';
@@ -2172,8 +2172,8 @@ export async function confirmarExclusaoProducao() {
               JSON.stringify(updatedSales)
             );
             cachedInsumos = updatedItems;
-            cachedProducoes = updatedProductions;
-            cachedVendas = updatedSales;
+            setCachedProducoes(updatedProductions);
+            setCachedVendas(updatedSales);
             renderizarInsumos();
             renderizarProducoes();
             renderizarVendas();
@@ -2182,11 +2182,11 @@ export async function confirmarExclusaoProducao() {
           }
 
           if (firestoreDb && !isTestStockMode && !isLocal) {
-            cachedProducoes = cachedProducoes.filter(item => item.id !== productionId);
-            cachedVendas = cachedVendas.filter(item =>
+            setCachedProducoes(cachedProducoes.filter(item => item.id !== productionId));
+            setCachedVendas(cachedVendas.filter(item =>
               item.producaoId !== productionId &&
               !(item.id === producao.vendaId && item.origem === 'producao')
-            );
+            ));
             renderizarProducoes();
             renderizarVendas();
             renderizarClientes();
@@ -2207,7 +2207,7 @@ export async function confirmarExclusaoProducao() {
 
       // Adicionar novo item a uma receita existente
 export function abrirModalAddItemReceita(receitaId, nomeReceita) {
-        pendingAddItemReceitaId = receitaId;
+        setPendingAddItemReceitaId(receitaId);
         dom.modalAddItemReceitaName.textContent = `"${nomeReceita}"`;
         dom.inputModalAddQtd.value = '';
         dom.modalAddCostPreview.textContent = 'R$ 0,00';
@@ -2216,7 +2216,7 @@ export function abrirModalAddItemReceita(receitaId, nomeReceita) {
       }
 
 export function fecharModalAddItemReceita() {
-        pendingAddItemReceitaId = null;
+        setPendingAddItemReceitaId(null);
         dom.modalAddItemReceita.classList.remove('active');
       }
 
@@ -2378,13 +2378,13 @@ export async function salvarNovoPrecoReceita(receitaId, novoPreco) {
       }
 
 export function abrirModalExcluirReceita(id, nome) {
-        pendingDeleteReceitaId = id;
+        setPendingDeleteReceitaId(id);
         dom.modalDeleteReceitaName.textContent = `"${nome}"`;
         dom.deleteReceitaModal.classList.add('active');
       }
 
 export function fecharModalExcluirReceita() {
-        pendingDeleteReceitaId = null;
+        setPendingDeleteReceitaId(null);
         dom.deleteReceitaModal.classList.remove('active');
       }
 
@@ -2400,7 +2400,7 @@ export async function confirmarExclusaoReceita() {
             await deleteDoc(doc(firestoreDb, 'receitas', idToDelete));
             showToast('Receita excluída do Firestore!');
           } else {
-            cachedReceitas = cachedReceitas.filter(r => r.id !== idToDelete);
+            setCachedReceitas(cachedReceitas.filter(r => r.id !== idToDelete));
             salvarDadosReceitasLocais();
             renderizarReceitas();
             atualizarSelectProdutos();
@@ -2914,7 +2914,7 @@ export function abrirEdicaoVenda(vendaId) {
           option.textContent = venda.produtoNome || 'Produto não cadastrado';
           dom.editSaleProduct.append(option);
         }
-        pendingEditSaleId = vendaId;
+        setPendingEditSaleId(vendaId);
         dom.editSaleProduct.value = venda.produtoId || '';
         dom.editSaleProduct.disabled = venda.origem === 'producao';
         dom.editSaleCustomer.value = venda.clienteId || '';
@@ -2930,7 +2930,7 @@ export function abrirEdicaoVenda(vendaId) {
       }
 
 export function fecharEdicaoVenda() {
-        pendingEditSaleId = null;
+        setPendingEditSaleId(null);
         dom.editSaleProduct.disabled = false;
         dom.editSaleModal.classList.remove('active');
         dom.editSaleForm.reset();
@@ -3100,11 +3100,11 @@ export async function salvarEdicaoVenda(event) {
                   })),
                   updatedAt: new Date().toISOString()
                 };
-            cachedVendas = cachedVendas.map(item => item.id === venda.id ? saleUpdated : item);
+            setCachedVendas(cachedVendas.map(item => item.id === venda.id ? saleUpdated : item));
           } else {
-            cachedVendas = cachedVendas.map(item => item.id === venda.id
+            setCachedVendas(cachedVendas.map(item => item.id === venda.id
               ? { ...item, ...saleFields, updatedAt: new Date().toISOString() }
-              : item);
+              : item));
           }
 
           if (!firestoreDb || isTestStockMode || isLocal) {
@@ -3312,7 +3312,7 @@ export async function atualizarStatusPedido(pedidoId, status) {
 
       // Alternar abas do aplicativo
 export function switchTab(tab) {
-        activeTab = tab;
+        setActiveTab(tab);
         const tabs = [
           ['insumos', dom.tabNavInsumos, dom.viewInsumos],
           ['fornecedores', dom.tabNavFornecedores, dom.viewFornecedores],
@@ -3358,7 +3358,7 @@ export function switchTab(tab) {
       }
 
 export function switchRecipePanel(panel) {
-        activeRecipePanel = panel === 'groups' ? 'groups' : 'recipes';
+        setActiveRecipePanel(panel === 'groups' ? 'groups' : 'recipes');
         const showingGroups = activeRecipePanel === 'groups';
         dom.tabRecipeList.classList.toggle('active', !showingGroups);
         dom.tabRecipeList.setAttribute('aria-selected', String(!showingGroups));

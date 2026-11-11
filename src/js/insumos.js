@@ -1,4 +1,4 @@
-import { cachedInsumos, cachedReceitas, cachedFornecedores, editingInsumoId, stockFormUnit, isTestStockMode, firestoreDb, currentUser, activeGroupFilter, pendingDeleteId, LOCAL_DEMO_ITEMS_KEY, TEST_ITEMS_KEY, DEMO_SEED_INSUMOS } from './state.js';
+import { cachedInsumos, cachedReceitas, cachedFornecedores, editingInsumoId, stockFormUnit, isTestStockMode, firestoreDb, currentUser, activeGroupFilter, pendingDeleteId, LOCAL_DEMO_ITEMS_KEY, TEST_ITEMS_KEY, DEMO_SEED_INSUMOS, setActiveGroupFilter, setCachedInsumos, setEditingInsumoId, setPendingDeleteId, setStockFormUnit } from './state.js';
 import { dom } from './dom.js';
 import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda, correspondeBusca } from './helpers.js';
 import { initFirebase } from './firebaseAuth.js';
@@ -41,7 +41,7 @@ export function handleStockUnitChange() {
             return;
           }
         }
-        stockFormUnit = nextUnit;
+        setStockFormUnit(nextUnit);
         atualizarRotulosUnidadeEstoque();
         atualizarPreviewCalculo();
       }
@@ -62,12 +62,12 @@ export function atualizarPreviewCalculo() {
       }
 
 export function prepararNovoInsumo() {
-        editingInsumoId = null;
+        setEditingInsumoId(null);
         dom.formInsumo.reset();
         dom.selectCategoriaInsumo.value = 'ingrediente';
         dom.selectUnidade.value = 'kg';
         dom.inputGrupoComparacao.dataset.touched = 'false';
-        stockFormUnit = 'kg';
+        setStockFormUnit('kg');
         dom.inputEstoqueAtual.value = '';
         dom.inputEstoqueMinimo.value = '0';
         atualizarRotulosUnidadeEstoque();
@@ -86,7 +86,7 @@ export function abrirEdicaoInsumo(id) {
         const insumo = cachedInsumos.find(item => item.id === id);
         if (!insumo) return;
 
-        editingInsumoId = id;
+        setEditingInsumoId(id);
         atualizarSelectFornecedores();
         dom.selectCategoriaInsumo.value = insumo.categoria || 'ingrediente';
         dom.inputNome.value = insumo.nome || '';
@@ -101,7 +101,7 @@ export function abrirEdicaoInsumo(id) {
         dom.inputFornecedor.value = supplierOption?.value || '';
         dom.inputQuantidade.value = insumo.quantidade ?? '';
         dom.selectUnidade.value = insumo.unidade || 'kg';
-        stockFormUnit = dom.selectUnidade.value;
+        setStockFormUnit(dom.selectUnidade.value);
         dom.inputEstoqueAtual.value = obterEstoqueAtual(insumo);
         dom.inputEstoqueMinimo.value = insumo.estoqueMinimo ?? 0;
         atualizarRotulosUnidadeEstoque();
@@ -346,13 +346,13 @@ export async function handleFormSubmit(e) {
       }
 
 export function abrirModalExcluir(id, nome) {
-        pendingDeleteId = id;
+        setPendingDeleteId(id);
         dom.modalDeleteItemName.textContent = `"${nome}"`;
         dom.deleteModal.classList.add('active');
       }
 
 export function fecharModalExcluir() {
-        pendingDeleteId = null;
+        setPendingDeleteId(null);
         dom.deleteModal.classList.remove('active');
       }
 
@@ -369,7 +369,7 @@ export async function confirmarExclusao() {
               await deleteDoc(doc(firestoreDb, 'insumos', idToDelete));
               showToast('Insumo excluído do Firestore!');
           } else {
-            cachedInsumos = cachedInsumos.filter(item => item.id !== idToDelete);
+            setCachedInsumos(cachedInsumos.filter(item => item.id !== idToDelete));
             salvarDadosInsumosLocais();
             renderizarInsumos();
             showToast('Insumo removido!');
@@ -579,7 +579,7 @@ export function renderizarInsumos() {
       }
 
 export function setGroupFilter(grupo) {
-        activeGroupFilter = grupo;
+        setActiveGroupFilter(grupo);
         const pills = dom.categoryPillsContainer.querySelectorAll('.category-pill');
         pills.forEach(pill => {
           const active = pill.getAttribute('data-group-filter') === grupo;

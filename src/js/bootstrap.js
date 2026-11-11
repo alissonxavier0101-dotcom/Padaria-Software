@@ -1,6 +1,5 @@
 import { initFirebase } from './firebaseAuth.js';
-import { renderizarGruposReceitaEmElaboracao } from './receitas.js';
-import { obterDataLocalAtual } from './helpers.js';
+import { renderizarGruposReceitaEmElaboracao, obterDataLocalAtual } from './receitas.js';
 import { dom } from './dom.js';
 
 // 12. INICIALIZAÇÃO AUTOMÁTICA NA CARGA DA PÁGINA

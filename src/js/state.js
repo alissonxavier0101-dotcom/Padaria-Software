@@ -228,3 +228,192 @@ export const DEMO_SEED_RECEITAS = [
           createdAt: new Date().toISOString()
         }
       ];
+
+// Mutators for shared mutable state (imports are immutable in ES modules)
+export function setFirebaseApp(value) {
+  firebaseApp = value;
+}
+
+export function setFirebaseAuth(value) {
+  firebaseAuth = value;
+}
+
+export function setFirestoreDb(value) {
+  firestoreDb = value;
+}
+
+export function setRedirectResultChecked(value) {
+  redirectResultChecked = value;
+}
+
+export function setUnsubscribeSnapshot(value) {
+  unsubscribeSnapshot = value;
+}
+
+export function setUnsubscribeReceitasSnapshot(value) {
+  unsubscribeReceitasSnapshot = value;
+}
+
+export function setUnsubscribeRecipeGroupsSnapshot(value) {
+  unsubscribeRecipeGroupsSnapshot = value;
+}
+
+export function setUnsubscribeProducoesSnapshot(value) {
+  unsubscribeProducoesSnapshot = value;
+}
+
+export function setUnsubscribeFornecedoresSnapshot(value) {
+  unsubscribeFornecedoresSnapshot = value;
+}
+
+export function setUnsubscribeVendasSnapshot(value) {
+  unsubscribeVendasSnapshot = value;
+}
+
+export function setUnsubscribePedidosSnapshot(value) {
+  unsubscribePedidosSnapshot = value;
+}
+
+export function setUnsubscribeClientesSnapshot(value) {
+  unsubscribeClientesSnapshot = value;
+}
+
+export function setUnsubscribeCashflowSnapshot(value) {
+  unsubscribeCashflowSnapshot = value;
+}
+
+export function setUnsubscribeFixedExpensesSnapshot(value) {
+  unsubscribeFixedExpensesSnapshot = value;
+}
+
+export function setIsTestStockMode(value) {
+  isTestStockMode = value;
+}
+
+export function setCurrentUser(value) {
+  currentUser = value;
+}
+
+export function setCachedInsumos(value) {
+  cachedInsumos = value;
+}
+
+export function setCachedReceitas(value) {
+  cachedReceitas = value;
+}
+
+export function setCachedRecipeGroups(value) {
+  cachedRecipeGroups = value;
+}
+
+export function setCachedProducoes(value) {
+  cachedProducoes = value;
+}
+
+export function setCachedFornecedores(value) {
+  cachedFornecedores = value;
+}
+
+export function setCachedVendas(value) {
+  cachedVendas = value;
+}
+
+export function setCachedPedidos(value) {
+  cachedPedidos = value;
+}
+
+export function setCachedClientes(value) {
+  cachedClientes = value;
+}
+
+export function setCachedCashflow(value) {
+  cachedCashflow = value;
+}
+
+export function setCachedFixedExpenses(value) {
+  cachedFixedExpenses = value;
+}
+
+export function setPendingDeleteId(value) {
+  pendingDeleteId = value;
+}
+
+export function setPendingDeleteReceitaId(value) {
+  pendingDeleteReceitaId = value;
+}
+
+export function setPendingAddItemReceitaId(value) {
+  pendingAddItemReceitaId = value;
+}
+
+export function setEditingInsumoId(value) {
+  editingInsumoId = value;
+}
+
+export function setEditingReceitaId(value) {
+  editingReceitaId = value;
+}
+
+export function setStockFormUnit(value) {
+  stockFormUnit = value;
+}
+
+export function setPendingProductionRecipeId(value) {
+  pendingProductionRecipeId = value;
+}
+
+export function setPendingEditProductionId(value) {
+  pendingEditProductionId = value;
+}
+
+export function setPendingDeleteProductionId(value) {
+  pendingDeleteProductionId = value;
+}
+
+export function setPendingEditSaleId(value) {
+  pendingEditSaleId = value;
+}
+
+export function setEditingFornecedorId(value) {
+  editingFornecedorId = value;
+}
+
+export function setActiveGroupFilter(value) {
+  activeGroupFilter = value;
+}
+
+export function setActiveRecipeCategory(value) {
+  activeRecipeCategory = value;
+}
+
+export function setActiveTab(value) {
+  activeTab = value;
+}
+
+export function setItensReceitaEmElaboracao(value) {
+  itensReceitaEmElaboracao = value;
+}
+
+export function setGruposReceitaEmElaboracao(value) {
+  gruposReceitaEmElaboracao = value;
+}
+
+export function setGrupoReceitaSelecionadoId(value) {
+  grupoReceitaSelecionadoId = value;
+}
+
+export function setItensGrupoModeloEmEdicao(value) {
+  itensGrupoModeloEmEdicao = value;
+}
+
+export function setEditingRecipeGroupId(value) {
+  editingRecipeGroupId = value;
+}
+
+export function setActiveRecipePanel(value) {
+  activeRecipePanel = value;
+}
+
+export function setFotoReceitaDataUrl(value) {
+  fotoReceitaDataUrl = value;
+}
