@@ -363,8 +363,20 @@ export function configurarMemoriaCampos(form, prefixo) {
   const inputs = form.querySelectorAll('input, select, textarea');
   for (const input of inputs) {
     if (!input.id) continue;
+
+    // Nunca memoriza/restaura data, quantidade ou status:
+    // a data deve vir preenchida com hoje, a quantidade com o padrao e o
+    // status deve ser escolhido a cada venda.
+    if (input.type === 'date' || input.type === 'number') continue;
+    if (input.tagName === 'SELECT' && /status/i.test(input.id || input.name || '')) continue;
+
     const chave = `${prefixo}:${input.id}`;
     restaurarValorCampo(input, chave);
-    input.addEventListener('blur', () => lembrarValorCampo(input, chave), { once: false });
+
+    if (input.tagName === 'SELECT') {
+      input.addEventListener('change', () => lembrarValorCampo(input, chave), { once: false });
+    } else {
+      input.addEventListener('blur', () => lembrarValorCampo(input, chave), { once: false });
+    }
   }
 }
