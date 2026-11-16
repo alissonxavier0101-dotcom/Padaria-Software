@@ -10,7 +10,8 @@ import { renderizarClientes, salvarCliente } from './clientes.js';
 import { abrirModalConfig, fecharModalConfig, salvarConfigFirebaseModal } from './firebaseConfigModal.js';
 import { showToast } from './helpers.js';
 import { dom } from './dom.js';
-import { itensGrupoModeloEmEdicao, cachedReceitas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas, setActiveRecipeCategory, setGrupoReceitaSelecionadoId, setActiveTab } from './state.js';
+import { itensGrupoModeloEmEdicao, cachedReceitas, cachedVendas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas, setActiveRecipeCategory, setGrupoReceitaSelecionadoId, setActiveTab } from './state.js';
+import { ultimaFormaPagamentoDoCliente } from '../utils/formaPagamentoCliente.ts';
 
 // 11. REGISTRO DE EVENTOS E INTERATIVIDADE
 // -------------------------------------------------------------
@@ -88,6 +89,20 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       aplicarBuscaSelect(dom.editSaleCustomer, { placeholder: 'Buscar cliente...' });
       aplicarBuscaSelect(dom.orderCustomer, { placeholder: 'Buscar cliente...' });
       aplicarBuscaSelect(dom.orderProduct, { placeholder: 'Buscar produto...' });
+
+      // Pré-selecionar a forma de pagamento usada pelo cliente ao escolhê-lo
+      function preselecionarFormaPagamentoDoCliente(selectCliente, selectPagamento) {
+        selectCliente.addEventListener('change', () => {
+          const clienteId = selectCliente.value || undefined;
+          const forma = ultimaFormaPagamentoDoCliente(clienteId, cachedVendas);
+          if (forma && selectPagamento.value !== forma) {
+            selectPagamento.value = forma;
+          }
+        });
+      }
+
+      preselecionarFormaPagamentoDoCliente(dom.saleCustomer, dom.salePayment);
+      preselecionarFormaPagamentoDoCliente(dom.editSaleCustomer, dom.editSalePayment);
       dom.ordersList.addEventListener('change', (event) => {
         const select = event.target.closest('[data-order-status]');
         if (select) atualizarStatusPedido(select.getAttribute('data-order-status'), select.value);
