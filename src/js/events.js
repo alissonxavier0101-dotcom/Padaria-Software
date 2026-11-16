@@ -5,6 +5,7 @@ import { switchRecipePanel, renderizarReceitas, renderizarResultadosBuscaInsumos
 import { abrirModalProducao, fecharModalProducao, renderizarPreviaProducao, confirmarProducao, abrirEdicaoProducao, fecharEdicaoProducao, atualizarPreviaEdicaoProducao, salvarEdicaoProducao, abrirExclusaoProducao, fecharExclusaoProducao, confirmarExclusaoProducao, abrirModalAddItemReceita, fecharModalAddItemReceita, atualizarPreviewModalAddItem, confirmarModalAddItemReceita, renderizarProducoes } from './producao.js';
 import { renderizarFinanceiro, salvarMovimentacaoFinanceira, salvarDespesaFixa, excluirRegistroFinanceiro, atualizarCategoriasMovimentacao } from './financeiro.js';
 import { renderizarVendas, renderizarPedidos, abrirEdicaoVenda, fecharEdicaoVenda, salvarEdicaoVenda, salvarVenda, salvarPedido, atualizarStatusPedido, abrirModalExcluirVenda, fecharModalExcluirVenda, confirmarExclusaoVenda } from './vendas.js';
+import { aplicarMascaraTelefone, lerValorTelefone, aplicarBuscaSelect, refreshBuscaSelect } from './formHelpers.js';
 import { renderizarClientes, salvarCliente } from './clientes.js';
 import { abrirModalConfig, fecharModalConfig, salvarConfigFirebaseModal } from './firebaseConfigModal.js';
 import { showToast } from './helpers.js';
@@ -79,6 +80,14 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       dom.formPedido.addEventListener('submit', salvarPedido);
       dom.formCliente.addEventListener('submit', salvarCliente);
       dom.saleProduct.addEventListener('change', atualizarPrecoVendaProduto);
+
+      // Busca inteligente nos selects de produto e cliente (vendas e pedidos)
+      aplicarBuscaSelect(dom.saleProduct, { placeholder: 'Buscar produto...' });
+      aplicarBuscaSelect(dom.saleCustomer, { placeholder: 'Buscar cliente...' });
+      aplicarBuscaSelect(dom.editSaleProduct, { placeholder: 'Buscar produto...' });
+      aplicarBuscaSelect(dom.editSaleCustomer, { placeholder: 'Buscar cliente...' });
+      aplicarBuscaSelect(dom.orderCustomer, { placeholder: 'Buscar cliente...' });
+      aplicarBuscaSelect(dom.orderProduct, { placeholder: 'Buscar produto...' });
       dom.ordersList.addEventListener('change', (event) => {
         const select = event.target.closest('[data-order-status]');
         if (select) atualizarStatusPedido(select.getAttribute('data-order-status'), select.value);
@@ -606,11 +615,17 @@ export function switchTab(tab) {
     renderizarProducoes();
   } else if (tab === 'vendas') {
     atualizarSelectProdutos();
+    refreshBuscaSelect(dom.saleProduct);
+    refreshBuscaSelect(dom.editSaleProduct);
     atualizarSelectClientes();
+    refreshBuscaSelect(dom.saleCustomer);
+    refreshBuscaSelect(dom.editSaleCustomer);
     renderizarVendas();
   } else if (tab === 'pedidos') {
     atualizarSelectProdutos();
+    refreshBuscaSelect(dom.orderProduct);
     atualizarSelectClientes();
+    refreshBuscaSelect(dom.orderCustomer);
     renderizarPedidos();
   } else if (tab === 'clientes') {
     renderizarClientes();

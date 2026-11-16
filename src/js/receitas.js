@@ -51,7 +51,7 @@ import {
   obterCustosIndiretosDaReceita,
   calcularLucroEPrecificacao
 } from './helpers.js';
-import { aplicarMascaraMoeda, lerValorMoeda, configurarMemoriaCampos } from './formHelpers.js';
+import { aplicarMascaraMoeda, lerValorMoeda, configurarMemoriaCampos, aplicarBuscaSelect } from './formHelpers.js';
 import { initFirebase, salvarDadosReceitasLocais } from './firebaseAuth.js';
 import { renderizarInsumos, formatarQuantidadeEstoque, atualizarReceitasDependentes } from './insumos.js';
 import { atualizarSelectFornecedores, renderizarFornecedores, obterFornecedorDoInsumo } from './firestoreData.js';

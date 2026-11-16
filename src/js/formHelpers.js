@@ -226,30 +226,37 @@ export function aplicarBuscaSelect(select, { placeholder = 'Buscar...' } = {}) {
   campoBusca.autocomplete = 'off';
   campoBusca.spellcheck = false;
 
-  const selectOriginal = select.cloneNode(false);
-  selectOriginal.id = ''; // evita ids duplicados
+  // Mantem o select original no DOM (escondido) para que innerHTML/value
+  // continuem funcionando quando modificado por atualizarSelectProdutos/Clientes.
+  select.style.display = 'none';
+  select.setAttribute('aria-hidden', 'true');
+  select.tabIndex = -1;
 
   const listaOpcoes = document.createElement('div');
   listaOpcoes.className = 'select-busca-lista';
   listaOpcoes.hidden = true;
 
-  // popula opções originais
-  for (const opcao of Array.from(select.options)) {
-    const item = document.createElement('button');
-    item.type = 'button';
-    item.className = 'select-busca-opcao';
-    item.dataset.valor = opcao.value;
-    item.textContent = opcao.textContent;
-    if (opcao.selected) item.classList.add('selecionada');
-    item.addEventListener('click', () => {
-      select.value = opcao.value;
-      campoBusca.value = opcao.textContent;
-      listaOpcoes.hidden = true;
-      select.dispatchEvent(new Event('change', { bubbles: true }));
-      selectOriginal.dispatchEvent(new Event('change', { bubbles: true }));
-    });
-    listaOpcoes.append(item);
+  function montarLista() {
+    listaOpcoes.replaceChildren();
+    for (const opcao of Array.from(select.options)) {
+      const item = document.createElement('button');
+      item.type = 'button';
+      item.className = 'select-busca-opcao';
+      item.dataset.valor = opcao.value;
+      item.textContent = opcao.textContent;
+      if (opcao.selected) item.classList.add('selecionada');
+      item.addEventListener('click', () => {
+        select.value = opcao.value;
+        campoBusca.value = opcao.textContent;
+        listaOpcoes.hidden = true;
+        select.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+      listaOpcoes.append(item);
+    }
+    return listaOpcoes;
   }
+
+  montarLista();
 
   campoBusca.addEventListener('input', () => {
     const termo = normalizarTextoBuscaLocal(campoBusca.value);
@@ -274,29 +281,47 @@ export function aplicarBuscaSelect(select, { placeholder = 'Buscar...' } = {}) {
     listaOpcoes.hidden = true;
   });
 
-  wrapper.append(campoBusca, selectOriginal, listaOpcoes);
-  select.replaceWith(wrapper);
-
-  // mantém sincronização com o select original (visibilidade/valor)
-  selectOriginal.addEventListener('change', () => {
-    const selecionado = Array.from(selectOriginal.options).find(o => o.selected);
-    if (selecionado) {
-      campoBusca.value = selecionado.textContent;
-      for (const item of listaOpcoes.children) {
-        item.classList.toggle('selecionada', item.dataset.valor === selecionado.value);
-      }
+  // Re-sincroniza selecao quando o select original muda por programas externos
+  select.addEventListener('change', () => {
+    campoBusca.value = select.selectedOptions[0]?.textContent || '';
+    for (const item of listaOpcoes.children) {
+      item.classList.toggle('selecionada', item.dataset.valor === select.value);
     }
   });
 
-  select.dataset.selectBuscaAplicada = 'true';
-  inputBuscaSelectAtual(campoBusca, selectOriginal);
+  wrapper.append(campoBusca, select, listaOpcoes);
+  select.parentNode?.replaceChild(wrapper, select) || select.after(wrapper);
 
-  return { wrapper, campoBusca, select: selectOriginal, lista: listaOpcoes };
+  function refresh() {
+    montarLista();
+    campoBusca.value = select.selectedOptions[0]?.textContent || '';
+    for (const item of listaOpcoes.children) {
+      item.classList.toggle('selecionada', item.dataset.valor === select.value);
+    }
+  }
+
+  select.dataset.selectBuscaAplicada = 'true';
+  selectRefreshMap.set(select, refresh);
+
+  return { wrapper, campoBusca, select, lista: listaOpcoes, refresh };
 }
 
 const selectsComBusca = new WeakMap();
+const selectRefreshMap = new WeakMap();
+
 function inputBuscaSelectAtual(campoBusca, selectOriginal) {
   selectsComBusca.set(campoBusca, selectOriginal);
+}
+
+/**
+ * Reconstrói a lista visual de um select com busca a partir das opções
+ * atuais do select original. Deve ser chamado após atualizarSelectProdutos/
+ * atualizarSelectClientes (ou qualquer outra rotina que mude select.innerHTML).
+ */
+export function refreshBuscaSelect(select) {
+  if (!select || !select.dataset.selectBuscaAplicada) return;
+  const refresh = selectRefreshMap.get(select);
+  if (refresh) refresh();
 }
 
 function normalizarTextoBuscaLocal(valor) {
