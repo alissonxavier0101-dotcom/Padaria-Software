@@ -149,7 +149,9 @@ export function renderizarVendas(resultadoPronto) {
         <div class="module-record-meta">
           ${venda.origem === 'producao' ? '<span>Venda vinculada à produção</span>' : '<span></span>'}
           <button type="button" class="btn-secondary" data-edit-sale-id="${escapeHtml(venda.id)}">Editar venda</button>
-          <button type="button" class="btn-delete-item" data-delete-sale-id="${escapeHtml(venda.id)}" data-delete-sale-name="${escapeHtml(venda.produtoNome || 'Venda')}" title="Excluir venda">Excluir</button>
+          ${venda.origem !== 'producao'
+            ? `<button type="button" class="btn-delete-item" data-delete-sale-id="${escapeHtml(venda.id)}" data-delete-sale-name="${escapeHtml(venda.produtoNome || 'Venda')}" title="Excluir venda">Excluir</button>`
+            : ''}
         </div>
     </article>
   `}).join('');
