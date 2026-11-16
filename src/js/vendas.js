@@ -8,6 +8,7 @@ import {
   isTestStockMode,
   firestoreDb,
   setPendingEditSaleId,
+  setPendingDeleteSaleId,
   setCachedVendas,
   setCachedPedidos,
   TEST_ORDERS_KEY,
@@ -25,6 +26,7 @@ import {
   iniciarEnvio,
   obterBotaoSubmit
 } from './helpers.js';
+import { aplicarMascaraMoeda, lerValorMoeda, configurarMemoriaCampos } from './formHelpers.js';
 import {
   validarVenda,
   validarEdicaoVenda,
@@ -54,6 +56,7 @@ import {
 } from './firebaseAuth.js';
 import {
   doc,
+  deleteDoc,
   updateDoc,
   serverTimestamp,
   runTransaction
@@ -143,10 +146,11 @@ export function renderizarVendas(resultadoPronto) {
         <span>${formatarDataModulo(venda.data)} · ${formatarMoeda(Number(venda.valorUnitario || 0))} / un.</span>
         <span class="module-status ${status.css}">${escapeHtml(status.label)}</span>
       </div>
-      <div class="module-record-meta">
-        ${venda.origem === 'producao' ? '<span>Venda vinculada à produção</span>' : '<span></span>'}
-        <button type="button" class="btn-secondary" data-edit-sale-id="${escapeHtml(venda.id)}">Editar venda</button>
-      </div>
+        <div class="module-record-meta">
+          ${venda.origem === 'producao' ? '<span>Venda vinculada à produção</span>' : '<span></span>'}
+          <button type="button" class="btn-secondary" data-edit-sale-id="${escapeHtml(venda.id)}">Editar venda</button>
+          <button type="button" class="btn-delete-item" data-delete-sale-id="${escapeHtml(venda.id)}" data-delete-sale-name="${escapeHtml(venda.produtoNome || 'Venda')}" title="Excluir venda">Excluir</button>
+        </div>
     </article>
   `}).join('');
 }
@@ -186,7 +190,7 @@ export async function salvarVenda(event) {
     clienteId: dom.saleCustomer.value,
     clienteNome: cliente?.nome || '',
     quantidade: dom.saleQuantity.value,
-    valorUnitario: dom.saleUnitPrice.value,
+    valorUnitario: lerValorMoeda(dom.saleUnitPrice),
     data: dom.saleDate.value,
     formaPagamento: dom.salePayment.value,
     status: dom.saleStatus.value
@@ -200,7 +204,7 @@ export async function salvarVenda(event) {
       produto: dom.saleProduct,
       cliente: dom.saleCustomer,
       quantidade: dom.saleQuantity,
-      valorUnitario: dom.saleUnitPrice,
+      valorUnitario: lerValorMoeda(dom.saleUnitPrice),
       data: dom.saleDate,
       formaPagamento: dom.salePayment,
       status: dom.saleStatus
@@ -213,7 +217,7 @@ export async function salvarVenda(event) {
   const botao = obterBotaoSubmit(dom.formVenda);
   if (botao) botao.disabled = true;
   const quantidade = Number(dom.saleQuantity.value);
-  const valorUnitario = Number(dom.saleUnitPrice.value);
+  const valorUnitario = lerValorMoeda(dom.saleUnitPrice);
   const venda = {
     produtoId: produto.id,
     produtoNome: produto.nome,
@@ -271,7 +275,7 @@ export function abrirEdicaoVenda(vendaId) {
   dom.editSaleProduct.disabled = venda.origem === 'producao';
   dom.editSaleCustomer.value = venda.clienteId || '';
   dom.editSaleQuantity.value = Number(venda.quantidade) || '';
-  dom.editSaleUnitPrice.value = Number(venda.valorUnitario) || 0;
+  dom.editSaleUnitPrice.valorNumerico = Number(venda.valorUnitario) || 0;
   dom.editSalePayment.value = venda.formaPagamento || 'nao_informado';
   dom.editSaleDate.value = venda.data || '';
   dom.editSaleStatus.value = venda.status || 'pago';
@@ -317,7 +321,7 @@ export async function salvarEdicaoVenda(event) {
 
   const erros = validarEdicaoVenda({
     quantidade: dom.editSaleQuantity.value,
-    valorUnitario: dom.editSaleUnitPrice.value,
+    valorUnitario: lerValorMoeda(dom.editSaleUnitPrice),
     data,
     formaPagamento: dom.editSalePayment.value,
     status
@@ -338,7 +342,7 @@ export async function salvarEdicaoVenda(event) {
       produto: dom.editSaleProduct,
       cliente: dom.editSaleCustomer,
       quantidade: dom.editSaleQuantity,
-      valorUnitario: dom.editSaleUnitPrice,
+      valorUnitario: lerValorMoeda(dom.editSaleUnitPrice),
       data: dom.editSaleDate,
       formaPagamento: dom.editSalePayment,
       status: dom.editSaleStatus
@@ -349,7 +353,7 @@ export async function salvarEdicaoVenda(event) {
   const liberar = iniciarEnvio(dom.editSaleForm);
   if (!liberar) return;
   const quantidade = Number(dom.editSaleQuantity.value);
-  const valorUnitario = Number(dom.editSaleUnitPrice.value);
+  const valorUnitario = lerValorMoeda(dom.editSaleUnitPrice);
 
   const updatedAt = isTestStockMode ? new Date().toISOString() : serverTimestamp();
   const saleFields = {
@@ -568,3 +572,47 @@ export async function atualizarStatusPedido(pedidoId, status) {
     renderizarPedidos();
   }
 }
+
+export function abrirModalExcluirVenda(id, nome) {
+  setPendingDeleteSaleId(id);
+  dom.modalDeleteItemName.textContent = `"${nome}"`;
+  dom.deleteModal.classList.add('active');
+}
+
+export function fecharModalExcluirVenda() {
+  setPendingDeleteSaleId(null);
+  dom.deleteModal.classList.remove('active');
+}
+
+export async function confirmarExclusaoVenda() {
+  if (!pendingDeleteSaleId) return;
+  const idToDelete = pendingDeleteSaleId;
+  dom.btnConfirmDelete.disabled = true;
+  dom.btnConfirmDelete.innerHTML = '<span class="loading-spinner"></span> Excluindo...';
+  try {
+    if (firestoreDb && !isTestStockMode && !idToDelete.startsWith('local-') && !idToDelete.startsWith('demo-')) {
+      await deleteDoc(doc(firestoreDb, 'vendas', idToDelete));
+      showToast('Venda excluída.');
+    } else {
+      setCachedVendas(cachedVendas.filter(item => item.id !== idToDelete));
+      localStorage.setItem(obterChaveStorageModulo('vendas'), JSON.stringify(cachedVendas));
+      showToast('Venda excluída.');
+    }
+    fecharModalExcluirVenda();
+    renderizarVendas();
+    renderizarClientes();
+    renderizarFinanceiro();
+  } catch (err) {
+    console.error('Erro ao excluir venda:', err);
+    showToast('Erro ao excluir venda: ' + (err.message || 'Tente novamente'));
+  } finally {
+    dom.btnConfirmDelete.disabled = false;
+    dom.btnConfirmDelete.innerHTML = 'Excluir Venda';
+  }
+}
+
+// Máscaras e memória de últimos valores (vendas)
+aplicarMascaraMoeda(dom.saleUnitPrice);
+aplicarMascaraMoeda(dom.editSaleUnitPrice);
+configurarMemoriaCampos(dom.formVenda, 'vendas');
+configurarMemoriaCampos(dom.formPedido, 'pedidos');

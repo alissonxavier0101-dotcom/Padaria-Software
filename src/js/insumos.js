@@ -1,6 +1,9 @@
 import { cachedInsumos, cachedReceitas, cachedFornecedores, editingInsumoId, stockFormUnit, isTestStockMode, firestoreDb, currentUser, activeGroupFilter, pendingDeleteId, LOCAL_DEMO_ITEMS_KEY, TEST_ITEMS_KEY, DEMO_SEED_INSUMOS, setActiveGroupFilter, setCachedInsumos, setEditingInsumoId, setPendingDeleteId, setStockFormUnit } from './state.js';
 import { dom } from './dom.js';
-import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda, correspondeBusca, formatarCustoComUnidade, calcularEquivalenciaReceita, preencherConversoesDoFormulario, calcularCustoItemReceita, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, obterConversoesDoFormulario, exibirErrosFormulario, limparErrosFormulario, iniciarEnvio } from './helpers.js';
+import {
+  showToast, calcularCustoUnitario, escapeHtml, formatarMoeda, correspondeBusca, formatarCustoComUnidade, calcularEquivalenciaReceita, preencherConversoesDoFormulario, calcularCustoItemReceita, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, obterConversoesDoFormulario, exibirErrosFormulario, limparErrosFormulario, iniciarEnvio
+} from './helpers.js';
+import { aplicarMascaraMoeda, lerValorMoeda, aplicarBuscaSelect, configurarMemoriaCampos } from './formHelpers.js';
 import { validarInsumo, possuiErros } from '../utils/validation.ts';
 import { initFirebase, salvarDadosReceitasLocais, salvarDadosInsumosLocais, abrirModalRegrasFirestore } from './firebaseAuth.js';
 import { collection, onSnapshot, doc, addDoc, deleteDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
@@ -52,7 +55,7 @@ export function handleStockUnitChange() {
       }
 
 export function atualizarPreviewCalculo() {
-        const preco = parseFloat(dom.inputPreco.value) || 0;
+        const preco = lerValorMoeda(dom.inputPreco);
         const qtd = parseFloat(dom.inputQuantidade.value) || 0;
         const unidade = dom.selectUnidade.value || 'kg';
 
@@ -111,7 +114,7 @@ export function abrirEdicaoInsumo(id) {
         dom.inputEstoqueMinimo.value = insumo.estoqueMinimo ?? 0;
         atualizarRotulosUnidadeEstoque();
         preencherConversoesDoFormulario(insumo.conversoes);
-        dom.inputPreco.value = insumo.preco ?? '';
+        dom.inputPreco.valorNumerico = insumo.preco ?? 0;
         dom.formInsumoTitle.textContent = '✏️ Editar Insumo ou Material';
         dom.btnSubmitInsumo.innerHTML = '<span>Salvar alterações</span>';
         dom.btnCancelEditInsumo.classList.remove('hidden');
@@ -257,7 +260,7 @@ export async function handleFormSubmit(e) {
           marca: dom.inputMarcaInsumo.value,
           quantidade: dom.inputQuantidade.value,
           unidade: dom.selectUnidade.value,
-          preco: dom.inputPreco.value,
+          preco: lerValorMoeda(dom.inputPreco),
           estoqueAtual: dom.inputEstoqueAtual.value,
           estoqueMinimo: dom.inputEstoqueMinimo.value
         });
@@ -277,7 +280,7 @@ export async function handleFormSubmit(e) {
         }
 
         const quantidade = parseFloat(dom.inputQuantidade.value);
-        const preco = parseFloat(dom.inputPreco.value);
+        const preco = lerValorMoeda(dom.inputPreco);
         const estoqueAtual = parseFloat(dom.inputEstoqueAtual.value);
         const estoqueMinimo = parseFloat(dom.inputEstoqueMinimo.value);
         const custoUnitario = calcularCustoUnitario(preco, quantidade);
@@ -616,4 +619,8 @@ export function setGroupFilter(grupo) {
         });
         renderizarInsumos();
       }
+
+// Máscaras e memória de últimos valores (insumos)
+aplicarMascaraMoeda(dom.inputPreco);
+configurarMemoriaCampos(dom.formInsumo, 'insumos');
 

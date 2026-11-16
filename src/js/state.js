@@ -67,6 +67,7 @@ export let pendingProductionRecipeId = null;
 export let pendingEditProductionId = null;
 export let pendingDeleteProductionId = null;
 export let pendingEditSaleId = null;
+export let pendingDeleteSaleId = null;
 export let editingFornecedorId = null;
 export let activeGroupFilter = 'todos';
 export let activeRecipeCategory = 'todos';
@@ -372,6 +373,10 @@ export function setPendingDeleteProductionId(value) {
 
 export function setPendingEditSaleId(value) {
   pendingEditSaleId = value;
+}
+
+export function setPendingDeleteSaleId(value) {
+  pendingDeleteSaleId = value;
 }
 
 export function setEditingFornecedorId(value) {

@@ -51,6 +51,7 @@ import {
   obterCustosIndiretosDaReceita,
   calcularLucroEPrecificacao
 } from './helpers.js';
+import { aplicarMascaraMoeda, lerValorMoeda, configurarMemoriaCampos } from './formHelpers.js';
 import { initFirebase, salvarDadosReceitasLocais } from './firebaseAuth.js';
 import { renderizarInsumos, formatarQuantidadeEstoque, atualizarReceitasDependentes } from './insumos.js';
 import { atualizarSelectFornecedores, renderizarFornecedores, obterFornecedorDoInsumo } from './firestoreData.js';
@@ -859,8 +860,8 @@ export function atualizarTotaisReceitaEmElaboracao() {
 }
 
 export function atualizarCalculadoraLucroReceita(custoUnitario, rendimento = 1) {
-  const margem = parseFloat(dom.inputMargemLucro.value) || 100;
-  const precoPraticadoInput = parseFloat(dom.inputPrecoPraticado.value);
+  const margem = lerValorMoeda(dom.inputMargemLucro) || 100;
+  const precoPraticadoInput = lerValorMoeda(dom.inputPrecoPraticado);
 
   dom.badgeProfitPreview.textContent = `Margem: ${margem}%`;
 
@@ -872,11 +873,11 @@ export function atualizarCalculadoraLucroReceita(custoUnitario, rendimento = 1) 
     : '';
   dom.recipePriceWarning.classList.toggle('hidden', !calculo.precoAbaixoDoMinimo);
 
-  if (!dom.inputPrecoPraticado.value || parseFloat(dom.inputPrecoPraticado.value) <= 0) {
-    dom.inputPrecoPraticado.value = calculo.precoSugerido.toFixed(2);
+  if (!dom.inputPrecoPraticado.value || lerValorMoeda(dom.inputPrecoPraticado) <= 0) {
+    dom.inputPrecoPraticado.valorNumerico = calculo.precoSugerido;
   }
 
-  const precoFinal = parseFloat(dom.inputPrecoPraticado.value) || calculo.precoSugerido;
+  const precoFinal = lerValorMoeda(dom.inputPrecoPraticado) || calculo.precoSugerido;
   const lucroUn = Math.round((precoFinal - custoUnitario) * 100) / 100;
   const lucroLote = Math.round((lucroUn * rendimento) * 100) / 100;
 
@@ -980,15 +981,15 @@ export function abrirEdicaoReceita(id) {
   dom.inputReceitaDescricao.value = receita.descricao || '';
   dom.inputModoPreparo.value = receita.modoPreparo || '';
   dom.inputTempoPreparo.value = receita.tempoPreparoMin ?? '';
-  dom.inputCustoEnergia.value = receita.custoEnergia ?? '';
-  dom.inputValorHora.value = receita.valorHoraMaoDeObra ?? '';
-  dom.inputCustoAgua.value = receita.custoAgua ?? '';
+  dom.inputCustoEnergia.valorNumerico = receita.custoEnergia ?? 0;
+  dom.inputValorHora.valorNumerico = receita.valorHoraMaoDeObra ?? 0;
+  dom.inputCustoAgua.valorNumerico = receita.custoAgua ?? 0;
   dom.inputUnidadesPerdidas.value = receita.unidadesPerdidas ?? 0;
   dom.inputTempoForno.value = receita.tempoFornoMin ?? '';
   dom.inputTemperaturaForno.value = receita.temperaturaFornoC ?? '';
   atualizarPreviewFotoReceita(receita.fotoDataUrl);
-  dom.inputMargemLucro.value = receita.margemLucroDesejada ?? 100;
-  dom.inputPrecoPraticado.value = receita.precoVendaPraticado ?? '';
+  dom.inputMargemLucro.valorNumerico = receita.margemLucroDesejada ?? 100;
+  dom.inputPrecoPraticado.valorNumerico = receita.precoVendaPraticado ?? 0;
   dom.recipeCostDetails.open = Boolean(
     Number(receita.custoEnergia) || Number(receita.valorHoraMaoDeObra) ||
     Number(receita.custoAgua) || Number(receita.unidadesPerdidas)
@@ -1026,15 +1027,15 @@ export function duplicarReceita(id) {
   dom.inputReceitaDescricao.value = receita.descricao || '';
   dom.inputModoPreparo.value = receita.modoPreparo || '';
   dom.inputTempoPreparo.value = receita.tempoPreparoMin ?? '';
-  dom.inputCustoEnergia.value = receita.custoEnergia ?? '';
-  dom.inputValorHora.value = receita.valorHoraMaoDeObra ?? '';
-  dom.inputCustoAgua.value = receita.custoAgua ?? '';
+  dom.inputCustoEnergia.valorNumerico = receita.custoEnergia ?? 0;
+  dom.inputValorHora.valorNumerico = receita.valorHoraMaoDeObra ?? 0;
+  dom.inputCustoAgua.valorNumerico = receita.custoAgua ?? 0;
   dom.inputUnidadesPerdidas.value = receita.unidadesPerdidas ?? 0;
   dom.inputTempoForno.value = receita.tempoFornoMin ?? '';
   dom.inputTemperaturaForno.value = receita.temperaturaFornoC ?? '';
   atualizarPreviewFotoReceita(receita.fotoDataUrl);
-  dom.inputMargemLucro.value = receita.margemLucroDesejada ?? 100;
-  dom.inputPrecoPraticado.value = '';
+  dom.inputMargemLucro.valorNumerico = receita.margemLucroDesejada ?? 100;
+  dom.inputPrecoPraticado.valorNumerico = 0;
   dom.recipeCostDetails.open = Boolean(
     Number(receita.custoEnergia) || Number(receita.valorHoraMaoDeObra) ||
     Number(receita.custoAgua) || Number(receita.unidadesPerdidas)
@@ -1075,8 +1076,8 @@ export async function handleFormReceitaSubmit(e) {
   const tempoPreparoMin = optionalNumber(dom.inputTempoPreparo);
   const tempoFornoMin = optionalNumber(dom.inputTempoForno);
   const temperaturaFornoC = optionalNumber(dom.inputTemperaturaForno);
-  const margemLucroDesejada = parseFloat(dom.inputMargemLucro.value) || 100;
-  const precoVendaPraticado = parseFloat(dom.inputPrecoPraticado.value);
+  const margemLucroDesejada = lerValorMoeda(dom.inputMargemLucro) || 100;
+  const precoVendaPraticado = lerValorMoeda(dom.inputPrecoPraticado);
 
   if (!nome || isNaN(rendimento) || rendimento <= 0) {
     showToast('Preencha o nome da receita e rendimento válido.');
@@ -1531,7 +1532,7 @@ export function renderizarReceitas() {
   dom.receitasContainer.innerHTML = html;
 }
 
-export function salvarNovoPrecoReceita(receitaId, novoPreco) {
+export async function salvarNovoPrecoReceita(receitaId, novoPreco) {
   const receita = cachedReceitas.find(r => r.id === receitaId);
   if (!receita) return;
 
@@ -1640,7 +1641,7 @@ export function atualizarSelectClientes() {
 export function atualizarPrecoVendaProduto() {
   const selectedOption = dom.saleProduct.selectedOptions[0];
   const preco = Number(selectedOption?.dataset.price || 0);
-  dom.saleUnitPrice.value = preco.toFixed(2);
+  dom.saleUnitPrice.valorNumerico = preco;
 }
 
 export function switchRecipePanel(panel) {
@@ -1657,3 +1658,11 @@ export function switchRecipePanel(panel) {
     renderizarGruposModeloReceita();
   }
 }
+
+// Máscaras e memória de últimos valores (receitas)
+aplicarMascaraMoeda(dom.inputPrecoPraticado);
+aplicarMascaraMoeda(dom.inputValorHora);
+aplicarMascaraMoeda(dom.inputCustoEnergia);
+aplicarMascaraMoeda(dom.inputCustoAgua);
+aplicarMascaraMoeda(dom.inputMargemLucro);
+configurarMemoriaCampos(dom.formReceita, 'receitas');

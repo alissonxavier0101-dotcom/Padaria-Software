@@ -398,7 +398,8 @@ function obterFiltroProducoes() {
     onChange: resultado => {
       if (!inicializandoFiltroProducoes) renderizarProducoes(resultado);
     },
-    busca: false,
+    busca: true,
+    placeholderBusca: 'Buscar receita ou cliente...',
     chips: false,
     ordenacao: false,
     periodoRapido: false,

@@ -10,6 +10,7 @@ import { renderizarVendas, renderizarPedidos } from './vendas.js';
 import { renderizarClientes } from './clientes.js';
 import { collection, onSnapshot, doc, addDoc, deleteDoc, updateDoc, query, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { normalizeComparisonName, compareSupplierOffers } from '../utils/supplierComparison.ts';
+import { aplicarMascaraTelefone, lerValorTelefone } from './formHelpers.js';
 
 export function iniciarListenerFirestore() {
         if (isTestStockMode) return;
@@ -438,7 +439,7 @@ export function abrirEdicaoFornecedor(id) {
         if (!fornecedor) return;
         setEditingFornecedorId(id);
         dom.inputNomeFornecedor.value = fornecedor.nome || '';
-        dom.inputTelefoneFornecedor.value = fornecedor.telefone || '';
+        dom.inputTelefoneFornecedor.valorTelefone = fornecedor.telefone || '';
         dom.inputEmailFornecedor.value = fornecedor.email || '';
         dom.inputObservacaoFornecedor.value = fornecedor.observacoes || '';
         dom.supplierFormTitle.textContent = '✏️ Editar fornecedor';
@@ -461,7 +462,7 @@ export async function handleFormFornecedorSubmit(event) {
 
         const dadosFornecedor = {
           nome,
-          telefone: dom.inputTelefoneFornecedor.value.trim(),
+          telefone: lerValorTelefone(dom.inputTelefoneFornecedor),
           email: dom.inputEmailFornecedor.value.trim(),
           observacoes: dom.inputObservacaoFornecedor.value.trim()
         };
@@ -508,3 +509,6 @@ export async function handleFormFornecedorSubmit(event) {
       // -------------------------------------------------------------
       // 6. CADASTRO DE INSUMOS & EMBALAGENS COM GRUPOS
       // -------------------------------------------------------------
+
+// Máscara de telefone (fornecedores)
+aplicarMascaraTelefone(dom.inputTelefoneFornecedor);

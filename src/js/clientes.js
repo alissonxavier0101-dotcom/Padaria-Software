@@ -18,6 +18,7 @@ import { validarCliente, possuiErros } from '../utils/validation.ts';
 import { persistirNovoRegistro, obterDataLocalAtual, obterStatusVenda, vendaEstaPaga, formatarDataModulo } from './financeiro.js';
 import { atualizarSelectClientes } from './receitas.js';
 import { criarFiltroLista } from './components/filtroLista.js';
+import { aplicarMascaraTelefone, lerValorTelefone, configurarMemoriaCampos } from './formHelpers.js';
 
 const OPCOES_FILTRO_CLIENTES = {
   nome: cliente => cliente.nome,
@@ -99,10 +100,10 @@ export async function salvarCliente(event) {
   event.preventDefault();
   limparErrosFormulario(dom.formCliente);
   const nome = dom.customerName.value.trim();
-  const telefone = dom.customerPhone.value.trim();
+  const telefone = lerValorTelefone(dom.customerPhone);
   const erros = validarCliente({
     nome: dom.customerName.value,
-    telefone: dom.customerPhone.value
+    telefone: lerValorTelefone(dom.customerPhone)
   });
   if (possuiErros(erros)) {
     exibirErrosFormulario(dom.formCliente, erros, {
@@ -131,3 +132,7 @@ export async function salvarCliente(event) {
     liberar();
   }
 }
+
+// Máscaras e memória de últimos valores (clientes)
+aplicarMascaraTelefone(dom.customerPhone);
+configurarMemoriaCampos(dom.formCliente, 'clientes');

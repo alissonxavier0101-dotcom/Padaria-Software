@@ -4,7 +4,7 @@ import { renderizarInsumos, abrirEdicaoInsumo, prepararNovoInsumo, cancelarEdica
 import { switchRecipePanel, renderizarReceitas, renderizarResultadosBuscaInsumosReceita, renderizarGruposReceitaEmElaboracao, renderizarItensGrupoModelo, renderizarGruposModeloReceita, adicionarGrupoReceita, atualizarModoOrganizacaoGrupoReceita, atualizarNomeGrupoReceita, removerGrupoReceita, selecionarGrupoReceita, copiarItensGrupoModeloParaReceita, moverItemParaGrupo, adicionarItemReceitaEmElaboracao, removerItemReceitaEmElaboracao, renderizarItensReceitaEmElaboracao, atualizarPreviewItemReceita, atualizarTotaisReceitaEmElaboracao, atualizarCalculadoraLucroReceita, atualizarPreviewFotoReceita, compactarFotoReceita, prepararNovaReceita, abrirEdicaoReceita, duplicarReceita, handleFormReceitaSubmit, salvarNovoPrecoReceita, atualizarSelectProdutos, atualizarSelectClientes, atualizarPrecoVendaProduto, salvarGrupoModeloReceita, adicionarItemGrupoModelo, prepararNovoGrupoModelo, editarGrupoModeloReceita, excluirGrupoModeloReceita, usarGrupoCatalogoNaReceita, abrirModalExcluirReceita, fecharModalExcluirReceita, confirmarExclusaoReceita } from './receitas.js';
 import { abrirModalProducao, fecharModalProducao, renderizarPreviaProducao, confirmarProducao, abrirEdicaoProducao, fecharEdicaoProducao, atualizarPreviaEdicaoProducao, salvarEdicaoProducao, abrirExclusaoProducao, fecharExclusaoProducao, confirmarExclusaoProducao, abrirModalAddItemReceita, fecharModalAddItemReceita, atualizarPreviewModalAddItem, confirmarModalAddItemReceita, renderizarProducoes } from './producao.js';
 import { renderizarFinanceiro, salvarMovimentacaoFinanceira, salvarDespesaFixa, excluirRegistroFinanceiro, atualizarCategoriasMovimentacao } from './financeiro.js';
-import { renderizarVendas, renderizarPedidos, abrirEdicaoVenda, fecharEdicaoVenda, salvarEdicaoVenda, salvarVenda, salvarPedido, atualizarStatusPedido } from './vendas.js';
+import { renderizarVendas, renderizarPedidos, abrirEdicaoVenda, fecharEdicaoVenda, salvarEdicaoVenda, salvarVenda, salvarPedido, atualizarStatusPedido, abrirModalExcluirVenda, fecharModalExcluirVenda, confirmarExclusaoVenda } from './vendas.js';
 import { renderizarClientes, salvarCliente } from './clientes.js';
 import { abrirModalConfig, fecharModalConfig, salvarConfigFirebaseModal } from './firebaseConfigModal.js';
 import { showToast } from './helpers.js';
@@ -211,6 +211,19 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
 
       dom.btnCancelDelete.addEventListener('click', fecharModalExcluir);
       dom.btnConfirmDelete.addEventListener('click', confirmarExclusao);
+
+      // Deleção de vendas
+      dom.salesList.addEventListener('click', (e) => {
+        const btnDelete = e.target.closest('[data-delete-sale-id]');
+        if (btnDelete) {
+          const id = btnDelete.getAttribute('data-delete-sale-id');
+          const name = btnDelete.getAttribute('data-delete-sale-name');
+          abrirModalExcluirVenda(id, name);
+        }
+      });
+
+      dom.btnConfirmDelete.addEventListener('click', confirmarExclusaoVenda);
+      dom.btnCancelDelete.addEventListener('click', fecharModalExcluirVenda);
 
       // Busca de insumos
       dom.inputSearch.addEventListener('input', () => {
