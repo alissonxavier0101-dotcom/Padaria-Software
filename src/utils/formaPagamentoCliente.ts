@@ -18,18 +18,12 @@ export function ultimaFormaPagamentoDoCliente(
 ): string | undefined {
   if (!clienteId) return undefined;
 
-  const filtradas = Array.from(vendas)
-    .filter((venda) => venda.status !== 'cancelado')
-    .filter((venda) => venda.clienteId === clienteId)
-    .filter((venda) => venda.formaPagamento && venda.formaPagamento !== 'nao_informado')
-    .sort((a, b) => {
-      const dataA = String(a.data ?? '');
-      const dataB = String(b.data ?? '');
-      if (dataA < dataB) return 1;
-      if (dataA > dataB) return -1;
-      return 0;
-    });
-
-  if (filtradas.length === 0) return undefined;
-  return String(filtradas[0].formaPagamento);
+  let ultima: string | undefined;
+  for (const venda of vendas) {
+    if (venda.status === 'cancelado') continue;
+    if (venda.clienteId !== clienteId) continue;
+    if (!venda.formaPagamento || venda.formaPagamento === 'nao_informado') continue;
+    ultima = String(venda.formaPagamento);
+  }
+  return ultima;
 }
