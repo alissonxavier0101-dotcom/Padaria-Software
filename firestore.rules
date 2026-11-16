@@ -261,10 +261,12 @@ service cloud.firestore {
               'custoUnitario', 'custosInsumos', 'status', 'updatedAt'
             ]))
         );
-      allow delete: if isSignedIn() &&
-        resource.data.origem == 'producao' &&
-        resource.data.producaoId is string &&
-        get(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.vendaId == vendaId;
+      allow delete: if isSignedIn() && (
+        !resource.data.keys().hasAny(['origem']) ||
+        resource.data.origem != 'producao' ||
+        (resource.data.producaoId is string &&
+          get(/databases/$(database)/documents/producoes/$(resource.data.producaoId)).data.vendaId == vendaId)
+      );
     }
 
     match /pedidos/{pedidoId} {
