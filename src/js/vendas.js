@@ -616,5 +616,10 @@ export async function confirmarExclusaoVenda() {
 // Máscaras e memória de últimos valores (vendas)
 aplicarMascaraMoeda(dom.saleUnitPrice);
 aplicarMascaraMoeda(dom.editSaleUnitPrice);
-configurarMemoriaCampos(dom.formVenda, 'vendas');
-configurarMemoriaCampos(dom.formPedido, 'pedidos');
+const selecionacoesDiferidasVendas = configurarMemoriaCampos(dom.formVenda, 'vendas');
+const selecionacoesDiferidasPedidos = configurarMemoriaCampos(dom.formPedido, 'pedidos');
+
+export function restaurarSelecoesDiferidasVendas() {
+  restaurarSelecoesDiferidas(selecionacoesDiferidasVendas);
+  restaurarSelecoesDiferidas(selecionacoesDiferidasPedidos);
+}

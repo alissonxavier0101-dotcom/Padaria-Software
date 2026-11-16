@@ -38,6 +38,7 @@ import {
 } from './state.js';
 import { ordenarOpcoesPorUso } from '../utils/optionUsage.ts';
 import { dom } from './dom.js';
+import { restaurarSelecoesDiferidasVendas } from './vendas.js';
 import {
   showToast,
   escapeHtml,
@@ -1633,6 +1634,7 @@ export function atualizarSelectProdutos() {
     if (cachedReceitas.some(receita => receita.id === selecionado)) select.value = selecionado;
   });
   if (dom.saleProduct.value) atualizarPrecoVendaProduto();
+  restaurarSelecoesDiferidasVendas();
 }
 
 export function atualizarSelectClientes() {
@@ -1661,6 +1663,7 @@ export function atualizarSelectClientes() {
     select.innerHTML = html;
     if (cachedClientes.some(cliente => cliente.id === selecionado)) select.value = selecionado;
   });
+  restaurarSelecoesDiferidasVendas();
 }
 
 export function atualizarPrecoVendaProduto() {

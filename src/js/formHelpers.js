@@ -361,6 +361,7 @@ export function restaurarValorCampo(input, chave) {
 export function configurarMemoriaCampos(form, prefixo) {
   if (!form || !prefixo) return;
   const inputs = form.querySelectorAll('input, select, textarea');
+  const selecionacoesDiferidas = [];
   for (const input of inputs) {
     if (!input.id) continue;
 
@@ -371,12 +372,31 @@ export function configurarMemoriaCampos(form, prefixo) {
     if (input.tagName === 'SELECT' && /status/i.test(input.id || input.name || '')) continue;
 
     const chave = `${prefixo}:${input.id}`;
-    restaurarValorCampo(input, chave);
 
+    // Selects dependem de opcoes preenchidas assincronamente (Firestore),
+    // entao diferimos a restauracao para depois de preencher as opcoes.
     if (input.tagName === 'SELECT') {
-      input.addEventListener('change', () => lembrarValorCampo(input, chave), { once: false });
-    } else {
-      input.addEventListener('blur', () => lembrarValorCampo(input, chave), { once: false });
+      selecionacoesDiferidas.push({ input, chave });
+      continue;
     }
+
+    restaurarValorCampo(input, chave);
+    input.addEventListener('blur', () => lembrarValorCampo(input, chave), { once: false });
+  }
+  return selecionacoesDiferidas;
+}
+
+/**
+ * Restaura o valor salvo em selects que foram diferidos por
+ * configurarMemoriaCampos. Deve ser chamado apos preencher as opcoes
+ * dos selects (ex.: apos atualizarSelectProdutos/Clientes). Restaura
+ * apenas se o campo ainda estiver vazio.
+ */
+export function restaurarSelecoesDiferidas(selecionacoesDiferidas) {
+  if (!selecionacoesDiferidas) return;
+  for (const { input, chave } of selecionacoesDiferidas) {
+    if (input.value) continue; // ja tem valor, nao sobrescreve
+    restaurarValorCampo(input, chave);
+    input.addEventListener('change', () => lembrarValorCampo(input, chave), { once: false });
   }
 }
