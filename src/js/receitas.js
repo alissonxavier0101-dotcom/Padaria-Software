@@ -36,6 +36,7 @@ import {
   setCachedRecipeGroups,
   setCachedInsumos
 } from './state.js';
+import { ordenarOpcoesPorUso } from '../utils/optionUsage.ts';
 import { dom } from './dom.js';
 import {
   showToast,
@@ -1611,11 +1612,24 @@ export function atualizarSelectProdutos() {
   const selects = [dom.saleProduct, dom.orderProduct, dom.editSaleProduct];
   selects.forEach(select => {
     const selecionado = select.value;
-    select.innerHTML = '<option value="">Selecione um produto...</option>' +
-      cachedReceitas.map(receita => {
-        const preco = Number(receita.precoVendaPraticado ?? receita.precoVendaSugerido ?? 0);
-        return `<option value="${escapeHtml(receita.id)}" data-price="${Number.isFinite(preco) ? preco : 0}">${escapeHtml(receita.nome)}</option>`;
-      }).join('');
+    const opcoes = cachedReceitas.map(receita => ({
+      valor: receita.id,
+      rotulo: receita.nome,
+      preco: Number(receita.precoVendaPraticado ?? receita.precoVendaSugerido ?? 0)
+    }));
+    const ordenadas = ordenarOpcoesPorUso(opcoes, cachedVendas);
+    let html = '<option value="">Selecione um produto...</option>';
+    const maisUsados = ordenadas.filter((o) => o.ehMaisUsado);
+    if (maisUsados.length) {
+      html += '<option disabled>- Mais usados -</option>';
+      html += maisUsados.map((o) => `<option value="${escapeHtml(o.valor)}" data-price="${Number.isFinite(o.preco) ? o.preco : 0}">${escapeHtml(o.rotulo)}</option>`).join('');
+    }
+    const demais = ordenadas.filter((o) => !o.ehMaisUsado);
+    if (demais.length) {
+      html += '<option disabled>- Demais -</option>';
+      html += demais.map((o) => `<option value="${escapeHtml(o.valor)}" data-price="${Number.isFinite(o.preco) ? o.preco : 0}">${escapeHtml(o.rotulo)}</option>`).join('');
+    }
+    select.innerHTML = html;
     if (cachedReceitas.some(receita => receita.id === selecionado)) select.value = selecionado;
   });
   if (dom.saleProduct.value) atualizarPrecoVendaProduto();
@@ -1631,9 +1645,20 @@ export function atualizarSelectClientes() {
   ];
   selects.forEach(([select, placeholder]) => {
     const selecionado = select.value;
-    select.innerHTML = placeholder + cachedClientes.map(cliente =>
-      `<option value="${escapeHtml(cliente.id)}">${escapeHtml(cliente.nome)}</option>`
-    ).join('');
+    const opcoes = cachedClientes.map(cliente => ({ valor: cliente.id, rotulo: cliente.nome }));
+    const ordenadas = ordenarOpcoesPorUso(opcoes, cachedVendas, (registro) => registro['clienteId']);
+    let html = placeholder;
+    const maisUsados = ordenadas.filter((o) => o.ehMaisUsado);
+    if (maisUsados.length) {
+      html += '<option disabled>- Mais usados -</option>';
+      html += maisUsados.map((o) => `<option value="${escapeHtml(o.valor)}">${escapeHtml(o.rotulo)}</option>`).join('');
+    }
+    const demais = ordenadas.filter((o) => !o.ehMaisUsado);
+    if (demais.length) {
+      html += '<option disabled>- Demais -</option>';
+      html += demais.map((o) => `<option value="${escapeHtml(o.valor)}">${escapeHtml(o.rotulo)}</option>`).join('');
+    }
+    select.innerHTML = html;
     if (cachedClientes.some(cliente => cliente.id === selecionado)) select.value = selecionado;
   });
 }
