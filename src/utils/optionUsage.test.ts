@@ -81,7 +81,7 @@ test('usa clienteId quando informado obterChave', () => {
     { clienteId: 'c1', status: 'pago' },
     { clienteId: 'c1', status: 'pago' },
     { clienteId: 'c2', status: 'cancelado' }
-  ], (registro) => registro['clienteId']);
+  ], (registro) => registro['clienteId'] as string | undefined);
   assert.deepEqual(resultado.map((o) => o.valor), ['c1', 'c2']);
   assert.equal(resultado.find((o) => o.valor === 'c1')?.usos, 2);
   assert.equal(resultado.find((o) => o.valor === 'c2')?.usos, 0);
