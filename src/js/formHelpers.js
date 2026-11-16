@@ -216,8 +216,12 @@ export function lerValorTelefone(input) {
 export function aplicarBuscaSelect(select, { placeholder = 'Buscar...' } = {}) {
   if (!select || select.dataset.selectBuscaAplicada === 'true') return select;
 
-  const wrapper = document.createElement('div');
-  wrapper.className = 'select-com-busca';
+  // Mantem o select original no fluxo do DOM (escondido visualmente)
+  // para que innerHTML/value/continuem funcionando normalmente quando
+  // modificado por atualizarSelectProdutos/Clientes e por submits de form.
+  select.style.display = 'none';
+  select.setAttribute('aria-hidden', 'true');
+  select.tabIndex = -1;
 
   const campoBusca = document.createElement('input');
   campoBusca.type = 'text';
@@ -225,12 +229,6 @@ export function aplicarBuscaSelect(select, { placeholder = 'Buscar...' } = {}) {
   campoBusca.className = 'select-busca-input';
   campoBusca.autocomplete = 'off';
   campoBusca.spellcheck = false;
-
-  // Mantem o select original no DOM (escondido) para que innerHTML/value
-  // continuem funcionando quando modificado por atualizarSelectProdutos/Clientes.
-  select.style.display = 'none';
-  select.setAttribute('aria-hidden', 'true');
-  select.tabIndex = -1;
 
   const listaOpcoes = document.createElement('div');
   listaOpcoes.className = 'select-busca-lista';
@@ -289,8 +287,10 @@ export function aplicarBuscaSelect(select, { placeholder = 'Buscar...' } = {}) {
     }
   });
 
-  wrapper.append(campoBusca, select, listaOpcoes);
-  select.parentNode?.replaceChild(wrapper, select) || select.after(wrapper);
+  // Insere o campo de busca e a lista ANTES do select, sem remover o select
+  // do fluxo do DOM. Assim formularios continuam enviando o valor do select.
+  select.parentNode?.insertBefore(listaOpcoes, select);
+  select.parentNode?.insertBefore(campoBusca, select);
 
   function refresh() {
     montarLista();
@@ -303,7 +303,7 @@ export function aplicarBuscaSelect(select, { placeholder = 'Buscar...' } = {}) {
   select.dataset.selectBuscaAplicada = 'true';
   selectRefreshMap.set(select, refresh);
 
-  return { wrapper, campoBusca, select, lista: listaOpcoes, refresh };
+  return { campoBusca, select, lista: listaOpcoes, refresh };
 }
 
 const selectsComBusca = new WeakMap();
