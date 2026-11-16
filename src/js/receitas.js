@@ -98,10 +98,10 @@ export function criariaCicloReceita(receitaPaiId, receitaBaseId) {
 }
 
 export function renderizarResultadosBuscaInsumosReceita() {
-  const termo = normalizarTextoBusca(dom.receitaItemBusca.value.trim());
+  const consulta = dom.receitaItemBusca.value;
   const options = Array.from(dom.receitaItemInsumo.options)
     .filter(option => option.value)
-    .filter(option => !termo || normalizarTextoBusca(option.textContent || '').includes(termo));
+    .filter(option => correspondeBusca(consulta, [option.textContent || '']));
 
   if (options.length === 0) {
     dom.receitaItemResultados.innerHTML = '<div role="status" style="padding: 10px 12px; color: var(--text-muted); font-size: 13px;">Nenhum material encontrado.</div>';

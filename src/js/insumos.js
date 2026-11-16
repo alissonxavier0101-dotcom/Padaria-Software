@@ -1,6 +1,7 @@
 import { cachedInsumos, cachedReceitas, cachedFornecedores, editingInsumoId, stockFormUnit, isTestStockMode, firestoreDb, currentUser, activeGroupFilter, pendingDeleteId, LOCAL_DEMO_ITEMS_KEY, TEST_ITEMS_KEY, DEMO_SEED_INSUMOS, setActiveGroupFilter, setCachedInsumos, setEditingInsumoId, setPendingDeleteId, setStockFormUnit } from './state.js';
 import { dom } from './dom.js';
-import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda, correspondeBusca, formatarCustoComUnidade, calcularEquivalenciaReceita, preencherConversoesDoFormulario, calcularCustoItemReceita, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, obterConversoesDoFormulario } from './helpers.js';
+import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda, correspondeBusca, formatarCustoComUnidade, calcularEquivalenciaReceita, preencherConversoesDoFormulario, calcularCustoItemReceita, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, obterConversoesDoFormulario, exibirErrosFormulario, limparErrosFormulario, iniciarEnvio } from './helpers.js';
+import { validarInsumo, possuiErros } from '../utils/validation.ts';
 import { initFirebase, salvarDadosReceitasLocais, salvarDadosInsumosLocais, abrirModalRegrasFirestore } from './firebaseAuth.js';
 import { collection, onSnapshot, doc, addDoc, deleteDoc, updateDoc, serverTimestamp } from 'https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js';
 import { convertStockQuantity, isBelowMinimum } from '../utils/inventory.ts';
@@ -237,6 +238,7 @@ export async function atualizarReceitasDependentes(receitaBaseId, visitadas = ne
 
 export async function handleFormSubmit(e) {
         e.preventDefault();
+        limparErrosFormulario(dom.formInsumo);
 
         const categoria = dom.selectCategoriaInsumo.value || 'ingrediente';
         const nome = dom.inputNome.value.trim();
@@ -245,21 +247,42 @@ export async function handleFormSubmit(e) {
         const fornecedorId = fornecedorSelecionado?.getAttribute('data-supplier-id') || '';
         const grupoComparacao = dom.inputGrupoComparacao.value.trim();
         const marca = dom.inputMarcaInsumo.value.trim();
-        const quantidade = parseFloat(dom.inputQuantidade.value);
         const unidade = dom.selectUnidade.value;
-        const preco = parseFloat(dom.inputPreco.value);
-        const estoqueAtual = parseFloat(dom.inputEstoqueAtual.value);
-        const estoqueMinimo = parseFloat(dom.inputEstoqueMinimo.value);
         const conversoes = obterConversoesDoFormulario();
 
-        if (!nome || !fornecedor || !grupoComparacao || isNaN(quantidade) || quantidade <= 0 || isNaN(preco) || preco <= 0 ||
-            !Number.isFinite(estoqueAtual) || estoqueAtual < 0 ||
-            !Number.isFinite(estoqueMinimo) || estoqueMinimo < 0) {
-          showToast('Preencha todos os campos com valores válidos. O estoque atual e o mínimo não podem ser negativos.');
+        const erros = validarInsumo({
+          nome: dom.inputNome.value,
+          fornecedor,
+          grupoComparacao: dom.inputGrupoComparacao.value,
+          marca: dom.inputMarcaInsumo.value,
+          quantidade: dom.inputQuantidade.value,
+          unidade: dom.selectUnidade.value,
+          preco: dom.inputPreco.value,
+          estoqueAtual: dom.inputEstoqueAtual.value,
+          estoqueMinimo: dom.inputEstoqueMinimo.value
+        });
+        if (possuiErros(erros)) {
+          exibirErrosFormulario(dom.formInsumo, erros, {
+            nome: dom.inputNome,
+            fornecedor: dom.inputFornecedor,
+            grupoComparacao: dom.inputGrupoComparacao,
+            marca: dom.inputMarcaInsumo,
+            quantidade: dom.inputQuantidade,
+            unidade: dom.selectUnidade,
+            preco: dom.inputPreco,
+            estoqueAtual: dom.inputEstoqueAtual,
+            estoqueMinimo: dom.inputEstoqueMinimo
+          });
           return;
         }
 
+        const quantidade = parseFloat(dom.inputQuantidade.value);
+        const preco = parseFloat(dom.inputPreco.value);
+        const estoqueAtual = parseFloat(dom.inputEstoqueAtual.value);
+        const estoqueMinimo = parseFloat(dom.inputEstoqueMinimo.value);
         const custoUnitario = calcularCustoUnitario(preco, quantidade);
+        const liberar = iniciarEnvio(dom.formInsumo);
+        if (!liberar) return;
 
         const novoInsumo = {
           nome,
@@ -346,6 +369,7 @@ export async function handleFormSubmit(e) {
           dom.btnSubmitInsumo.innerHTML = editingInsumoId
             ? '<span>Salvar alterações</span>'
             : '<span>Salvar no Firestore</span>';
+          liberar();
         }
       }
 

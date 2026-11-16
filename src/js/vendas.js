@@ -19,8 +19,18 @@ import { dom } from './dom.js';
 import {
   showToast,
   escapeHtml,
-  formatarMoeda
+  formatarMoeda,
+  exibirErrosFormulario,
+  limparErrosFormulario,
+  iniciarEnvio,
+  obterBotaoSubmit
 } from './helpers.js';
+import {
+  validarVenda,
+  validarEdicaoVenda,
+  validarPedido,
+  possuiErros
+} from '../utils/validation.ts';
 import {
   persistirNovoRegistro,
   obterChaveStorageModulo,
@@ -29,7 +39,6 @@ import {
   obterStatusVenda,
   vendaEstaPaga,
   obterCustosInsumosProduto,
-  dataISOValida,
   formatarDataModulo
 } from './financeiro.js';
 import {
@@ -49,17 +58,76 @@ import {
   serverTimestamp,
   runTransaction
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { criarFiltroLista } from './components/filtroLista.js';
 
-export function renderizarVendas() {
+const STATUS_VENDA_FILTRO = [
+  { valor: 'pago', rotulo: 'Pago' },
+  { valor: 'aguardando_pagamento', rotulo: 'Aguardando pagamento' },
+  { valor: 'em_processo', rotulo: 'Em processo' },
+  { valor: 'pronto', rotulo: 'Pronto' },
+  { valor: 'entregue', rotulo: 'Entregue' },
+  { valor: 'cancelado', rotulo: 'Cancelado' }
+];
+
+const FORMAS_PAGAMENTO_FILTRO = ['nao_informado', 'pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia']
+  .map(forma => ({ valor: forma, rotulo: obterNomeFormaPagamento(forma) }));
+
+const OPCOES_FILTRO_VENDAS = {
+  nome: venda => venda.produtoNome,
+  camposBusca: venda => [venda.produtoNome, venda.clienteNome, obterNomeFormaPagamento(venda.formaPagamento)],
+  categoria: venda => venda.status || 'pago',
+  data: venda => venda.data,
+  valor: venda => Number(venda.valorTotal) || 0,
+  extras: venda => ({
+    status: venda.status || 'pago',
+    forma: venda.formaPagamento || 'nao_informado',
+    cliente: venda.clienteId || ''
+  })
+};
+
+let filtroVendas = null;
+let inicializandoFiltroVendas = false;
+
+function obterFiltroVendas() {
+  if (filtroVendas) return filtroVendas;
+  if (inicializandoFiltroVendas || !dom.salesFilters) return null;
+  inicializandoFiltroVendas = true;
+  filtroVendas = criarFiltroLista({
+    container: dom.salesFilters,
+    aba: 'vendas',
+    opcoes: OPCOES_FILTRO_VENDAS,
+    itens: () => cachedVendas,
+    onChange: resultado => {
+      if (!inicializandoFiltroVendas) renderizarVendas(resultado);
+    },
+    busca: false,
+    chips: false,
+    faixaData: false,
+    ordenacao: false,
+    periodoRapido: true,
+    selects: [
+      { campo: 'status', rotulo: 'Status', rotuloTodos: 'Todos os status', opcoes: STATUS_VENDA_FILTRO },
+      { campo: 'forma', rotulo: 'Forma de pagamento', rotuloTodos: 'Todas as formas', opcoes: FORMAS_PAGAMENTO_FILTRO },
+      { campo: 'cliente', rotulo: 'Cliente', rotuloTodos: 'Todos os clientes', opcoes: () => cachedClientes.map(cliente => ({ valor: cliente.id, rotulo: cliente.nome })) }
+    ]
+  });
+  inicializandoFiltroVendas = false;
+  return filtroVendas;
+}
+
+export function renderizarVendas(resultadoPronto) {
   if (!dom.salesList) return;
-  const total = cachedVendas
+  const componente = obterFiltroVendas();
+  const resultado = resultadoPronto || (componente ? componente.sincronizar() : null);
+  const base = resultado ? resultado.itens : cachedVendas;
+  const total = base
     .filter(vendaEstaPaga)
     .reduce((soma, venda) => soma + Number(venda.valorTotal || 0), 0);
-  dom.salesTotalCount.textContent = String(cachedVendas.length);
+  dom.salesTotalCount.textContent = String(base.length);
   dom.salesTotalValue.textContent = formatarMoeda(total);
   dom.tabBadgeVendas.textContent = String(cachedVendas.length);
-  dom.salesEmpty.classList.toggle('hidden', cachedVendas.length > 0);
-  const vendas = [...cachedVendas].sort((left, right) =>
+  dom.salesEmpty.classList.toggle('hidden', base.length > 0);
+  const vendas = [...base].sort((left, right) =>
     String(right.data || '').localeCompare(String(left.data || ''))
   );
   dom.salesList.innerHTML = vendas.map(venda => {
@@ -109,32 +177,43 @@ export function renderizarPedidos() {
 
 export async function salvarVenda(event) {
   event.preventDefault();
+  limparErrosFormulario(dom.formVenda);
   const produto = cachedReceitas.find(receita => receita.id === dom.saleProduct.value);
   const cliente = cachedClientes.find(item => item.id === dom.saleCustomer.value);
+  const erros = validarVenda({
+    produtoId: dom.saleProduct.value,
+    produtoNome: produto?.nome || '',
+    clienteId: dom.saleCustomer.value,
+    clienteNome: cliente?.nome || '',
+    quantidade: dom.saleQuantity.value,
+    valorUnitario: dom.saleUnitPrice.value,
+    data: dom.saleDate.value,
+    formaPagamento: dom.salePayment.value,
+    status: dom.saleStatus.value
+  });
+  if (!produto) erros.produto = 'O produto selecionado não foi encontrado. Atualize a lista e tente novamente.';
+  if (dom.saleCustomer.value && !cliente) {
+    erros.cliente = 'O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.';
+  }
+  if (possuiErros(erros)) {
+    exibirErrosFormulario(dom.formVenda, erros, {
+      produto: dom.saleProduct,
+      cliente: dom.saleCustomer,
+      quantidade: dom.saleQuantity,
+      valorUnitario: dom.saleUnitPrice,
+      data: dom.saleDate,
+      formaPagamento: dom.salePayment,
+      status: dom.saleStatus
+    });
+    if (erros.cliente) atualizarSelectClientes();
+    return;
+  }
+  const liberar = iniciarEnvio(dom.formVenda);
+  if (!liberar) return;
+  const botao = obterBotaoSubmit(dom.formVenda);
+  if (botao) botao.disabled = true;
   const quantidade = Number(dom.saleQuantity.value);
   const valorUnitario = Number(dom.saleUnitPrice.value);
-  const data = dom.saleDate.value;
-  const status = dom.saleStatus.value;
-  const paymentMethods = ['nao_informado', 'pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia'];
-  const saleStatuses = ['pago', 'aguardando_pagamento', 'em_processo', 'pronto', 'entregue', 'cancelado'];
-  if (!produto || !Number.isInteger(quantidade) || quantidade < 1 || !Number.isFinite(valorUnitario) || valorUnitario < 0) {
-    showToast('Selecione um produto e informe quantidade e valor válidos.');
-    return;
-  }
-  if (!dataISOValida(data)) {
-    showToast('Informe uma data válida para a venda.');
-    dom.saleDate.focus();
-    return;
-  }
-  if (dom.saleCustomer.value && !cliente) {
-    showToast('O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.');
-    atualizarSelectClientes();
-    return;
-  }
-  if (!paymentMethods.includes(dom.salePayment.value) || !saleStatuses.includes(status)) {
-    showToast('Confira a forma de pagamento e o status da venda.');
-    return;
-  }
   const venda = {
     produtoId: produto.id,
     produtoNome: produto.nome,
@@ -167,6 +246,9 @@ export async function salvarVenda(event) {
   } catch (error) {
     console.error('Erro ao registrar venda:', error);
     showToast(`Não foi possível registrar a venda: ${error.message || 'tente novamente.'}`);
+  } finally {
+    if (botao) botao.disabled = false;
+    liberar();
   }
 }
 
@@ -208,6 +290,7 @@ export function fecharEdicaoVenda() {
 
 export async function salvarEdicaoVenda(event) {
   event.preventDefault();
+  limparErrosFormulario(dom.editSaleForm);
   const venda = cachedVendas.find(item => item.id === pendingEditSaleId);
   if (!venda) {
     showToast('A venda selecionada não foi encontrada.');
@@ -229,49 +312,44 @@ export async function salvarEdicaoVenda(event) {
     } : null);
   const clienteId = dom.editSaleCustomer.value;
   const cliente = clienteId ? cachedClientes.find(item => item.id === clienteId) : null;
-  const quantidade = Number(dom.editSaleQuantity.value);
-  const valorUnitario = Number(dom.editSaleUnitPrice.value);
   const data = dom.editSaleDate.value;
   const status = dom.editSaleStatus.value;
-  const formasPagamento = ['nao_informado', 'pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia'];
-  const statusValidos = ['pago', 'aguardando_pagamento', 'em_processo', 'pronto', 'entregue', 'cancelado'];
 
+  const erros = validarEdicaoVenda({
+    quantidade: dom.editSaleQuantity.value,
+    valorUnitario: dom.editSaleUnitPrice.value,
+    data,
+    formaPagamento: dom.editSalePayment.value,
+    status
+  }, { producao: isProduction });
   if (!produto || !produto.id) {
-    showToast(isProduction
+    erros.produto = isProduction
       ? 'A receita vinculada a esta produção não está disponível. Atualize os dados e tente novamente.'
-      : 'Selecione um produto válido para a venda.');
-    return;
+      : 'Selecione um produto válido para a venda.';
   }
   if (isProduction && !cachedProduction && (!firestoreDb || isTestStockMode || venda.id.startsWith('local-') || venda.id.startsWith('demo-'))) {
-    showToast('A produção vinculada não está carregada neste dispositivo. Atualize os dados e tente novamente.');
-    return;
-  }
-  if (!Number.isFinite(quantidade) || quantidade <= 0 || (!isProduction && !Number.isInteger(quantidade))) {
-    showToast(isProduction
-      ? 'A quantidade deve ser maior que zero.'
-      : 'A quantidade da venda deve ser um número inteiro maior que zero.');
-    dom.editSaleQuantity.focus();
-    return;
-  }
-  if (!Number.isFinite(valorUnitario) || valorUnitario < 0) {
-    showToast('Informe um valor unitário válido, igual ou maior que zero.');
-    dom.editSaleUnitPrice.focus();
-    return;
-  }
-  if (!dataISOValida(data)) {
-    showToast('Informe uma data válida para a venda.');
-    dom.editSaleDate.focus();
-    return;
+    erros.produto = 'A produção vinculada não está carregada neste dispositivo. Atualize os dados e tente novamente.';
   }
   if (clienteId && !cliente) {
-    showToast('O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.');
-    atualizarSelectClientes();
+    erros.cliente = 'O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.';
+  }
+  if (possuiErros(erros)) {
+    exibirErrosFormulario(dom.editSaleForm, erros, {
+      produto: dom.editSaleProduct,
+      cliente: dom.editSaleCustomer,
+      quantidade: dom.editSaleQuantity,
+      valorUnitario: dom.editSaleUnitPrice,
+      data: dom.editSaleDate,
+      formaPagamento: dom.editSalePayment,
+      status: dom.editSaleStatus
+    });
+    if (erros.cliente) atualizarSelectClientes();
     return;
   }
-  if (!formasPagamento.includes(dom.editSalePayment.value) || !statusValidos.includes(status)) {
-    showToast('Confira a forma de pagamento e o status da venda.');
-    return;
-  }
+  const liberar = iniciarEnvio(dom.editSaleForm);
+  if (!liberar) return;
+  const quantidade = Number(dom.editSaleQuantity.value);
+  const valorUnitario = Number(dom.editSaleUnitPrice.value);
 
   const updatedAt = isTestStockMode ? new Date().toISOString() : serverTimestamp();
   const saleFields = {
@@ -393,26 +471,55 @@ export async function salvarEdicaoVenda(event) {
   } finally {
     button.disabled = false;
     button.textContent = 'Salvar alterações';
+    liberar();
   }
 }
 
 export async function salvarPedido(event) {
   event.preventDefault();
+  limparErrosFormulario(dom.formPedido);
   const cliente = cachedClientes.find(item => item.id === dom.orderCustomer.value);
   const produto = cachedReceitas.find(item => item.id === dom.orderProduct.value);
-  const quantidade = Number(dom.orderQuantity.value);
-  const dataEntrega = dom.orderDeliveryDate.value;
-  if (!cliente || !produto || !Number.isInteger(quantidade) || quantidade < 1 || !dataEntrega) {
-    showToast('Informe cliente, produto, quantidade e data de entrega válidos.');
+  const erros = validarPedido({
+    clienteId: dom.orderCustomer.value,
+    clienteNome: cliente?.nome || '',
+    produtoId: dom.orderProduct.value,
+    produtoNome: produto?.nome || '',
+    quantidade: dom.orderQuantity.value,
+    dataEntrega: dom.orderDeliveryDate.value,
+    status: dom.orderStatus.value,
+    observacoes: dom.orderNotes.value
+  });
+  if (dom.orderCustomer.value && !cliente) {
+    erros.cliente = 'O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.';
+  }
+  if (dom.orderProduct.value && !produto) {
+    erros.produto = 'O produto selecionado não foi encontrado. Atualize a lista e tente novamente.';
+  }
+  if (possuiErros(erros)) {
+    exibirErrosFormulario(dom.formPedido, erros, {
+      cliente: dom.orderCustomer,
+      produto: dom.orderProduct,
+      quantidade: dom.orderQuantity,
+      dataEntrega: dom.orderDeliveryDate,
+      status: dom.orderStatus,
+      observacoes: dom.orderNotes
+    });
+    if (erros.cliente) atualizarSelectClientes();
+    if (erros.produto) atualizarSelectProdutos();
     return;
   }
+  const liberar = iniciarEnvio(dom.formPedido);
+  if (!liberar) return;
+  const botao = obterBotaoSubmit(dom.formPedido);
+  if (botao) botao.disabled = true;
   const pedido = {
     clienteId: cliente.id,
     clienteNome: cliente.nome,
     produtoId: produto.id,
     produtoNome: produto.nome,
-    quantidade,
-    dataEntrega,
+    quantidade: Number(dom.orderQuantity.value),
+    dataEntrega: dom.orderDeliveryDate.value,
     status: dom.orderStatus.value,
     observacoes: dom.orderNotes.value.trim()
   };
@@ -428,6 +535,9 @@ export async function salvarPedido(event) {
   } catch (error) {
     console.error('Erro ao cadastrar encomenda:', error);
     showToast(`Não foi possível cadastrar a encomenda: ${error.message || 'tente novamente.'}`);
+  } finally {
+    if (botao) botao.disabled = false;
+    liberar();
   }
 }
 

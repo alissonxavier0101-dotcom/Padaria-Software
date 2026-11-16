@@ -194,7 +194,7 @@
             </div>
 
             <!-- Formulário de Cadastro de Matéria-Prima & Embalagem -->
-            <form id="form-insumo" class="card-form hidden" autocomplete="off">
+            <form id="form-insumo" class="card-form hidden" autocomplete="off" novalidate>
               <div class="card-header">
                 <h2 id="form-insumo-title" class="card-title">🌾 Novo Insumo ou Embalagem</h2>
                 <span style="font-size: 12px; color: var(--text-muted);">Campos obrigatórios <span style="color:var(--wheat-accent);">*</span></span>
@@ -1096,6 +1096,7 @@
               </div>
               <span id="producoes-counter" class="items-count-badge">0 fornadas</span>
             </div>
+            <div id="producoes-filters" class="filtro-lista-container"></div>
             <div id="producoes-container" class="production-record-list"></div>
             <div id="empty-state-producoes" class="empty-state hidden">
               <div class="empty-icon">🔥</div>
@@ -1116,7 +1117,7 @@
               <div class="module-metric-card"><span>Vendas registradas</span><strong id="sales-total-count">0</strong></div>
               <div class="module-metric-card"><span>Total recebido</span><strong id="sales-total-value">R$ 0,00</strong></div>
             </div>
-            <form id="form-venda" class="card-form" autocomplete="off">
+            <form id="form-venda" class="card-form" autocomplete="off" novalidate>
               <div class="card-header">
                 <h3 class="card-title">Registrar venda</h3>
               </div>
@@ -1169,10 +1170,11 @@
             <div class="section-heading">
               <h3 class="section-title">Histórico de vendas</h3>
             </div>
+            <div id="sales-filters" class="filtro-lista-container"></div>
             <div id="sales-list" class="module-record-list"></div>
             <div id="sales-empty" class="module-empty hidden">Nenhuma venda registrada.</div>
             <div id="edit-sale-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="edit-sale-title">
-              <form id="form-edit-sale" class="modal-box card-form" autocomplete="off">
+              <form id="form-edit-sale" class="modal-box card-form" autocomplete="off" novalidate>
                 <h3 id="edit-sale-title" class="modal-title">Editar venda</h3>
                 <p id="edit-sale-description" class="modal-desc">Atualize os dados e o andamento da venda.</p>
                 <div class="form-grid-2">
@@ -1234,7 +1236,7 @@
                 <p class="section-subtitle">Acompanhe a produção e a entrega de cada pedido.</p>
               </div>
             </div>
-            <form id="form-pedido" class="card-form" autocomplete="off">
+            <form id="form-pedido" class="card-form" autocomplete="off" novalidate>
               <div class="card-header">
                 <h3 class="card-title">Nova encomenda</h3>
               </div>
@@ -1285,7 +1287,7 @@
                 <p class="section-subtitle">Cadastre contatos, consulte compras e fale pelo WhatsApp.</p>
               </div>
             </div>
-            <form id="form-cliente" class="card-form" autocomplete="off">
+            <form id="form-cliente" class="card-form" autocomplete="off" novalidate>
               <div class="card-header">
                 <h3 class="card-title">Novo cliente</h3>
               </div>
@@ -1305,6 +1307,7 @@
               <h3 class="section-title">Clientes cadastrados</h3>
               <span id="customers-counter" class="items-count-badge">0 clientes</span>
             </div>
+            <div id="customers-filters" class="filtro-lista-container"></div>
             <div id="customers-list" class="customer-list"></div>
             <div id="customers-empty" class="module-empty hidden">Nenhum cliente cadastrado.</div>
           </section>
@@ -1348,7 +1351,7 @@
 
             <section class="finance-section">
               <h3>Fluxo de caixa</h3>
-              <form id="form-movimento-financeiro" class="card-form" autocomplete="off">
+              <form id="form-movimento-financeiro" class="card-form" autocomplete="off" novalidate>
                 <div class="card-header"><h3 class="card-title">Registrar entrada ou saída</h3></div>
                 <div class="form-grid-2">
                   <div class="form-group">
@@ -1386,13 +1389,14 @@
                 <h3 class="section-title">Movimentações do período</h3>
                 <span id="finance-transactions-total" class="items-count-badge">0 registros</span>
               </div>
+              <div id="finance-transactions-filters" class="filtro-lista-container"></div>
               <div id="finance-transactions-list" class="module-record-list"></div>
               <div id="finance-transactions-empty" class="module-empty hidden">Nenhuma movimentação neste período.</div>
             </section>
 
             <section class="finance-section">
               <h3>Despesas fixas mensais</h3>
-              <form id="form-despesa-fixa" class="card-form" autocomplete="off">
+              <form id="form-despesa-fixa" class="card-form" autocomplete="off" novalidate>
                 <div class="card-header"><h3 class="card-title">Cadastrar despesa fixa</h3></div>
                 <div class="form-grid-2">
                   <div class="form-group">

@@ -22,7 +22,8 @@ import {
   LOCAL_DEMO_SALES_KEY
 } from './state.js';
 import { dom } from './dom.js';
-import { showToast, escapeHtml, formatarMoeda, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, calcularCustoItemReceita } from './helpers.js';
+import { showToast, escapeHtml, formatarMoeda, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, calcularCustoItemReceita, exibirErrosFormulario, limparErrosFormulario, iniciarEnvio } from './helpers.js';
+import { validarProducao, validarEdicaoProducao, validarQuantidadePositiva, possuiErros, obterDataHojeISO } from '../utils/validation.ts';
 import { initFirebase, salvarDadosReceitasLocais, salvarDadosInsumosLocais, salvarDadosProducoesLocais } from './firebaseAuth.js';
 import { renderizarInsumos, formatarQuantidadeEstoque, atualizarReceitasDependentes } from './insumos.js';
 import {
@@ -44,9 +45,10 @@ import {
   criariaCicloReceita,
   obterGruposEItensReceita
 } from './receitas.js';
-import { obterChaveStorageModulo, renderizarFinanceiro, dataISOValida } from './financeiro.js';
+import { obterChaveStorageModulo, renderizarFinanceiro } from './financeiro.js';
 import { renderizarVendas } from './vendas.js';
 import { renderizarClientes } from './clientes.js';
+import { criarFiltroLista } from './components/filtroLista.js';
 
 export function abrirModalProducao(receitaId) {
   const receita = cachedReceitas.find(item => item.id === receitaId);
@@ -98,36 +100,42 @@ export function renderizarPreviaProducao() {
 }
 
 export async function confirmarProducao() {
+  limparErrosFormulario(dom.productionModal);
   const receitaId = pendingProductionRecipeId;
-  const fornadas = Number(dom.productionBatches.value);
   if (!receitaId) return;
-
-  const dataProducao = dom.productionDate.value;
-  if (!dataISOValida(dataProducao)) {
-    showToast('Informe uma data válida para a produção.');
-    dom.productionDate.focus();
-    return;
-  }
-
-  const clienteId = dom.productionCustomer.value;
-  const cliente = clienteId ? cachedClientes.find(item => item.id === clienteId) : null;
-  if (clienteId && !cliente) {
-    showToast('O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.');
-    atualizarSelectClientes();
-    return;
-  }
-  const formaPagamento = dom.productionPayment.value;
-  if (!['nao_informado', 'pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia'].includes(formaPagamento)) {
-    showToast('Selecione uma forma de pagamento válida.');
-    dom.productionPayment.focus();
-    return;
-  }
 
   const receita = cachedReceitas.find(item => item.id === receitaId);
   if (!receita) {
     showToast('A receita selecionada não foi encontrada.');
     return;
   }
+
+  const clienteId = dom.productionCustomer.value;
+  const cliente = clienteId ? cachedClientes.find(item => item.id === clienteId) : null;
+  const erros = validarProducao({
+    data: dom.productionDate.value,
+    quantidade: dom.productionBatches.value,
+    clienteId,
+    clienteNome: cliente?.nome || '',
+    formaPagamento: dom.productionPayment.value
+  }, obterDataHojeISO());
+  if (clienteId && !cliente) {
+    erros.cliente = 'O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.';
+  }
+  if (possuiErros(erros)) {
+    exibirErrosFormulario(dom.productionModal, erros, {
+      data: dom.productionDate,
+      quantidade: dom.productionBatches,
+      cliente: dom.productionCustomer,
+      formaPagamento: dom.productionPayment
+    });
+    if (erros.cliente) atualizarSelectClientes();
+    return;
+  }
+
+  const fornadas = Number(dom.productionBatches.value);
+  const dataProducao = dom.productionDate.value;
+  const formaPagamento = dom.productionPayment.value;
 
   let baixas;
   let custos;
@@ -156,6 +164,8 @@ export async function confirmarProducao() {
     return;
   }
 
+  const liberar = iniciarEnvio(dom.productionModal);
+  if (!liberar) return;
   const button = dom.btnConfirmProduction;
   button.disabled = true;
   button.innerHTML = '<span class="loading-spinner"></span> Registrando...';
@@ -293,6 +303,7 @@ export async function confirmarProducao() {
   } finally {
     button.disabled = false;
     button.textContent = 'Confirmar produção';
+    liberar();
   }
 }
 
@@ -363,9 +374,54 @@ export function normalizarParaComparacao(valor) {
   return valor;
 }
 
-export function renderizarProducoes() {
-  const producoes = [...cachedProducoes].sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
-  dom.tabBadgeProducoes.textContent = String(producoes.length);
+const OPCOES_FILTRO_PRODUCOES = {
+  nome: producao => producao.receitaNome,
+  camposBusca: producao => [producao.receitaNome, producao.clienteNome],
+  categoria: () => 'producao',
+  data: producao => producao.data,
+  valor: producao => Number(producao.custoReal) || 0,
+  extras: producao => ({ produto: producao.receitaId || '' })
+};
+
+let filtroProducoes = null;
+let inicializandoFiltroProducoes = false;
+
+function obterFiltroProducoes() {
+  if (filtroProducoes) return filtroProducoes;
+  if (inicializandoFiltroProducoes || !dom.producoesFilters) return null;
+  inicializandoFiltroProducoes = true;
+  filtroProducoes = criarFiltroLista({
+    container: dom.producoesFilters,
+    aba: 'producoes',
+    opcoes: OPCOES_FILTRO_PRODUCOES,
+    itens: () => cachedProducoes,
+    onChange: resultado => {
+      if (!inicializandoFiltroProducoes) renderizarProducoes(resultado);
+    },
+    busca: false,
+    chips: false,
+    ordenacao: false,
+    periodoRapido: false,
+    faixaData: true,
+    selects: [
+      {
+        campo: 'produto',
+        rotulo: 'Produto',
+        rotuloTodos: 'Todos os produtos',
+        opcoes: () => cachedReceitas.map(receita => ({ valor: receita.id, rotulo: receita.nome }))
+      }
+    ]
+  });
+  inicializandoFiltroProducoes = false;
+  return filtroProducoes;
+}
+
+export function renderizarProducoes(resultadoPronto) {
+  const componente = obterFiltroProducoes();
+  const resultado = resultadoPronto || (componente ? componente.sincronizar() : null);
+  const base = resultado ? resultado.itens : cachedProducoes;
+  const producoes = [...base].sort((a, b) => String(b.data || '').localeCompare(String(a.data || '')));
+  dom.tabBadgeProducoes.textContent = String(cachedProducoes.length);
   dom.producoesCounter.textContent = `${producoes.length} ${producoes.length === 1 ? 'registro' : 'registros'}`;
   dom.emptyStateProducoes.classList.toggle('hidden', producoes.length > 0);
   dom.producoesContainer.classList.toggle('hidden', producoes.length === 0);
@@ -486,6 +542,7 @@ export function atualizarPreviaEdicaoProducao() {
 }
 
 export async function salvarEdicaoProducao() {
+  limparErrosFormulario(dom.editProductionModal);
   const producao = cachedProducoes.find(item => item.id === pendingEditProductionId);
   if (!producao) {
     showToast('O registro de produção não foi encontrado.');
@@ -496,35 +553,33 @@ export async function salvarEdicaoProducao() {
   const data = dom.editProductionDate.value;
   const quantidadeProduzida = Number(dom.editProductionQuantity.value);
   const precoVendaUnitario = Number(dom.editProductionSalePrice.value);
-  if (!dataISOValida(data)) {
-    showToast('Informe uma data válida para a produção.');
-    dom.editProductionDate.focus();
-    return;
-  }
-  if (!Number.isFinite(quantidadeProduzida) || quantidadeProduzida <= 0) {
-    showToast('A quantidade produzida deve ser maior que zero.');
-    dom.editProductionQuantity.focus();
-    return;
-  }
-  if (!Number.isFinite(precoVendaUnitario) || precoVendaUnitario < 0) {
-    showToast('Informe um preço de venda válido, igual ou maior que zero.');
-    dom.editProductionSalePrice.focus();
-    return;
-  }
-
   const clienteId = dom.editProductionCustomer.value;
   const cliente = clienteId ? cachedClientes.find(item => item.id === clienteId) : null;
-  if (clienteId && !cliente) {
-    showToast('O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.');
-    atualizarSelectClientes();
-    return;
-  }
   const formaPagamento = dom.editProductionPayment.value;
+  const erros = validarEdicaoProducao({
+    data,
+    quantidadeProduzida,
+    precoVendaUnitario
+  }, obterDataHojeISO());
+  if (clienteId && !cliente) {
+    erros.cliente = 'O cliente selecionado não foi encontrado. Atualize a lista e tente novamente.';
+  }
   if (!['nao_informado', 'pix', 'dinheiro', 'cartao_credito', 'cartao_debito', 'transferencia'].includes(formaPagamento)) {
-    showToast('Selecione uma forma de pagamento válida.');
-    dom.editProductionPayment.focus();
+    erros.formaPagamento = 'Selecione uma forma de pagamento válida.';
+  }
+  if (possuiErros(erros)) {
+    exibirErrosFormulario(dom.editProductionModal, erros, {
+      data: dom.editProductionDate,
+      quantidade: dom.editProductionQuantity,
+      preco: dom.editProductionSalePrice,
+      cliente: dom.editProductionCustomer,
+      formaPagamento: dom.editProductionPayment
+    });
+    if (erros.cliente) atualizarSelectClientes();
     return;
   }
+  const liberar = iniciarEnvio(dom.editProductionModal);
+  if (!liberar) return;
 
   const vendaExistente = cachedVendas.find(venda =>
     venda.id === producao.vendaId || venda.producaoId === producao.id
@@ -626,6 +681,7 @@ export async function salvarEdicaoProducao() {
   } finally {
     button.disabled = false;
     button.textContent = 'Salvar alterações';
+    liberar();
   }
 }
 
@@ -808,20 +864,21 @@ export function atualizarPreviewModalAddItem() {
 }
 
 export async function confirmarModalAddItemReceita() {
+  limparErrosFormulario(dom.modalAddItemReceita);
   if (!pendingAddItemReceitaId) return;
   const receitaId = pendingAddItemReceitaId;
 
   const insumoId = dom.selectModalAddInsumo.value;
-  const qtd = parseFloat(dom.inputModalAddQtd.value);
   const unidadeUsada = dom.selectModalAddUn.value;
-
-  if (!insumoId) {
-    showToast('Escolha um insumo ou embalagem.');
-    return;
-  }
-  if (isNaN(qtd) || qtd <= 0) {
-    showToast('Informe uma quantidade válida.');
-    dom.inputModalAddQtd.focus();
+  const erros = {};
+  if (!insumoId) erros.insumo = 'Escolha um insumo ou embalagem.';
+  const erroQuantidade = validarQuantidadePositiva(dom.inputModalAddQtd.value);
+  if (erroQuantidade) erros.quantidade = erroQuantidade;
+  if (possuiErros(erros)) {
+    exibirErrosFormulario(dom.modalAddItemReceita, erros, {
+      insumo: dom.selectModalAddInsumo,
+      quantidade: dom.inputModalAddQtd
+    });
     return;
   }
 
@@ -838,6 +895,7 @@ export async function confirmarModalAddItemReceita() {
   const unidadeBase = selectedOption?.getAttribute('data-unit') || 'kg';
   const conversoes = JSON.parse(selectedOption?.getAttribute('data-conversions') || '{}');
   const ofertaInsumoId = selectedOption?.getAttribute('data-offer-id') || insumoId;
+  const qtd = Number(dom.inputModalAddQtd.value);
 
   const custoItem = calcularCustoItemReceita(custoUnitarioBase, unidadeBase, qtd, unidadeUsada, conversoes);
 
@@ -847,6 +905,8 @@ export async function confirmarModalAddItemReceita() {
     fecharModalAddItemReceita();
     return;
   }
+  const liberar = iniciarEnvio(dom.modalAddItemReceita);
+  if (!liberar) return;
 
   const gruposEItens = obterGruposEItensReceita(receitaAlvo);
   const novosItens = [...(receitaAlvo.itens || []), {
@@ -906,5 +966,6 @@ export async function confirmarModalAddItemReceita() {
   } finally {
     dom.btnConfirmModalAddItem.disabled = false;
     dom.btnConfirmModalAddItem.innerHTML = 'Gravar na Receita';
+    liberar();
   }
 }

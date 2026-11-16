@@ -3159,3 +3159,76 @@
           transition-duration: 0.01ms !important;
         }
       }
+
+      /* Componente reutilizável de filtro de listas (filtroLista.js) */
+      .filtro-lista {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .filtro-lista-row {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 12px;
+      }
+
+      .filtro-lista-campo {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--text-secondary, #596B61);
+      }
+
+      .filtro-lista-select,
+      .filtro-lista-date {
+        height: 40px;
+        padding: 0 12px;
+        border: 1px solid var(--border-color);
+        border-radius: var(--radius-sm, 12px);
+        background-color: var(--bg-card, #FFFFFF);
+        color: var(--text-primary);
+        font-size: 14px;
+      }
+
+      .filtro-lista-select:focus-visible,
+      .filtro-lista-date:focus-visible {
+        outline: 2px solid var(--border-focus);
+        outline-offset: 1px;
+      }
+
+      .filtro-lista-container {
+        margin-bottom: 12px;
+      }
+
+      .filtro-lista-periodo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px;
+      }
+
+      /* Validação de formulários */
+      .field-error {
+        margin: 0;
+        color: #B23A2A;
+        font-size: 12px;
+        font-weight: 600;
+        line-height: 1.35;
+      }
+
+      input.input-invalid,
+      select.input-invalid,
+      textarea.input-invalid {
+        border-color: #B23A2A;
+        background-color: #FFF7F5;
+      }
+
+      input.input-invalid:focus,
+      select.input-invalid:focus,
+      textarea.input-invalid:focus {
+        border-color: #B23A2A;
+        box-shadow: 0 0 0 4px rgba(178, 58, 42, 0.14);
+      }

@@ -21,8 +21,13 @@ import { dom } from './dom.js';
 import {
   showToast,
   escapeHtml,
-  formatarMoeda
+  formatarMoeda,
+  exibirErrosFormulario,
+  limparErrosFormulario,
+  iniciarEnvio,
+  obterBotaoSubmit
 } from './helpers.js';
+import { validarMovimentacaoFinanceira, validarDespesaFixa, possuiErros } from '../utils/validation.ts';
 import {
   doc,
   deleteDoc,
@@ -30,6 +35,7 @@ import {
   addDoc,
   serverTimestamp
 } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { criarFiltroLista } from './components/filtroLista.js';
 
 export function formatarDataModulo(data) {
   if (!data) return '—';
@@ -200,7 +206,59 @@ export function calcularResumoFinanceiro(mes) {
   };
 }
 
-export function renderizarFinanceiro() {
+const TIPOS_MOVIMENTACAO_FILTRO = [
+  { valor: 'entrada', rotulo: 'Entrada' },
+  { valor: 'saida', rotulo: 'Saída' }
+];
+
+const CATEGORIAS_MOVIMENTACAO_FILTRO = [
+  'venda',
+  'outra_entrada',
+  'despesa_variavel',
+  'despesa_fixa',
+  'retirada'
+].map(categoria => ({ valor: categoria, rotulo: formatarNomeCategoriaFinanceira(categoria) }));
+
+const OPCOES_FILTRO_FINANCEIRO = {
+  nome: movimento => movimento.descricao,
+  camposBusca: movimento => [movimento.descricao, formatarNomeCategoriaFinanceira(movimento.categoria)],
+  categoria: movimento => movimento.categoria,
+  data: movimento => movimento.data,
+  valor: movimento => Number(movimento.valor) || 0,
+  extras: movimento => ({ tipo: movimento.tipo, categoria: movimento.categoria })
+};
+
+let filtroFinanceiro = null;
+let inicializandoFiltroFinanceiro = false;
+let movimentacoesFinanceirasAtuais = [];
+
+function obterFiltroFinanceiro() {
+  if (filtroFinanceiro) return filtroFinanceiro;
+  if (inicializandoFiltroFinanceiro || !dom.financeTransactionsFilters) return null;
+  inicializandoFiltroFinanceiro = true;
+  filtroFinanceiro = criarFiltroLista({
+    container: dom.financeTransactionsFilters,
+    aba: 'financeiro',
+    opcoes: OPCOES_FILTRO_FINANCEIRO,
+    itens: () => movimentacoesFinanceirasAtuais,
+    onChange: resultado => {
+      if (!inicializandoFiltroFinanceiro) renderizarFinanceiro(resultado);
+    },
+    busca: false,
+    chips: false,
+    ordenacao: false,
+    periodoRapido: false,
+    faixaData: true,
+    selects: [
+      { campo: 'tipo', rotulo: 'Tipo', rotuloTodos: 'Todos os tipos', opcoes: TIPOS_MOVIMENTACAO_FILTRO },
+      { campo: 'categoria', rotulo: 'Categoria', rotuloTodos: 'Todas as categorias', opcoes: CATEGORIAS_MOVIMENTACAO_FILTRO }
+    ]
+  });
+  inicializandoFiltroFinanceiro = false;
+  return filtroFinanceiro;
+}
+
+export function renderizarFinanceiro(resultadoPronto) {
   if (!dom.financeMonth) return;
   const mes = obterMesSelecionadoFinanceiro();
   const resumo = calcularResumoFinanceiro(mes);
@@ -268,9 +326,14 @@ export function renderizarFinanceiro() {
     'valor'
   );
 
-  dom.financeTransactionsTotal.textContent = `${resumo.movimentacoes.length} ${resumo.movimentacoes.length === 1 ? 'registro' : 'registros'}`;
-  dom.financeTransactionsEmpty.classList.toggle('hidden', resumo.movimentacoes.length > 0);
-  dom.financeTransactionsList.innerHTML = resumo.movimentacoes.map(movimento => `
+  movimentacoesFinanceirasAtuais = resumo.movimentacoes;
+  const componente = obterFiltroFinanceiro();
+  const resultado = resultadoPronto || (componente ? componente.sincronizar() : null);
+  const movimentacoesVisiveis = resultado ? resultado.itens : resumo.movimentacoes;
+
+  dom.financeTransactionsTotal.textContent = `${movimentacoesVisiveis.length} ${movimentacoesVisiveis.length === 1 ? 'registro' : 'registros'}`;
+  dom.financeTransactionsEmpty.classList.toggle('hidden', movimentacoesVisiveis.length > 0);
+  dom.financeTransactionsList.innerHTML = movimentacoesVisiveis.map(movimento => `
     <article class="module-record-card">
       <div class="module-record-heading">
         <h3>${escapeHtml(movimento.descricao)}</h3>
@@ -321,23 +384,34 @@ export function vendaEstaPaga(venda) {
 
 export async function salvarMovimentacaoFinanceira(event) {
   event.preventDefault();
-  const tipo = dom.financeTransactionType.value;
-  const categoria = dom.financeTransactionCategory.value;
-  const categoriasValidas = tipo === 'entrada'
-    ? ['outra_entrada']
-    : ['despesa_variavel', 'despesa_fixa', 'retirada'];
-  const valor = Number(dom.financeTransactionAmount.value);
-  const data = dom.financeTransactionDate.value;
-  if (!categoriasValidas.includes(categoria) || !Number.isFinite(valor) || valor <= 0 || !data) {
-    showToast('Informe tipo, categoria, valor e data válidos para a movimentação.');
+  limparErrosFormulario(dom.financeTransactionForm);
+  const erros = validarMovimentacaoFinanceira({
+    tipo: dom.financeTransactionType.value,
+    categoria: dom.financeTransactionCategory.value,
+    descricao: dom.financeTransactionDescription.value,
+    valor: dom.financeTransactionAmount.value,
+    data: dom.financeTransactionDate.value
+  });
+  if (possuiErros(erros)) {
+    exibirErrosFormulario(dom.financeTransactionForm, erros, {
+      tipo: dom.financeTransactionType,
+      categoria: dom.financeTransactionCategory,
+      descricao: dom.financeTransactionDescription,
+      valor: dom.financeTransactionAmount,
+      data: dom.financeTransactionDate
+    });
     return;
   }
+  const liberar = iniciarEnvio(dom.financeTransactionForm);
+  if (!liberar) return;
+  const botao = obterBotaoSubmit(dom.financeTransactionForm);
+  if (botao) botao.disabled = true;
   const registro = {
-    tipo,
-    categoria,
+    tipo: dom.financeTransactionType.value,
+    categoria: dom.financeTransactionCategory.value,
     descricao: dom.financeTransactionDescription.value.trim(),
-    valor: Math.round(valor * 100) / 100,
-    data
+    valor: Math.round(Number(dom.financeTransactionAmount.value) * 100) / 100,
+    data: dom.financeTransactionDate.value
   };
   try {
     await persistirNovoRegistro('movimentacoesFinanceiras', 'fluxoCaixa', registro, cachedCashflow);
@@ -350,24 +424,37 @@ export async function salvarMovimentacaoFinanceira(event) {
   } catch (error) {
     console.error('Erro ao registrar movimentação financeira:', error);
     showToast(`Não foi possível registrar a movimentação: ${error.message || 'tente novamente.'}`);
+  } finally {
+    if (botao) botao.disabled = false;
+    liberar();
   }
 }
 
 export async function salvarDespesaFixa(event) {
   event.preventDefault();
-  const nome = dom.fixedExpenseName.value.trim();
-  const valorMensal = Number(dom.fixedExpenseAmount.value);
-  const diaVencimento = Number(dom.fixedExpenseDueDay.value || 1);
-  if (!nome || !Number.isFinite(valorMensal) || valorMensal <= 0 ||
-      !Number.isInteger(diaVencimento) || diaVencimento < 1 || diaVencimento > 31) {
-    showToast('Informe descrição, valor mensal e dia de vencimento válidos.');
+  limparErrosFormulario(dom.fixedExpenseForm);
+  const erros = validarDespesaFixa({
+    nome: dom.fixedExpenseName.value,
+    valorMensal: dom.fixedExpenseAmount.value,
+    diaVencimento: dom.fixedExpenseDueDay.value || 1
+  });
+  if (possuiErros(erros)) {
+    exibirErrosFormulario(dom.fixedExpenseForm, erros, {
+      nome: dom.fixedExpenseName,
+      valorMensal: dom.fixedExpenseAmount,
+      diaVencimento: dom.fixedExpenseDueDay
+    });
     return;
   }
+  const liberar = iniciarEnvio(dom.fixedExpenseForm);
+  if (!liberar) return;
+  const botao = obterBotaoSubmit(dom.fixedExpenseForm);
+  if (botao) botao.disabled = true;
   try {
     await persistirNovoRegistro('despesasFixas', 'despesasFixas', {
-      nome,
-      valorMensal: Math.round(valorMensal * 100) / 100,
-      diaVencimento
+      nome: dom.fixedExpenseName.value.trim(),
+      valorMensal: Math.round(Number(dom.fixedExpenseAmount.value) * 100) / 100,
+      diaVencimento: Number(dom.fixedExpenseDueDay.value || 1)
     }, cachedFixedExpenses);
     if (!firestoreDb || isTestStockMode) renderizarFinanceiro();
     dom.fixedExpenseForm.reset();
@@ -376,6 +463,9 @@ export async function salvarDespesaFixa(event) {
   } catch (error) {
     console.error('Erro ao cadastrar despesa fixa:', error);
     showToast(`Não foi possível cadastrar a despesa fixa: ${error.message || 'tente novamente.'}`);
+  } finally {
+    if (botao) botao.disabled = false;
+    liberar();
   }
 }
 
