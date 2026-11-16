@@ -8,12 +8,9 @@ import { dom } from './dom.js';
 import {
   showToast,
   escapeHtml,
-  formatarMoeda,
-  obterStatusVenda,
-  vendaEstaPaga,
-  formatarDataModulo
+  formatarMoeda
 } from './helpers.js';
-import { persistirNovoRegistro, obterDataLocalAtual } from './financeiro.js';
+import { persistirNovoRegistro, obterDataLocalAtual, obterStatusVenda, vendaEstaPaga, formatarDataModulo } from './financeiro.js';
 import { atualizarSelectClientes } from './receitas.js';
 
 export function renderizarClientes() {

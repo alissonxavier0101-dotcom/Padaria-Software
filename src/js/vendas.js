@@ -19,9 +19,7 @@ import { dom } from './dom.js';
 import {
   showToast,
   escapeHtml,
-  formatarMoeda,
-  dataISOValida,
-  formatarDataModulo
+  formatarMoeda
 } from './helpers.js';
 import {
   persistirNovoRegistro,
@@ -30,7 +28,9 @@ import {
   obterNomeFormaPagamento,
   obterStatusVenda,
   vendaEstaPaga,
-  obterCustosInsumosProduto
+  obterCustosInsumosProduto,
+  dataISOValida,
+  formatarDataModulo
 } from './financeiro.js';
 import {
   criarDadosVendaProducao,

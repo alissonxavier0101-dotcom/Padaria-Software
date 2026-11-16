@@ -22,7 +22,7 @@ import {
   LOCAL_DEMO_SALES_KEY
 } from './state.js';
 import { dom } from './dom.js';
-import { showToast, escapeHtml, formatarMoeda, dataISOValida, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, calcularCustoItemReceita } from './helpers.js';
+import { showToast, escapeHtml, formatarMoeda, calcularTotaisReceita, obterCustosIndiretosDaReceita, calcularLucroEPrecificacao, calcularCustoItemReceita } from './helpers.js';
 import { initFirebase, salvarDadosReceitasLocais, salvarDadosInsumosLocais, salvarDadosProducoesLocais } from './firebaseAuth.js';
 import { renderizarInsumos, formatarQuantidadeEstoque, atualizarReceitasDependentes } from './insumos.js';
 import {
@@ -44,7 +44,7 @@ import {
   criariaCicloReceita,
   obterGruposEItensReceita
 } from './receitas.js';
-import { obterChaveStorageModulo, renderizarFinanceiro } from './financeiro.js';
+import { obterChaveStorageModulo, renderizarFinanceiro, dataISOValida } from './financeiro.js';
 import { renderizarVendas } from './vendas.js';
 import { renderizarClientes } from './clientes.js';
 
