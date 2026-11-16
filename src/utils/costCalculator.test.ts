@@ -8,9 +8,9 @@ import {
   calcularTotaisReceita,
   calcularLucroEPrecificacao,
   formatarMoeda,
-  formatarTextoCustoUnitario,
-  ItemReceita
+  formatarTextoCustoUnitario
 } from './costCalculator.ts';
+import type { ItemReceita } from './costCalculator.ts';
 
 test('calcularCustoUnitario divide corretamente preço por quantidade da embalagem', () => {
   const resultado = calcularCustoUnitario(25, 5);
