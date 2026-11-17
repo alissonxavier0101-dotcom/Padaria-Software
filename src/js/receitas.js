@@ -34,7 +34,9 @@ import {
   LOCAL_DEMO_ITEMS_KEY,
   setCachedReceitas,
   setCachedRecipeGroups,
-  setCachedInsumos
+  setCachedInsumos,
+  cachedCategoriasReceita,
+  setCachedCategoriasReceita
 } from './state.js';
 import { ordenarOpcoesPorUso } from '../utils/optionUsage.ts';
 import { dom } from './dom.js';

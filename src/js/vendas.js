@@ -26,7 +26,7 @@ import {
   iniciarEnvio,
   obterBotaoSubmit
 } from './helpers.js';
-import { aplicarMascaraMoeda, lerValorMoeda, configurarMemoriaCampos } from './formHelpers.js';
+import { aplicarMascaraMoeda, lerValorMoeda, configurarMemoriaCampos, restaurarSelecoesDiferidas } from './formHelpers.js';
 import {
   validarVenda,
   validarEdicaoVenda,

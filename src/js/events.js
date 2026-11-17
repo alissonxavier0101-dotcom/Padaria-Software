@@ -4,6 +4,7 @@ import { renderizarInsumos, abrirEdicaoInsumo, prepararNovoInsumo, cancelarEdica
 import { switchRecipePanel, renderizarReceitas, renderizarResultadosBuscaInsumosReceita, renderizarGruposReceitaEmElaboracao, renderizarItensGrupoModelo, renderizarGruposModeloReceita, adicionarGrupoReceita, atualizarModoOrganizacaoGrupoReceita, atualizarNomeGrupoReceita, removerGrupoReceita, selecionarGrupoReceita, copiarItensGrupoModeloParaReceita, moverItemParaGrupo, adicionarItemReceitaEmElaboracao, removerItemReceitaEmElaboracao, renderizarItensReceitaEmElaboracao, atualizarPreviewItemReceita, atualizarTotaisReceitaEmElaboracao, atualizarCalculadoraLucroReceita, atualizarPreviewFotoReceita, compactarFotoReceita, prepararNovaReceita, abrirEdicaoReceita, duplicarReceita, handleFormReceitaSubmit, salvarNovoPrecoReceita, atualizarSelectProdutos, atualizarSelectClientes, atualizarPrecoVendaProduto, salvarGrupoModeloReceita, adicionarItemGrupoModelo, prepararNovoGrupoModelo, editarGrupoModeloReceita, excluirGrupoModeloReceita, usarGrupoCatalogoNaReceita, abrirModalExcluirReceita, fecharModalExcluirReceita, confirmarExclusaoReceita,
   abrirModalCategoriaReceita, fecharModalCategoriaReceita, salvarCategoriaReceita,
   abrirModalExcluirCategoria, fecharModalExcluirCategoria, confirmarExclusaoCategoria,
+  atualizarSelectsInsumosParaReceitas,
 } from './receitas.js';
 import { abrirModalProducao, fecharModalProducao, renderizarPreviaProducao, confirmarProducao, abrirEdicaoProducao, fecharEdicaoProducao, atualizarPreviaEdicaoProducao, salvarEdicaoProducao, abrirExclusaoProducao, fecharExclusaoProducao, confirmarExclusaoProducao, abrirModalAddItemReceita, fecharModalAddItemReceita, atualizarPreviewModalAddItem, confirmarModalAddItemReceita, renderizarProducoes } from './producao.js';
 import { renderizarFinanceiro, salvarMovimentacaoFinanceira, salvarDespesaFixa, excluirRegistroFinanceiro, atualizarCategoriasMovimentacao } from './financeiro.js';
@@ -13,7 +14,7 @@ import { renderizarClientes, salvarCliente } from './clientes.js';
 import { abrirModalConfig, fecharModalConfig, salvarConfigFirebaseModal } from './firebaseConfigModal.js';
 import { showToast } from './helpers.js';
 import { dom } from './dom.js';
-import { itensGrupoModeloEmEdicao, cachedReceitas, cachedVendas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas, setActiveRecipeCategory, setGrupoReceitaSelecionadoId, setActiveTab } from './state.js';
+import { itensGrupoModeloEmEdicao, cachedReceitas, cachedVendas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas, setActiveRecipeCategory, setGrupoReceitaSelecionadoId, setActiveTab, cachedCategoriasReceita } from './state.js';
 import { ultimaFormaPagamentoDoCliente } from '../utils/formaPagamentoCliente.ts';
 import { contarReceitasPorCategoria } from '../utils/categoriasReceita.ts';
 
