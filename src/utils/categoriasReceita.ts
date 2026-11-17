@@ -92,14 +92,14 @@ export function prepararCategoriasReceita(categorias: CategoriaReceita[]): Categ
   return ordenarCategoriasReceita(deduplicarCategoriasReceita(categorias));
 }
 
-export function obterPrimeiraCategoria(categorias: CategoriaReceita[]): CategoriaReceita | null {
-  const ordenadas = prepararCategoriasReceita(categorias);
+export function obterPrimeiraCategoria(categorias: ReadonlyArray<CategoriaReceita>): CategoriaReceita | null {
+  const ordenadas = prepararCategoriasReceita([...categorias]);
   return ordenadas.length > 0 ? ordenadas[0] : null;
 }
 
 export function resolverCategoriaReceita(
   receita: { categoria?: string | null } | null | undefined,
-  categorias: CategoriaReceita[]
+  categorias: ReadonlyArray<CategoriaReceita>
 ): string | null {
   const primeira = obterPrimeiraCategoria(categorias);
   if (!primeira) return null;
@@ -118,7 +118,7 @@ export function resolverCategoriaReceita(
 }
 
 export function obterNomeCategoria(
-  categorias: CategoriaReceita[],
+  categorias: ReadonlyArray<CategoriaReceita>,
   id: string | null | undefined
 ): string {
   const cat = categorias.find((c) => c.id === id);
@@ -127,9 +127,9 @@ export function obterNomeCategoria(
 
 export function contarReceitasPorCategoria(
   receitas: Array<{ categoria?: string | null }>,
-  categorias: CategoriaReceita[]
+  categorias: ReadonlyArray<CategoriaReceita>
 ): Record<string, number> {
-  const ordenadas = prepararCategoriasReceita(categorias);
+  const ordenadas = prepararCategoriasReceita([...categorias]);
   const contagens: Record<string, number> = { todos: receitas.length };
   for (const cat of ordenadas) contagens[cat.id] = 0;
   for (const receita of receitas) {
@@ -141,11 +141,11 @@ export function contarReceitasPorCategoria(
 
 export function planejarRealocacaoReceitas(
   receitas: Array<{ id: string; categoria?: string | null }>,
-  categorias: CategoriaReceita[],
+  categorias: ReadonlyArray<CategoriaReceita>,
   origemId: string,
   destinoId: string
 ) {
-  const ordenadas = prepararCategoriasReceita(categorias);
+  const ordenadas = prepararCategoriasReceita([...categorias]);
   const plano = { origemId, destinoId, movidas: 0, ids: [] as string[] };
   if (origemId === destinoId) return plano;
   for (const receita of receitas) {
