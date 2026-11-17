@@ -531,20 +531,6 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       });
 
       dom.recipeCategoryPills.addEventListener('click', (e) => {
-        const menuBtn = e.target.closest('[data-category-id]');
-        if (menuBtn) {
-          e.stopPropagation();
-          const id = menuBtn.getAttribute('data-category-id');
-          dom.recipeCategoryPills.querySelectorAll('.category-menu').forEach(painel => painel.classList.add('hidden'));
-          const painel = dom.recipeCategoryPills.querySelector(`.category-menu[data-menu-for="${id}"]`);
-          if (painel) {
-            painel.classList.toggle('hidden');
-            if (!painel.classList.contains('hidden')) {
-              posicionarMenuCategoria(id);
-            }
-          }
-          return;
-        }
         const action = e.target.closest('[data-action]');
         if (action) {
           e.stopPropagation();
@@ -556,6 +542,20 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
             abrirModalExcluirCategoria(id);
           }
           dom.recipeCategoryPills.querySelectorAll('.category-menu').forEach(painel => painel.classList.add('hidden'));
+          return;
+        }
+        const menuBtn = e.target.closest('[data-category-id]:not([data-action])');
+        if (menuBtn) {
+          e.stopPropagation();
+          const id = menuBtn.getAttribute('data-category-id');
+          dom.recipeCategoryPills.querySelectorAll('.category-menu').forEach(painel => painel.classList.add('hidden'));
+          const painel = dom.recipeCategoryPills.querySelector(`.category-menu[data-menu-for="${id}"]`);
+          if (painel) {
+            painel.classList.toggle('hidden');
+            if (!painel.classList.contains('hidden')) {
+              posicionarMenuCategoria(id);
+            }
+          }
           return;
         }
         const pill = e.target.closest('[data-recipe-category]');
