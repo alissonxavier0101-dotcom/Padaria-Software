@@ -4,7 +4,7 @@
 
 export type UnitType = 'kg' | 'g' | 'L' | 'ml' | 'un' | 'xicara' | 'colher_sopa' | 'colher_cha';
 export type CategoriaInsumo = 'ingrediente' | 'embalagem' | 'outro';
-export type CategoriaReceita = 'paes' | 'bolos' | 'salgados' | 'outros';
+export type CategoriaReceita = string;
 
 export interface RecipeUnitConversions {
   baseUnit: 'g' | 'ml';

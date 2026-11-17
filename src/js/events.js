@@ -1,7 +1,10 @@
 import { handleLoginGoogle, handleLoginWithPassword, handleLogout, alterarModoEstoque, copiarDominio, carregarDadosLocais, pararListenersFirestore, abrirModalDominioNaoAutorizado, fecharModalDominioNaoAutorizado, abrirModalRegrasFirestore, fecharModalRegrasFirestore } from './firebaseAuth.js';
 import { abrirEdicaoFornecedor, prepararNovoFornecedor, handleFormFornecedorSubmit, obterFornecedoresDisponiveis, renderizarComparativoIngredientes, renderizarFornecedores, atualizarSelectFornecedores } from './firestoreData.js';
 import { renderizarInsumos, abrirEdicaoInsumo, prepararNovoInsumo, cancelarEdicaoInsumo, handleFormSubmit, confirmarExclusao, handleStockUnitChange, setGroupFilter, atualizarPreviewCalculo, abrirModalExcluir, fecharModalExcluir } from './insumos.js';
-import { switchRecipePanel, renderizarReceitas, renderizarResultadosBuscaInsumosReceita, renderizarGruposReceitaEmElaboracao, renderizarItensGrupoModelo, renderizarGruposModeloReceita, adicionarGrupoReceita, atualizarModoOrganizacaoGrupoReceita, atualizarNomeGrupoReceita, removerGrupoReceita, selecionarGrupoReceita, copiarItensGrupoModeloParaReceita, moverItemParaGrupo, adicionarItemReceitaEmElaboracao, removerItemReceitaEmElaboracao, renderizarItensReceitaEmElaboracao, atualizarPreviewItemReceita, atualizarTotaisReceitaEmElaboracao, atualizarCalculadoraLucroReceita, atualizarPreviewFotoReceita, compactarFotoReceita, prepararNovaReceita, abrirEdicaoReceita, duplicarReceita, handleFormReceitaSubmit, salvarNovoPrecoReceita, atualizarSelectProdutos, atualizarSelectClientes, atualizarPrecoVendaProduto, salvarGrupoModeloReceita, adicionarItemGrupoModelo, prepararNovoGrupoModelo, editarGrupoModeloReceita, excluirGrupoModeloReceita, usarGrupoCatalogoNaReceita, abrirModalExcluirReceita, fecharModalExcluirReceita, confirmarExclusaoReceita } from './receitas.js';
+import { switchRecipePanel, renderizarReceitas, renderizarResultadosBuscaInsumosReceita, renderizarGruposReceitaEmElaboracao, renderizarItensGrupoModelo, renderizarGruposModeloReceita, adicionarGrupoReceita, atualizarModoOrganizacaoGrupoReceita, atualizarNomeGrupoReceita, removerGrupoReceita, selecionarGrupoReceita, copiarItensGrupoModeloParaReceita, moverItemParaGrupo, adicionarItemReceitaEmElaboracao, removerItemReceitaEmElaboracao, renderizarItensReceitaEmElaboracao, atualizarPreviewItemReceita, atualizarTotaisReceitaEmElaboracao, atualizarCalculadoraLucroReceita, atualizarPreviewFotoReceita, compactarFotoReceita, prepararNovaReceita, abrirEdicaoReceita, duplicarReceita, handleFormReceitaSubmit, salvarNovoPrecoReceita, atualizarSelectProdutos, atualizarSelectClientes, atualizarPrecoVendaProduto, salvarGrupoModeloReceita, adicionarItemGrupoModelo, prepararNovoGrupoModelo, editarGrupoModeloReceita, excluirGrupoModeloReceita, usarGrupoCatalogoNaReceita, abrirModalExcluirReceita, fecharModalExcluirReceita, confirmarExclusaoReceita,
+  abrirModalCategoriaReceita, fecharModalCategoriaReceita, salvarCategoriaReceita,
+  abrirModalExcluirCategoria, fecharModalExcluirCategoria, confirmarExclusaoCategoria,
+} from './receitas.js';
 import { abrirModalProducao, fecharModalProducao, renderizarPreviaProducao, confirmarProducao, abrirEdicaoProducao, fecharEdicaoProducao, atualizarPreviaEdicaoProducao, salvarEdicaoProducao, abrirExclusaoProducao, fecharExclusaoProducao, confirmarExclusaoProducao, abrirModalAddItemReceita, fecharModalAddItemReceita, atualizarPreviewModalAddItem, confirmarModalAddItemReceita, renderizarProducoes } from './producao.js';
 import { renderizarFinanceiro, salvarMovimentacaoFinanceira, salvarDespesaFixa, excluirRegistroFinanceiro, atualizarCategoriasMovimentacao } from './financeiro.js';
 import { renderizarVendas, renderizarPedidos, abrirEdicaoVenda, fecharEdicaoVenda, salvarEdicaoVenda, salvarVenda, salvarPedido, atualizarStatusPedido, abrirModalExcluirVenda, fecharModalExcluirVenda, confirmarExclusaoVenda } from './vendas.js';
@@ -12,6 +15,7 @@ import { showToast } from './helpers.js';
 import { dom } from './dom.js';
 import { itensGrupoModeloEmEdicao, cachedReceitas, cachedVendas, activeRecipeCategory, grupoReceitaSelecionadoId, listasReceitaRecolhidas, setActiveRecipeCategory, setGrupoReceitaSelecionadoId, setActiveTab } from './state.js';
 import { ultimaFormaPagamentoDoCliente } from '../utils/formaPagamentoCliente.ts';
+import { contarReceitasPorCategoria } from '../utils/categoriasReceita.ts';
 
 // 11. REGISTRO DE EVENTOS E INTERATIVIDADE
 // -------------------------------------------------------------
@@ -90,9 +94,13 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       aplicarBuscaSelect(dom.orderCustomer, { placeholder: 'Buscar cliente...' });
       aplicarBuscaSelect(dom.orderProduct, { placeholder: 'Buscar produto...' });
 
-      // Pré-selecionar a forma de pagamento usada pelo cliente ao escolhê-lo
+      // Pré-selecionar a forma de pagamento usada pelo cliente ao escolhê-lo.
+      // Só preenche se o pagamento ainda estiver em "Não informado", para não
+      // sobrescrever a escolha do padeiro feita antes de escolher o cliente.
       function preselecionarFormaPagamentoDoCliente(selectCliente, selectPagamento) {
         selectCliente.addEventListener('change', () => {
+          const pagamentoAtual = selectPagamento.value;
+          if (pagamentoAtual && pagamentoAtual !== 'nao_informado') return;
           const clienteId = selectCliente.value || undefined;
           const forma = ultimaFormaPagamentoDoCliente(clienteId, cachedVendas);
           if (forma && selectPagamento.value !== forma) {
@@ -521,6 +529,28 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       });
 
       dom.recipeCategoryPills.addEventListener('click', (e) => {
+        const menuBtn = e.target.closest('[data-category-id]');
+        if (menuBtn) {
+          e.stopPropagation();
+          const id = menuBtn.getAttribute('data-category-id');
+          dom.recipeCategoryPills.querySelectorAll('.category-menu').forEach(painel => painel.classList.add('hidden'));
+          const painel = dom.recipeCategoryPills.querySelector(`.category-menu[data-menu-for="${id}"]`);
+          if (painel) painel.classList.toggle('hidden');
+          return;
+        }
+        const action = e.target.closest('[data-action]');
+        if (action) {
+          e.stopPropagation();
+          const id = action.getAttribute('data-category-id');
+          if (action.getAttribute('data-action') === 'editar-categoria') {
+            const categoria = cachedCategoriasReceita.find(cat => cat.id === id);
+            if (categoria) abrirModalCategoriaReceita('editar', categoria);
+          } else if (action.getAttribute('data-action') === 'excluir-categoria') {
+            abrirModalExcluirCategoria(id);
+          }
+          dom.recipeCategoryPills.querySelectorAll('.category-menu').forEach(painel => painel.classList.add('hidden'));
+          return;
+        }
         const pill = e.target.closest('[data-recipe-category]');
         if (!pill) return;
         setActiveRecipeCategory(pill.getAttribute('data-recipe-category') || 'todos');
@@ -530,6 +560,29 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
           button.setAttribute('aria-pressed', String(active));
         });
         renderizarReceitas();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!dom.recipeCategoryPills.contains(e.target)) {
+          dom.recipeCategoryPills.querySelectorAll('.category-menu').forEach(painel => painel.classList.add('hidden'));
+        }
+      });
+
+      dom.btnNovaCategoriaReceita.addEventListener('click', () => abrirModalCategoriaReceita('novo'));
+      dom.btnSalvarCategoriaReceita.addEventListener('click', salvarCategoriaReceita);
+      dom.btnCancelarCategoriaReceita.addEventListener('click', fecharModalCategoriaReceita);
+      dom.btnConfirmarExcluirCategoria.addEventListener('click', confirmarExclusaoCategoria);
+      dom.btnCancelarExcluirCategoria.addEventListener('click', fecharModalExcluirCategoria);
+      dom.selectDestinoCategoriaReceita.addEventListener('change', () => {
+        const categoriaId = dom.categoriaExcluindoId.value;
+        const total = contarReceitasPorCategoria(cachedReceitas, cachedCategoriasReceita)[categoriaId] || 0;
+        dom.btnConfirmarExcluirCategoria.disabled = total > 0 && !dom.selectDestinoCategoriaReceita.value;
+      });
+      dom.categoriaModal.addEventListener('click', (event) => {
+        if (event.target === dom.categoriaModal) fecharModalCategoriaReceita();
+      });
+      dom.excluirCategoriaModal.addEventListener('click', (event) => {
+        if (event.target === dom.excluirCategoriaModal) fecharModalExcluirCategoria();
       });
 
       // Modais de receitas

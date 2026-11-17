@@ -54,10 +54,21 @@ import {
   calcularLucroEPrecificacao
 } from './helpers.js';
 import { aplicarMascaraMoeda, lerValorMoeda, configurarMemoriaCampos, aplicarBuscaSelect } from './formHelpers.js';
-import { initFirebase, salvarDadosReceitasLocais } from './firebaseAuth.js';
+import { initFirebase, salvarDadosReceitasLocais, salvarDadosCategoriasReceitaLocais } from './firebaseAuth.js';
 import { renderizarInsumos, formatarQuantidadeEstoque, atualizarReceitasDependentes } from './insumos.js';
 import { atualizarSelectFornecedores, renderizarFornecedores, obterFornecedorDoInsumo } from './firestoreData.js';
 import { calcularCustoUnitarioReceita } from '../utils/costCalculator.ts';
+import {
+  contarReceitasPorCategoria,
+  obterNomeCategoria,
+  resolverCategoriaReceita,
+  obterPrimeiraCategoria,
+  prepararCategoriasReceita,
+  validarNomeCategoria,
+  categoriaDuplicada,
+  gerarSlugCategoria,
+  planejarRealocacaoReceitas,
+} from '../utils/categoriasReceita.ts';
 import { compareSupplierOffers, getSupplierOfferComparisonKey } from '../utils/supplierComparison.ts';
 import { calcularListaComprasReceita } from '../utils/inventory.ts';
 import {
@@ -958,7 +969,7 @@ export function prepararNovaReceita() {
   dom.formReceita.reset();
   dom.recipeCostDetails.open = false;
   dom.recipeTechDetails.open = false;
-  dom.selectCategoriaReceita.value = 'paes';
+  renderizarOpcoesCategoriaReceita();
   atualizarPreviewFotoReceita(null);
   dom.formReceitaTitle.textContent = '📖 Nova Receita com Custos e Lucro';
   dom.btnSubmitReceita.innerHTML = '<span>Salvar Receita no Firestore</span>';
@@ -977,7 +988,8 @@ export function abrirEdicaoReceita(id) {
 
   setEditingReceitaId(id);
   dom.inputReceitaNome.value = receita.nome || '';
-  dom.selectCategoriaReceita.value = receita.categoria || 'paes';
+  renderizarOpcoesCategoriaReceita();
+  dom.selectCategoriaReceita.value = resolverCategoriaReceita(receita, cachedCategoriasReceita) || (obterPrimeiraCategoria(cachedCategoriasReceita)?.id ?? 'paes');
   dom.inputReceitaRendimento.value = receita.rendimento || 1;
   dom.inputReceitaRendimentoUn.value = receita.rendimentoUnidade || 'pães';
   dom.inputReceitaDescricao.value = receita.descricao || '';
@@ -1023,7 +1035,8 @@ export function duplicarReceita(id) {
 
   setEditingReceitaId(null);
   dom.inputReceitaNome.value = `${receita.nome} (cópia)`;
-  dom.selectCategoriaReceita.value = receita.categoria || 'paes';
+  renderizarOpcoesCategoriaReceita();
+  dom.selectCategoriaReceita.value = resolverCategoriaReceita(receita, cachedCategoriasReceita) || (obterPrimeiraCategoria(cachedCategoriasReceita)?.id ?? 'paes');
   dom.inputReceitaRendimento.value = receita.rendimento || 1;
   dom.inputReceitaRendimentoUn.value = receita.rendimentoUnidade || 'pães';
   dom.inputReceitaDescricao.value = receita.descricao || '';
@@ -1069,7 +1082,8 @@ export async function handleFormReceitaSubmit(e) {
   e.preventDefault();
 
   const nome = dom.inputReceitaNome.value.trim();
-  const categoria = dom.selectCategoriaReceita.value || 'paes';
+  const primeira = obterPrimeiraCategoria(cachedCategoriasReceita);
+  const categoria = dom.selectCategoriaReceita.value || (primeira?.id ?? 'paes');
   const rendimento = parseFloat(dom.inputReceitaRendimento.value);
   const rendimentoUnidade = dom.inputReceitaRendimentoUn.value.trim() || 'pães';
   const descricao = dom.inputReceitaDescricao.value.trim();
@@ -1195,24 +1209,211 @@ export async function handleFormReceitaSubmit(e) {
   }
 }
 
+export function renderizarOpcoesCategoriaReceita() {
+  if (!dom.selectCategoriaReceita) return;
+  const categorias = prepararCategoriasReceita(cachedCategoriasReceita);
+  const selecionado = dom.selectCategoriaReceita.value;
+  dom.selectCategoriaReceita.innerHTML = categorias.map(cat => {
+    const selecionada = cat.id === selecionado ? ' selected' : '';
+    return `<option value="${escapeHtml(cat.id)}"${selecionada}>${escapeHtml(cat.nome)}</option>`;
+  }).join('');
+  if (categorias.some(cat => cat.id === selecionado)) {
+    dom.selectCategoriaReceita.value = selecionado;
+  } else if (categorias.length > 0) {
+    dom.selectCategoriaReceita.value = categorias[0].id;
+  }
+}
+
+export function renderizarFiltrosCategoriasReceita() {
+  if (!dom.recipeCategoryPills) return;
+  const categorias = prepararCategoriasReceita(cachedCategoriasReceita);
+  const contagens = contarReceitasPorCategoria(cachedReceitas, categorias);
+  let ativo = activeRecipeCategory;
+  if (ativo !== 'todos' && !categorias.some(cat => cat.id === ativo)) {
+    ativo = 'todos';
+    setActiveRecipeCategory('todos');
+  }
+  const html = [
+    `<button class="category-pill${ativo === 'todos' ? ' active' : ''}" data-recipe-category="todos" type="button" aria-pressed="${ativo === 'todos'}">Todas (<span id="count-recipe-todos">${contagens.todos}</span>)</button>`,
+    ...categorias.map(cat => {
+      const pressionado = ativo === cat.id;
+      return `<div class="category-pill-row" style="position: relative; display: inline-flex; align-items: center; gap: 4px; margin: 2px;">
+        <button class="category-pill${pressionado ? ' active' : ''}" data-recipe-category="${escapeHtml(cat.id)}" type="button" aria-pressed="${pressionado}">${escapeHtml(cat.nome)} (<span id="count-recipe-${escapeHtml(cat.id)}">${contagens[cat.id] || 0}</span>)</button>
+        <button class="category-menu-btn" data-category-id="${escapeHtml(cat.id)}" type="button" aria-label="Opções de ${escapeHtml(cat.nome)}">⋮</button>
+        <div class="category-menu hidden" data-menu-for="${escapeHtml(cat.id)}">
+          <button type="button" data-action="editar-categoria" data-category-id="${escapeHtml(cat.id)}">Editar</button>
+          <button type="button" data-action="excluir-categoria" data-category-id="${escapeHtml(cat.id)}">Excluir</button>
+        </div>
+      </div>`;
+    }),
+  ].join('');
+  dom.recipeCategoryPills.innerHTML = html;
+}
+
+let editandoCategoriaId = null;
+
+export function abrirModalCategoriaReceita(modo = 'novo', categoria = null) {
+  editandoCategoriaId = modo === 'editar' && categoria ? categoria.id : null;
+  dom.categoriaEditandoId.value = editandoCategoriaId ?? '';
+  dom.inputNomeCategoriaReceita.value = categoria ? categoria.nome : '';
+  dom.inputNomeCategoriaReceita.maxLength = 40;
+  dom.categoriaModal.querySelector('.modal-title').textContent = modo === 'editar' ? 'Editar categoria' : 'Nova categoria';
+  dom.btnSalvarCategoriaReceita.textContent = modo === 'editar' ? 'Salvar alterações' : 'Salvar';
+  dom.categoriaModal.classList.add('active');
+  dom.inputNomeCategoriaReceita.focus();
+}
+
+export function fecharModalCategoriaReceita() {
+  editandoCategoriaId = null;
+  dom.categoriaEditandoId.value = '';
+  dom.inputNomeCategoriaReceita.value = '';
+  dom.categoriaModal.classList.remove('active');
+}
+
+export function abrirModalExcluirCategoria(categoriaId) {
+  const categoria = cachedCategoriasReceita.find(c => c.id === categoriaId);
+  if (!categoria) return;
+  if (cachedCategoriasReceita.length <= 1) {
+    showToast('Não é possível excluir a última categoria de receita.');
+    return;
+  }
+  const contagens = contarReceitasPorCategoria(cachedReceitas, cachedCategoriasReceita);
+  const total = contagens[categoriaId] || 0;
+  dom.categoriaExcluindoId.value = categoriaId;
+  dom.textoExcluirCategoria.textContent = `Excluir "${categoria.nome}" moverá ${total} receita(s) para outra categoria.`;
+  const destinoSelecionado = dom.selectDestinoCategoriaReceita.value;
+  const categoriasDestino = prepararCategoriasReceita(cachedCategoriasReceita).filter(cat => cat.id !== categoriaId);
+  dom.selectDestinoCategoriaReceita.innerHTML = categoriasDestino.map(cat => {
+    const selecionada = cat.id === destinoSelecionado ? ' selected' : '';
+    return `<option value="${escapeHtml(cat.id)}"${selecionada}>${escapeHtml(cat.nome)}</option>`;
+  }).join('');
+  if (categoriasDestino.length > 0) {
+    dom.selectDestinoCategoriaReceita.value = categoriasDestino[0].id;
+  }
+  dom.btnConfirmarExcluirCategoria.disabled = total > 0 && !dom.selectDestinoCategoriaReceita.value;
+  dom.excluirCategoriaModal.classList.add('active');
+}
+
+export function fecharModalExcluirCategoria() {
+  dom.categoriaExcluindoId.value = '';
+  dom.selectDestinoCategoriaReceita.innerHTML = '';
+  dom.excluirCategoriaModal.classList.remove('active');
+}
+
+export async function salvarCategoriaReceita(event) {
+  event.preventDefault();
+  const nome = dom.inputNomeCategoriaReceita.value.trim();
+  const validacao = validarNomeCategoria(nome);
+  if (!validacao.valido) {
+    showToast(validacao.motivo);
+    dom.inputNomeCategoriaReceita.focus();
+    return;
+  }
+  if (categoriaDuplicada(cachedCategoriasReceita, nome, editandoCategoriaId)) {
+    showToast('Já existe uma categoria com esse nome.');
+    dom.inputNomeCategoriaReceita.focus();
+    return;
+  }
+  const dados = {
+    nome,
+    createdBy: currentUser?.uid || 'anon',
+    createdByName: currentUser?.displayName || 'Padeiro',
+  };
+  try {
+    dom.btnSalvarCategoriaReceita.disabled = true;
+    if (editandoCategoriaId) {
+      const categoria = cachedCategoriasReceita.find(c => c.id === editandoCategoriaId);
+      const payload = {
+        ...dados,
+        createdBy: categoria?.createdBy ?? dados.createdBy,
+        createdByName: categoria?.createdByName ?? dados.createdByName,
+        createdAt: categoria?.createdAt,
+        updatedAt: isTestStockMode ? new Date().toISOString() : serverTimestamp(),
+      };
+      if (firestoreDb && !isTestStockMode && !editandoCategoriaId.startsWith('local-') && !editandoCategoriaId.startsWith('demo-')) {
+        await updateDoc(doc(firestoreDb, 'categoriasReceita', editandoCategoriaId), payload);
+      }
+      if (categoria) Object.assign(categoria, { nome, updatedAt: new Date().toISOString() });
+      showToast(`Categoria renomeada para "${nome}".`);
+    } else {
+      const id = gerarSlugCategoria(nome) || `categoria-${Date.now()}`;
+      const payload = {
+        ...dados,
+        id,
+        createdAt: isTestStockMode ? new Date().toISOString() : serverTimestamp(),
+      };
+      if (firestoreDb && !isTestStockMode) {
+        await setDoc(doc(firestoreDb, 'categoriasReceita', id), payload);
+      } else {
+        cachedCategoriasReceita.unshift({ ...payload });
+        salvarDadosCategoriasReceitaLocais();
+      }
+      showToast(`Categoria "${nome}" criada.`);
+    }
+    fecharModalCategoriaReceita();
+    renderizarFiltrosCategoriasReceita();
+    renderizarOpcoesCategoriaReceita();
+    renderizarReceitas();
+  } catch (error) {
+    console.error('Erro ao salvar categoria:', error);
+    showToast(`Não foi possível salvar a categoria: ${error.message || 'Tente novamente.'}`);
+  } finally {
+    dom.btnSalvarCategoriaReceita.disabled = false;
+  }
+}
+
+export async function confirmarExclusaoCategoria() {
+  const categoriaId = dom.categoriaExcluindoId.value;
+  if (!categoriaId) return;
+  const destino = dom.selectDestinoCategoriaReceita.value;
+  const contagens = contarReceitasPorCategoria(cachedReceitas, cachedCategoriasReceita);
+  const total = contagens[categoriaId] || 0;
+  if (total > 0 && !destino) {
+    showToast('Selecione a categoria de destino.');
+    return;
+  }
+  const destinoId = destino || null;
+  try {
+    dom.btnConfirmarExcluirCategoria.disabled = true;
+    const afetadas = cachedReceitas.filter(r => resolverCategoriaReceita(r, cachedCategoriasReceita) === categoriaId);
+    for (const receita of afetadas) {
+      const atualizada = { ...receita, categoria: destinoId };
+      const indice = cachedReceitas.findIndex(r => r.id === receita.id);
+      if (indice >= 0) cachedReceitas[indice] = atualizada;
+      if (firestoreDb && !isTestStockMode && !receita.id.startsWith('local-') && !receita.id.startsWith('demo-')) {
+        await updateDoc(doc(firestoreDb, 'receitas', receita.id), atualizada);
+      }
+    }
+    if (firestoreDb && !isTestStockMode && !categoriaId.startsWith('local-') && !categoriaId.startsWith('demo-')) {
+      await deleteDoc(doc(firestoreDb, 'categoriasReceita', categoriaId));
+    }
+    setCachedCategoriasReceita(cachedCategoriasReceita.filter(c => c.id !== categoriaId));
+    salvarDadosCategoriasReceitaLocais();
+    salvarDadosReceitasLocais();
+    fecharModalExcluirCategoria();
+    renderizarFiltrosCategoriasReceita();
+    renderizarOpcoesCategoriaReceita();
+    renderizarReceitas();
+    showToast(total > 0 ? `Categoria excluída e ${total} receita(s) movida(s).` : 'Categoria excluída.');
+  } catch (error) {
+    console.error('Erro ao excluir categoria:', error);
+    showToast(`Não foi possível excluir a categoria: ${error.message || 'Tente novamente.'}`);
+  } finally {
+    dom.btnConfirmarExcluirCategoria.disabled = false;
+  }
+}
+
 export function renderizarReceitas() {
   const querySearch = dom.inputSearchReceitas.value.trim();
 
   const receitasDisponiveis = cachedReceitas;
-  const contagensCategoria = receitasDisponiveis.reduce((contagens, receita) => {
-    const categoria = receita.categoria || 'paes';
-    contagens[categoria] = (contagens[categoria] || 0) + 1;
-    return contagens;
-  }, { todos: receitasDisponiveis.length });
-  dom.countRecipeTodos.textContent = contagensCategoria.todos;
-  dom.countRecipePaes.textContent = contagensCategoria.paes || 0;
-  dom.countRecipeBolos.textContent = contagensCategoria.bolos || 0;
-  dom.countRecipeSalgados.textContent = contagensCategoria.salgados || 0;
-  dom.countRecipeOutros.textContent = contagensCategoria.outros || 0;
+  const categorias = prepararCategoriasReceita(cachedCategoriasReceita);
+  const contagensCategoria = contarReceitasPorCategoria(receitasDisponiveis, categorias);
+  renderizarFiltrosCategoriasReceita();
 
   let filtradas = receitasDisponiveis;
   if (activeRecipeCategory !== 'todos') {
-    filtradas = filtradas.filter(receita => (receita.categoria || 'paes') === activeRecipeCategory);
+    filtradas = filtradas.filter(receita => resolverCategoriaReceita(receita, categorias) === activeRecipeCategory);
   }
   if (querySearch) {
     filtradas = filtradas.filter(receita =>
@@ -1256,7 +1457,7 @@ export function renderizarReceitas() {
 
   const html = filtradas.map(rec => {
     const rendimentoTexto = `Rende ${rec.rendimento} ${rec.rendimentoUnidade || 'pães'}`;
-    const categoriaNome = ({ paes: 'Pães', bolos: 'Bolos', salgados: 'Salgados', outros: 'Outros' })[rec.categoria || 'paes'] || 'Pães';
+    const categoriaNome = obterNomeCategoria(categorias, rec.categoria);
     const gruposEItens = obterGruposEItensReceita(rec);
     const gruposIngredientes = gruposEItens.grupos;
     const itens = gruposEItens.itens;

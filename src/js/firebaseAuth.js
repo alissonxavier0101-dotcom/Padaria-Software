@@ -1,5 +1,6 @@
-import { LOCAL_CONFIG_KEY, DEFAULT_FIREBASE_CONFIG, firebaseApp, firebaseAuth, firestoreDb, redirectResultChecked, isTestStockMode, currentUser, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, setCachedCashflow, setCachedClientes, setCachedFixedExpenses, setCachedFornecedores, setCachedInsumos, setCachedPedidos, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setCurrentUser, setFirebaseApp, setFirebaseAuth, setFirestoreDb, setIsTestStockMode, setRedirectResultChecked, setUnsubscribeCashflowSnapshot, setUnsubscribeClientesSnapshot, setUnsubscribeFixedExpensesSnapshot, setUnsubscribeFornecedoresSnapshot, setUnsubscribePedidosSnapshot, setUnsubscribeProducoesSnapshot, setUnsubscribeReceitasSnapshot, setUnsubscribeRecipeGroupsSnapshot, setUnsubscribeSnapshot, setUnsubscribeVendasSnapshot, LOCAL_DEMO_ITEMS_KEY, LOCAL_DEMO_RECEITAS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, LOCAL_DEMO_PRODUCOES_KEY, LOCAL_DEMO_SUPPLIERS_KEY, LOCAL_DEMO_SALES_KEY, LOCAL_DEMO_ORDERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, LOCAL_DEMO_CASHFLOW_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY, DEMO_SEED_INSUMOS, TEST_ITEMS_KEY, TEST_RECIPES_KEY, TEST_RECIPE_GROUPS_KEY, TEST_PRODUCTIONS_KEY, TEST_SUPPLIERS_KEY, TEST_SALES_KEY, TEST_ORDERS_KEY, TEST_CUSTOMERS_KEY, TEST_CASHFLOW_KEY, TEST_FIXED_EXPENSES_KEY, DEMO_SEED_RECEITAS } from './state.js';
+import { LOCAL_CONFIG_KEY, DEFAULT_FIREBASE_CONFIG, firebaseApp, firebaseAuth, firestoreDb, redirectResultChecked, isTestStockMode, currentUser, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedCategoriasReceita, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, setCachedCashflow, setCachedClientes, setCachedFixedExpenses, setCachedFornecedores, setCachedInsumos, setCachedPedidos, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedCategoriasReceita, setCachedVendas, setCurrentUser, setFirebaseApp, setFirebaseAuth, setFirestoreDb, setIsTestStockMode, setRedirectResultChecked, setUnsubscribeCashflowSnapshot, setUnsubscribeClientesSnapshot, setUnsubscribeFixedExpensesSnapshot, setUnsubscribeFornecedoresSnapshot, setUnsubscribePedidosSnapshot, setUnsubscribeProducoesSnapshot, setUnsubscribeReceitasSnapshot, setUnsubscribeRecipeGroupsSnapshot, setUnsubscribeSnapshot, setUnsubscribeVendasSnapshot, LOCAL_DEMO_ITEMS_KEY, LOCAL_DEMO_RECEITAS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, LOCAL_DEMO_RECIPE_CATEGORIES_KEY, LOCAL_DEMO_PRODUCOES_KEY, LOCAL_DEMO_SUPPLIERS_KEY, LOCAL_DEMO_SALES_KEY, LOCAL_DEMO_ORDERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, LOCAL_DEMO_CASHFLOW_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY, DEMO_SEED_INSUMOS, TEST_ITEMS_KEY, TEST_RECIPES_KEY, TEST_RECIPE_GROUPS_KEY, TEST_RECIPE_CATEGORIES_KEY, TEST_PRODUCTIONS_KEY, TEST_SUPPLIERS_KEY, TEST_SALES_KEY, TEST_ORDERS_KEY, TEST_CUSTOMERS_KEY, TEST_CASHFLOW_KEY, TEST_FIXED_EXPENSES_KEY, DEMO_SEED_RECEITAS } from './state.js';
 import { dom } from './dom.js';
+import { CATEGORIAS_RECEITA_PADRAO } from '../utils/categoriasReceita.ts';
 import { showToast } from './helpers.js';
 import { iniciarListenerFirestore, renderizarFornecedores, atualizarSelectFornecedores } from './firestoreData.js';
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
@@ -310,9 +311,11 @@ export function carregarDadosLocais() {
           const savedCustomers = localStorage.getItem(LOCAL_DEMO_CUSTOMERS_KEY);
           const savedCashflow = localStorage.getItem(LOCAL_DEMO_CASHFLOW_KEY);
           const savedFixedExpenses = localStorage.getItem(LOCAL_DEMO_FIXED_EXPENSES_KEY);
+          const savedCategorias = localStorage.getItem(LOCAL_DEMO_RECIPE_CATEGORIES_KEY);
           setCachedInsumos(savedItems ? JSON.parse(savedItems) : [...DEMO_SEED_INSUMOS]);
           setCachedReceitas(savedRecipes ? JSON.parse(savedRecipes) : []);
           setCachedRecipeGroups(savedRecipeGroups ? JSON.parse(savedRecipeGroups) : []);
+          setCachedCategoriasReceita(savedCategorias ? JSON.parse(savedCategorias) : [...CATEGORIAS_RECEITA_PADRAO]);
           setCachedProducoes(savedProductions ? JSON.parse(savedProductions) : []);
           setCachedFornecedores(savedSuppliers ? JSON.parse(savedSuppliers) : []);
           setCachedVendas(savedSales ? JSON.parse(savedSales) : []);
@@ -371,6 +374,7 @@ export function carregarDadosTeste() {
           const savedItems = localStorage.getItem(TEST_ITEMS_KEY);
           const savedRecipes = localStorage.getItem(TEST_RECIPES_KEY);
           const savedRecipeGroups = localStorage.getItem(TEST_RECIPE_GROUPS_KEY);
+          const savedCategorias = localStorage.getItem(TEST_RECIPE_CATEGORIES_KEY);
           const savedProductions = localStorage.getItem(TEST_PRODUCTIONS_KEY);
           const savedSuppliers = localStorage.getItem(TEST_SUPPLIERS_KEY);
           const savedSales = localStorage.getItem(TEST_SALES_KEY);
@@ -381,6 +385,7 @@ export function carregarDadosTeste() {
           setCachedInsumos(savedItems ? JSON.parse(savedItems) : JSON.parse(JSON.stringify(DEMO_SEED_INSUMOS)));
           setCachedReceitas(savedRecipes ? JSON.parse(savedRecipes) : JSON.parse(JSON.stringify(DEMO_SEED_RECEITAS)));
           setCachedRecipeGroups(savedRecipeGroups ? JSON.parse(savedRecipeGroups) : []);
+          setCachedCategoriasReceita(savedCategorias ? JSON.parse(savedCategorias) : [...CATEGORIAS_RECEITA_PADRAO]);
           setCachedProducoes(savedProductions ? JSON.parse(savedProductions) : []);
           setCachedFornecedores(savedSuppliers ? JSON.parse(savedSuppliers) : []);
           setCachedVendas(savedSales ? JSON.parse(savedSales) : []);
@@ -414,6 +419,10 @@ export function salvarDadosInsumosLocais() {
 
 export function salvarDadosReceitasLocais() {
         localStorage.setItem(isTestStockMode ? TEST_RECIPES_KEY : LOCAL_DEMO_RECEITAS_KEY, JSON.stringify(cachedReceitas));
+      }
+
+export function salvarDadosCategoriasReceitaLocais() {
+        localStorage.setItem(isTestStockMode ? TEST_RECIPE_CATEGORIES_KEY : LOCAL_DEMO_RECIPE_CATEGORIES_KEY, JSON.stringify(cachedCategoriasReceita));
       }
 
 export function salvarDadosProducoesLocais() {

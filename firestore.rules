@@ -68,6 +68,12 @@ service cloud.firestore {
           (data.descricao is string && data.descricao.size() <= 200));
     }
 
+    function isValidCategoriaReceita(data) {
+      return data.keys().hasAll(['nome', 'createdBy']) &&
+        data.nome is string && data.nome.size() >= 1 && data.nome.size() <= 40 &&
+        data.createdBy is string && data.createdBy.size() > 0 && data.createdBy.size() <= 128;
+    }
+
     function isValidProducao(data) {
       return data.keys().hasAll([
           'receitaId', 'receitaNome', 'quantidade', 'data', 'quantidadeProduzida',
@@ -203,6 +209,13 @@ service cloud.firestore {
       allow create: if isSignedIn() && isValidId(grupoId) && isValidGrupoReceita(incoming());
       allow update: if isSignedIn() && isValidId(grupoId) && isValidGrupoReceita(incoming());
       allow delete: if isSignedIn() && isValidId(grupoId);
+    }
+
+    match /categoriasReceita/{categoriaId} {
+      allow get, list: if isSignedIn();
+      allow create: if isSignedIn() && isValidId(categoriaId) && isValidCategoriaReceita(incoming());
+      allow update: if isSignedIn() && isValidId(categoriaId) && isValidCategoriaReceita(incoming());
+      allow delete: if isSignedIn() && isValidId(categoriaId);
     }
 
     match /producoes/{producaoId} {

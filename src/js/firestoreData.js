@@ -1,15 +1,16 @@
-import { isTestStockMode, firestoreDb, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, LOCAL_CONFIG_KEY, LOCAL_DEMO_ITEMS_KEY, LOCAL_DEMO_RECEITAS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, LOCAL_DEMO_PRODUCOES_KEY, LOCAL_DEMO_SUPPLIERS_KEY, LOCAL_DEMO_SALES_KEY, LOCAL_DEMO_ORDERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, LOCAL_DEMO_CASHFLOW_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY, setCachedCashflow, setCachedClientes, setCachedFixedExpenses, setCachedFornecedores, setCachedInsumos, setCachedPedidos, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedVendas, setUnsubscribeCashflowSnapshot, setUnsubscribeClientesSnapshot, setUnsubscribeFixedExpensesSnapshot, setUnsubscribeFornecedoresSnapshot, setUnsubscribePedidosSnapshot, setUnsubscribeProducoesSnapshot, setUnsubscribeReceitasSnapshot, setUnsubscribeRecipeGroupsSnapshot, setUnsubscribeSnapshot, setUnsubscribeVendasSnapshot, editingFornecedorId, currentUser, setEditingFornecedorId } from './state.js';
+import { isTestStockMode, firestoreDb, unsubscribeSnapshot, unsubscribeReceitasSnapshot, unsubscribeRecipeGroupsSnapshot, unsubscribeCategoriasReceitaSnapshot, unsubscribeProducoesSnapshot, unsubscribeFornecedoresSnapshot, unsubscribeVendasSnapshot, unsubscribePedidosSnapshot, unsubscribeClientesSnapshot, unsubscribeCashflowSnapshot, unsubscribeFixedExpensesSnapshot, cachedInsumos, cachedReceitas, cachedRecipeGroups, cachedCategoriasReceita, cachedProducoes, cachedFornecedores, cachedVendas, cachedPedidos, cachedClientes, cachedCashflow, cachedFixedExpenses, LOCAL_CONFIG_KEY, LOCAL_DEMO_ITEMS_KEY, LOCAL_DEMO_RECEITAS_KEY, LOCAL_DEMO_RECIPE_GROUPS_KEY, LOCAL_DEMO_RECIPE_CATEGORIES_KEY, TEST_RECIPE_CATEGORIES_KEY, LOCAL_DEMO_PRODUCOES_KEY, LOCAL_DEMO_SUPPLIERS_KEY, LOCAL_DEMO_SALES_KEY, LOCAL_DEMO_ORDERS_KEY, LOCAL_DEMO_CUSTOMERS_KEY, LOCAL_DEMO_CASHFLOW_KEY, LOCAL_DEMO_FIXED_EXPENSES_KEY, setCachedCashflow, setCachedClientes, setCachedFixedExpenses, setCachedFornecedores, setCachedInsumos, setCachedPedidos, setCachedProducoes, setCachedReceitas, setCachedRecipeGroups, setCachedCategoriasReceita, setCachedVendas, setUnsubscribeCashflowSnapshot, setUnsubscribeClientesSnapshot, setUnsubscribeFixedExpensesSnapshot, setUnsubscribeFornecedoresSnapshot, setUnsubscribePedidosSnapshot, setUnsubscribeProducoesSnapshot, setUnsubscribeReceitasSnapshot, setUnsubscribeRecipeGroupsSnapshot, setUnsubscribeCategoriasReceitaSnapshot, setUnsubscribeSnapshot, setUnsubscribeVendasSnapshot, editingFornecedorId, currentUser, setEditingFornecedorId } from './state.js';
 import { dom } from './dom.js';
 import { showToast, calcularCustoUnitario, escapeHtml, formatarMoeda } from './helpers.js';
 import { initFirebase, abrirModalRegrasFirestore, salvarDadosFornecedoresLocais } from './firebaseAuth.js';
 import { renderizarInsumos } from './insumos.js';
-import { renderizarReceitas, renderizarGruposModeloReceita, atualizarSelectClientes, atualizarSelectsInsumosParaReceitas, atualizarSelectProdutos } from './receitas.js';
+import { renderizarReceitas, renderizarGruposModeloReceita, renderizarFiltrosCategoriasReceita, renderizarOpcoesCategoriaReceita, atualizarSelectClientes, atualizarSelectsInsumosParaReceitas, atualizarSelectProdutos } from './receitas.js';
 import { renderizarFinanceiro } from './financeiro.js';
 import { renderizarProducoes } from './producao.js';
 import { renderizarVendas, renderizarPedidos } from './vendas.js';
 import { renderizarClientes } from './clientes.js';
-import { collection, onSnapshot, doc, addDoc, deleteDoc, updateDoc, query, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
+import { collection, onSnapshot, doc, getDoc, setDoc, addDoc, deleteDoc, updateDoc, query, orderBy, serverTimestamp, runTransaction } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 import { normalizeComparisonName, compareSupplierOffers } from '../utils/supplierComparison.ts';
+import { CATEGORIAS_RECEITA_PADRAO, prepararCategoriasReceita, resolverCategoriaReceita } from '../utils/categoriasReceita.ts';
 import { aplicarMascaraTelefone, lerValorTelefone } from './formHelpers.js';
 
 export function iniciarListenerFirestore() {
@@ -72,6 +73,7 @@ export function iniciarListenerFirestore() {
         iniciarListenerFornecedores();
         iniciarListenerReceitas();
         iniciarListenerGruposReceita();
+        iniciarListenerCategoriasReceita();
         iniciarListenerProducoes();
         iniciarListenerVendas();
         iniciarListenerPedidos();
@@ -176,6 +178,69 @@ export function iniciarListenerGruposReceita() {
           showToast('Não foi possível conectar o catálogo de grupos.');
         }
       }
+
+let categoriasPadraoSemeadas = false;
+
+async function garantirCategoriasPadrao() {
+  if (isTestStockMode || !firestoreDb || categoriasPadraoSemeadas) return;
+  try {
+    for (const categoria of CATEGORIAS_RECEITA_PADRAO) {
+      const ref = doc(firestoreDb, 'categoriasReceita', categoria.id);
+      const snap = await getDoc(ref);
+      if (!snap.exists()) {
+        await setDoc(ref, {
+          ...categoria,
+          createdBy: currentUser?.uid || 'anon',
+          createdByName: currentUser?.displayName || 'Padeiro',
+          createdAt: serverTimestamp(),
+        });
+      }
+    }
+    categoriasPadraoSemeadas = true;
+  } catch (error) {
+    console.error('Não foi possível semear categorias padrão:', error);
+  }
+}
+
+export function iniciarListenerCategoriasReceita() {
+  if (!firestoreDb) return;
+  if (unsubscribeCategoriasReceitaSnapshot) {
+    unsubscribeCategoriasReceitaSnapshot();
+    setUnsubscribeCategoriasReceitaSnapshot(null);
+  }
+  setCachedCategoriasReceita([...CATEGORIAS_RECEITA_PADRAO]);
+  renderizarFiltrosCategoriasReceita();
+  renderizarOpcoesCategoriaReceita();
+  try {
+    setUnsubscribeCategoriasReceitaSnapshot(onSnapshot(collection(firestoreDb, 'categoriasReceita'), (snapshot) => {
+      if (isTestStockMode) return;
+      const docs = snapshot.docs.map(docSnap => ({ id: docSnap.id, ...docSnap.data() }));
+      if (docs.length === 0) {
+        void garantirCategoriasPadrao();
+        setCachedCategoriasReceita([...CATEGORIAS_RECEITA_PADRAO]);
+        renderizarFiltrosCategoriasReceita();
+        renderizarOpcoesCategoriaReceita();
+        return;
+      }
+      setCachedCategoriasReceita(prepararCategoriasReceita(docs));
+      renderizarFiltrosCategoriasReceita();
+      renderizarOpcoesCategoriaReceita();
+    }, (error) => {
+      console.error('Erro ao carregar categorias de receita:', error);
+      setCachedCategoriasReceita([...CATEGORIAS_RECEITA_PADRAO]);
+      if (error?.code === 'permission-denied') {
+        abrirModalRegrasFirestore();
+        showToast('Publique as regras atualizadas do Firestore para usar as categorias de receita.');
+      } else {
+        showToast('Não foi possível carregar as categorias de receita.');
+      }
+    }));
+  } catch (error) {
+    console.error('Falha ao conectar categorias de receita:', error);
+    setCachedCategoriasReceita([...CATEGORIAS_RECEITA_PADRAO]);
+    showToast('Não foi possível conectar as categorias de receita.');
+  }
+}
 
 export function iniciarListenerProducoes() {
         if (!firestoreDb) return;

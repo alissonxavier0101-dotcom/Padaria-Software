@@ -13,6 +13,8 @@ export const LOCAL_CONFIG_KEY = 'paniscustos_firebase_config';
 export const LOCAL_DEMO_ITEMS_KEY = 'paniscustos_demo_items';
 export const LOCAL_DEMO_RECEITAS_KEY = 'paniscustos_demo_receitas';
 export const LOCAL_DEMO_RECIPE_GROUPS_KEY = 'paniscustos_demo_recipe_groups';
+export const LOCAL_DEMO_RECIPE_CATEGORIES_KEY = 'paniscustos_demo_recipe_categories';
+export const TEST_RECIPE_CATEGORIES_KEY = 'paniscustos_test_recipe_categories';
 export const LOCAL_DEMO_PRODUCOES_KEY = 'paniscustos_demo_producoes';
 export const LOCAL_DEMO_SUPPLIERS_KEY = 'paniscustos_demo_suppliers';
 export const LOCAL_DEMO_SALES_KEY = 'paniscustos_demo_sales';
@@ -38,6 +40,7 @@ export let redirectResultChecked = false;
 export let unsubscribeSnapshot = null;
 export let unsubscribeReceitasSnapshot = null;
 export let unsubscribeRecipeGroupsSnapshot = null;
+export let unsubscribeCategoriasReceitaSnapshot = null;
 export let unsubscribeProducoesSnapshot = null;
 export let unsubscribeFornecedoresSnapshot = null;
 export let unsubscribeVendasSnapshot = null;
@@ -50,6 +53,7 @@ export let currentUser = null;
 export let cachedInsumos = [];
 export let cachedReceitas = [];
 export let cachedRecipeGroups = [];
+export let cachedCategoriasReceita = [];
 export let cachedProducoes = [];
 export let cachedFornecedores = [];
 export let cachedVendas = [];
@@ -259,6 +263,10 @@ export function setUnsubscribeRecipeGroupsSnapshot(value) {
   unsubscribeRecipeGroupsSnapshot = value;
 }
 
+export function setUnsubscribeCategoriasReceitaSnapshot(value) {
+  unsubscribeCategoriasReceitaSnapshot = value;
+}
+
 export function setUnsubscribeProducoesSnapshot(value) {
   unsubscribeProducoesSnapshot = value;
 }
@@ -305,6 +313,10 @@ export function setCachedReceitas(value) {
 
 export function setCachedRecipeGroups(value) {
   cachedRecipeGroups = value;
+}
+
+export function setCachedCategoriasReceita(value) {
+  cachedCategoriasReceita = value;
 }
 
 export function setCachedProducoes(value) {

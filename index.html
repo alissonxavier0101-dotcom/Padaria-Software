@@ -579,10 +579,6 @@
               <div class="form-group">
                 <label for="select-categoria-receita" class="form-label">Categoria da Receita</label>
                 <select id="select-categoria-receita">
-                  <option value="paes">Pães</option>
-                  <option value="bolos">Bolos</option>
-                  <option value="salgados">Salgados</option>
-                  <option value="outros">Outros</option>
                 </select>
               </div>
 
@@ -974,12 +970,8 @@
             </div>
 
             <div class="category-pills-bar" id="recipe-category-pills" role="group" aria-label="Filtrar receitas por categoria">
-              <button class="category-pill active" data-recipe-category="todos" type="button" aria-pressed="true">Todas (<span id="count-recipe-todos">0</span>)</button>
-              <button class="category-pill" data-recipe-category="paes" type="button" aria-pressed="false">Pães (<span id="count-recipe-paes">0</span>)</button>
-              <button class="category-pill" data-recipe-category="bolos" type="button" aria-pressed="false">Bolos (<span id="count-recipe-bolos">0</span>)</button>
-              <button class="category-pill" data-recipe-category="salgados" type="button" aria-pressed="false">Salgados (<span id="count-recipe-salgados">0</span>)</button>
-              <button class="category-pill" data-recipe-category="outros" type="button" aria-pressed="false">Outros (<span id="count-recipe-outros">0</span>)</button>
             </div>
+            <button id="btn-nova-categoria-receita" class="btn-primary" type="button">+ Nova categoria</button>
 
             <!-- Cabeçalho da Listagem de Receitas -->
             <div class="section-heading">
@@ -1710,7 +1702,38 @@
 
     </div>
 
+    <div id="categoria-receita-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-categoria-receita-title">
+      <div class="modal-box" style="max-width: 440px;">
+        <h3 id="modal-categoria-receita-title" class="modal-title">Categoria da receita</h3>
+        <p class="modal-desc">Informe o nome da categoria (de 1 a 40 caracteres).</p>
+        <div class="form-group" style="margin: 12px 0 6px 0;">
+          <label for="input-nome-categoria-receita" class="form-label">Nome da categoria</label>
+          <input id="input-nome-categoria-receita" type="text" maxlength="40" placeholder="Ex: Doces" />
+        </div>
+        <input type="hidden" id="categoria-editando-id" />
+        <div class="modal-actions" style="margin-top: 10px;">
+          <button id="btn-cancelar-categoria-receita" class="btn-modal-cancel" type="button">Cancelar</button>
+          <button id="btn-salvar-categoria-receita" class="btn-primary" type="button">Salvar</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="excluir-categoria-receita-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-excluir-categoria-title">
+      <div class="modal-box" style="max-width: 440px;">
+        <h3 id="modal-excluir-categoria-title" class="modal-title">Excluir categoria?</h3>
+        <p id="texto-excluir-categoria" class="modal-desc"></p>
+        <div class="form-group" style="margin: 12px 0 6px 0;">
+          <label for="select-destino-categoria-receita" class="form-label">Mover receitas para</label>
+          <select id="select-destino-categoria-receita"></select>
+        </div>
+        <input type="hidden" id="categoria-excluindo-id" />
+        <div class="modal-actions" style="margin-top: 10px;">
+          <button id="btn-cancelar-excluir-categoria" class="btn-modal-cancel" type="button">Cancelar</button>
+          <button id="btn-confirmar-excluir-categoria" class="btn-modal-danger" type="button">Excluir categoria</button>
+        </div>
+      </div>
+    </div>
+
     <!-- ================= SCRIPT MODULAR FIREBASE V10 VIA CDN ================= -->
-    <script type="module" src="src/js/main.js"></script>
-  </body>
+    <script type="module" src="src/js/main.js"></script>  </body>
 </html>
