@@ -1241,11 +1241,11 @@ export function renderizarFiltrosCategoriasReceita() {
     ...categorias.map(cat => {
       const pressionado = ativo === cat.id;
       return `<div class="category-pill-row" style="position: relative; display: inline-flex; align-items: center; gap: 4px; margin: 2px;">
-        <button class="category-pill${pressionado ? ' active' : ''}" data-recipe-category="${escapeHtml(cat.id)}" type="button" aria-pressed="${pressionado}">${escapeHtml(cat.nome)} (<span id="count-recipe-${escapeHtml(cat.id)}">${contagens[cat.id] || 0}</span>)</button>
-        <button class="category-menu-btn" data-category-id="${escapeHtml(cat.id)}" type="button" aria-label="Opções de ${escapeHtml(cat.nome)}">⋮</button>
-        <div class="category-menu hidden" data-menu-for="${escapeHtml(cat.id)}">
-          <button type="button" data-action="editar-categoria" data-category-id="${escapeHtml(cat.id)}">Editar</button>
-          <button type="button" data-action="excluir-categoria" data-category-id="${escapeHtml(cat.id)}">Excluir</button>
+        <button class="category-pill${pressionado ? ' active' : ''}" data-recipe-category="${cat.id}" type="button" aria-pressed="${pressionado}">${escapeHtml(cat.nome)} (<span id="count-recipe-${cat.id}">${contagens[cat.id] || 0}</span>)</button>
+        <button class="category-menu-btn" data-category-id="${cat.id}" type="button" aria-label="Opções de ${escapeHtml(cat.nome)}">⋮</button>
+        <div class="category-menu hidden" data-menu-for="${cat.id}">
+          <button type="button" data-action="editar-categoria" data-category-id="${cat.id}">Editar</button>
+          <button type="button" data-action="excluir-categoria" data-category-id="${cat.id}">Excluir</button>
         </div>
       </div>`;
     }),
@@ -1255,10 +1255,10 @@ export function renderizarFiltrosCategoriasReceita() {
 
 export function posicionarMenuCategoria(categoriaId) {
   const btn = dom.recipeCategoryPills.querySelector(
-    `.category-menu-btn[data-category-id="${escapeHtml(categoriaId)}"]`
+    `.category-menu-btn[data-category-id="${categoriaId}"]`
   );
   const painel = dom.recipeCategoryPills.querySelector(
-    `.category-menu[data-menu-for="${escapeHtml(categoriaId)}"]`
+    `.category-menu[data-menu-for="${categoriaId}"]`
   );
   if (!btn || !painel) return;
   const rect = btn.getBoundingClientRect();
