@@ -1081,7 +1081,6 @@
       .category-pills-bar {
         display: flex;
         gap: 6px;
-        overflow-x: auto;
         padding: 2px 0 6px 0;
         scrollbar-width: none;
         scroll-snap-type: x proximity;
@@ -3234,10 +3233,10 @@
       }
 
 /* Categorias de receita: menu de ações das pílulas */
-.category-pill-row { position: relative; display: inline-flex; align-items: center; gap: 4px; margin: 2px; }
+.category-pill-row { display: inline-flex; align-items: center; gap: 4px; margin: 2px; }
 .category-menu-btn { background: transparent; border: 1px solid var(--border-color, #EBDAC5); color: var(--text-primary, #374151); cursor: pointer; padding: 2px 8px; font-size: 16px; line-height: 1; border-radius: 4px; }
 .category-menu-btn:hover { background: #f3f4f6; }
-.category-menu { position: absolute; left: 0; top: 110%; background: #fff; border: 1px solid var(--border-color, #EBDAC5); box-shadow: 0 4px 12px rgba(0,0,0,0.12); border-radius: 6px; min-width: 150px; z-index: 50; margin-top: 4px; display: flex; flex-direction: column; padding: 6px 0; }
+.category-menu { position: fixed; background: #fff; border: 1px solid var(--border-color, #EBDAC5); box-shadow: 0 4px 12px rgba(0,0,0,0.12); border-radius: 6px; min-width: 150px; z-index: 1000; display: flex; flex-direction: column; padding: 6px 0; }
 .category-menu.hidden { display: none; }
 .category-menu button { width: 100%; text-align: left; padding: 6px 12px; border: 0; background: transparent; color: var(--text-primary, #374151); font-size: 13px; cursor: pointer; }
 .category-menu button:hover { background: #f3f4f6; }

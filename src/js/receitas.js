@@ -78,6 +78,7 @@ import {
   doc,
   addDoc,
   deleteDoc,
+  setDoc,
   updateDoc,
   runTransaction,
   serverTimestamp
@@ -1250,6 +1251,20 @@ export function renderizarFiltrosCategoriasReceita() {
     }),
   ].join('');
   dom.recipeCategoryPills.innerHTML = html;
+}
+
+export function posicionarMenuCategoria(categoriaId) {
+  const btn = dom.recipeCategoryPills.querySelector(
+    `.category-menu-btn[data-category-id="${escapeHtml(categoriaId)}"]`
+  );
+  const painel = dom.recipeCategoryPills.querySelector(
+    `.category-menu[data-menu-for="${escapeHtml(categoriaId)}"]`
+  );
+  if (!btn || !painel) return;
+  const rect = btn.getBoundingClientRect();
+  painel.style.left = `${rect.left}px`;
+  painel.style.top = `${rect.bottom + 6}px`;
+  painel.style.minWidth = `${rect.width}px`;
 }
 
 let editandoCategoriaId = null;
