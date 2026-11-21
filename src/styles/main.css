@@ -1171,8 +1171,8 @@ textarea {
   bottom: 0;
   left: 0;
   right: 0;
-  background: #0B0F17;
-  border-top: 1px solid #233044;
+  background: var(--color-black);
+  border-top: 1px solid var(--color-border);
   padding: 8px 0 env(safe-area-inset-bottom) 0;
   z-index: 1000;
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
