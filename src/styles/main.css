@@ -205,14 +205,23 @@ summary:focus-visible,
 }
 
 .btn-danger {
-  background: #DC2626;
+  background: var(--color-danger);
   color: #FFFFFF;
   padding: 12px 18px;
   font-size: 13px;
 }
 
 .btn-danger:hover:not(:disabled) {
-  background: #B91C1C;
+  background: var(--color-danger-hover);
+}
+
+.btn-danger:active:not(:disabled) {
+  background: var(--color-danger-active);
+}
+
+.btn-danger:focus-visible {
+  outline: 3px solid rgba(220, 38, 38, 0.4);
+  outline-offset: 2px;
 }
 
 /* ============================================================
@@ -551,7 +560,7 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: linear-gradient(135deg, var(--color-blue-dark), #1E293B);
+  background: linear-gradient(135deg, var(--color-blue-dark), var(--color-blue-dark-hover));
   color: #FFFFFF;
   border: 1px solid var(--color-blue-dark-active);
   border-radius: var(--radius-md);
@@ -680,7 +689,7 @@ textarea {
 }
 
 .insumo-unit-badge {
-  background: linear-gradient(135deg, var(--color-blue-dark), #1E293B);
+  background: linear-gradient(135deg, var(--color-blue-dark), var(--color-blue-dark-hover));
   border: 1px solid var(--color-green-dark);
   border-radius: var(--radius-sm);
   padding: 8px 12px;
@@ -985,7 +994,7 @@ textarea {
 }
 
 .btn-modal-danger {
-  background: #DC2626;
+  background: var(--color-danger);
   border: none;
   color: #FFFFFF;
   padding: 12px 20px;
@@ -997,11 +1006,11 @@ textarea {
 }
 
 .btn-modal-danger:hover {
-  background: #B91C1C;
+  background: var(--color-danger-hover);
 }
 
 .btn-modal-danger:focus-visible {
-  outline: 3px solid rgba(220, 38, 38, 0.5);
+  outline: 3px solid rgba(220, 38, 38, 0.4);
   outline-offset: 2px;
 }
 
@@ -1043,8 +1052,8 @@ textarea {
 }
 
 .toast.error {
-  background: #DC2626;
-  border-color: #DC2626;
+  background: var(--color-danger);
+  border-color: var(--color-danger);
 }
 
 /* ============================================================
@@ -1489,9 +1498,9 @@ textarea {
 }
 
 .price-warning {
-  background: rgba(220, 38, 38, 0.1);
+  background: rgba(220, 38, 38, 0.08);
   color: #FCA5A5;
-  border: 1px solid rgba(220, 38, 38, 0.3);
+  border: 1px solid rgba(220, 38, 38, 0.2);
   border-radius: var(--radius-sm);
   padding: 9px 11px;
   font-size: 12px;
@@ -1713,7 +1722,7 @@ textarea {
 .btn-remove-draft-item {
   background: transparent;
   border: none;
-  color: #DC2626;
+  color: var(--color-danger);
   cursor: pointer;
   padding: 2px 6px;
   font-weight: 700;
@@ -1856,8 +1865,8 @@ textarea {
 }
 
 .stock-level-low {
-  background: rgba(220, 38, 38, 0.15);
-  border-color: rgba(220, 38, 38, 0.3);
+  background: rgba(220, 38, 38, 0.08);
+  border-color: rgba(220, 38, 38, 0.2);
 }
 
 .stock-level-low .stock-level-value:first-child strong,

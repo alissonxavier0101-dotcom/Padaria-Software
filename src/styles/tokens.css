@@ -32,6 +32,11 @@
   --color-border: #233044;
   --color-border-hover: #3A4B64;
 
+  /* Danger/Error */
+  --color-danger: #DC2626;
+  --color-danger-hover: #B91C1C;
+  --color-danger-active: #991B1B;
+
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 20px;
@@ -70,5 +75,10 @@
 
     --color-border: #E2E8F0;
     --color-border-hover: #CBD5E1;
+
+    /* Danger/Error */
+    --color-danger: #EF4444;
+    --color-danger-hover: #DC2626;
+    --color-danger-active: #B91C1C;
   }
 }
