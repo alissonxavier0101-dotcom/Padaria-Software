@@ -35,6 +35,13 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       dom.tabNavReceitas.addEventListener('click', () => switchTab('receitas'));
       dom.tabRecipeList.addEventListener('click', () => switchRecipePanel('recipes'));
       dom.tabRecipeGroups.addEventListener('click', () => switchRecipePanel('groups'));
+
+      // Bottom Navigation (Mobile)
+      dom.bottomNavInsumos?.addEventListener('click', () => switchTab('insumos'));
+      dom.bottomNavFornecedores?.addEventListener('click', () => switchTab('fornecedores'));
+      dom.bottomNavReceitas?.addEventListener('click', () => switchTab('receitas'));
+      dom.bottomNavProducoes?.addEventListener('click', () => switchTab('producoes'));
+      dom.bottomNavVendas?.addEventListener('click', () => switchTab('vendas'));
       dom.recipeGroupTemplateForm.addEventListener('submit', salvarGrupoModeloReceita);
       dom.btnAddRecipeGroupTemplateItem.addEventListener('click', adicionarItemGrupoModelo);
       dom.btnCancelRecipeGroupTemplate.addEventListener('click', prepararNovoGrupoModelo);
@@ -673,6 +680,22 @@ export function switchTab(tab) {
     button.classList.toggle('active', isActive);
     button.setAttribute('aria-selected', String(isActive));
     view.classList.toggle('hidden', !isActive);
+  });
+
+  // Atualizar Bottom Navigation (Mobile)
+  const bottomNavTabs = [
+    ['insumos', dom.bottomNavInsumos],
+    ['fornecedores', dom.bottomNavFornecedores],
+    ['receitas', dom.bottomNavReceitas],
+    ['producoes', dom.bottomNavProducoes],
+    ['vendas', dom.bottomNavVendas]
+  ];
+  bottomNavTabs.forEach(([name, button]) => {
+    if (button) {
+      const isActive = name === tab;
+      button.classList.toggle('active', isActive);
+      button.setAttribute('aria-selected', String(isActive));
+    }
   });
 
   if (tab === 'insumos') {

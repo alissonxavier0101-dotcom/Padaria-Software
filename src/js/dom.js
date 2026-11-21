@@ -27,6 +27,14 @@ export const dom = {
         tabNavPedidos: document.getElementById('tab-nav-pedidos'),
         tabNavClientes: document.getElementById('tab-nav-clientes'),
         tabNavFinanceiro: document.getElementById('tab-nav-financeiro'),
+
+        // Bottom Navigation (Mobile)
+        bottomNavInsumos: document.querySelector('.bottom-nav-item[data-tab="insumos"]'),
+        bottomNavFornecedores: document.querySelector('.bottom-nav-item[data-tab="fornecedores"]'),
+        bottomNavReceitas: document.querySelector('.bottom-nav-item[data-tab="receitas"]'),
+        bottomNavProducoes: document.querySelector('.bottom-nav-item[data-tab="producoes"]'),
+        bottomNavVendas: document.querySelector('.bottom-nav-item[data-tab="vendas"]'),
+
         tabBadgeInsumos: document.getElementById('tab-badge-insumos'),
         tabBadgeFornecedores: document.getElementById('tab-badge-fornecedores'),
         tabBadgeReceitas: document.getElementById('tab-badge-receitas'),
