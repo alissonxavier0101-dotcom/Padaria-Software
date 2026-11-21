@@ -1224,21 +1224,21 @@ textarea {
 }
 
 .category-pill:focus-visible {
-  outline: 3px solid rgba(5, 150, 105, 0.5);
+  outline: 3px solid rgba(15, 23, 42, 0.5);
   outline-offset: 2px;
 }
 
 .category-pill:hover {
-  background: rgba(5, 150, 105, 0.15);
-  border-color: var(--color-green-dark);
-  color: var(--color-green-dark-hover);
+  background: rgba(15, 23, 42, 0.1);
+  border-color: var(--color-blue-dark);
+  color: var(--color-blue-dark);
 }
 
 .category-pill.active {
-  background: var(--color-green-dark);
+  background: var(--color-blue-dark);
   color: #FFFFFF;
-  border-color: var(--color-green-dark);
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  border-color: var(--color-blue-dark-active);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
 }
 
 /* Category Badges */
@@ -1923,13 +1923,13 @@ textarea {
 }
 
 .stock-mode-label { color: var(--color-text-primary); font-size: 13px; font-weight: 800; }
-.stock-mode-button { padding: 7px 12px; font-size: 12px; min-height: 40px; background: rgba(5, 150, 105, 0.05); border: 1px solid rgba(5, 150, 105, 0.3); color: var(--color-green-dark); }
-.stock-mode-button:hover { background: rgba(5, 150, 105, 0.15); border-color: var(--color-green-dark); }
+.stock-mode-button { padding: 7px 12px; font-size: 12px; min-height: 40px; background: rgba(15, 23, 42, 0.05); border: 1px solid rgba(15, 23, 42, 0.3); color: var(--color-blue-dark); }
+.stock-mode-button:hover { background: rgba(15, 23, 42, 0.15); border-color: var(--color-blue-dark-active); color: var(--color-blue-dark-active); }
 .stock-mode-button[aria-pressed="true"] {
-  background: var(--color-green-dark);
-  border-color: var(--color-green-dark);
+  background: var(--color-blue-dark);
+  border-color: var(--color-blue-dark-active);
   color: #FFFFFF;
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.3);
 }
 .stock-mode-description { color: var(--color-text-secondary); font-size: 12px; }
 
