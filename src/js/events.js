@@ -442,7 +442,7 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
             b.style.background = '';
             b.style.fontWeight = '700';
           });
-          btn.style.background = '#FEF3C7';
+          btn.style.background = 'var(--color-green-dark)';
           btn.style.fontWeight = '800';
           atualizarTotaisReceitaEmElaboracao();
         });

@@ -121,14 +121,14 @@ export function renderizarResultadosBuscaInsumosReceita() {
     .filter(option => correspondeBusca(consulta, [option.textContent || '']));
 
   if (options.length === 0) {
-    dom.receitaItemResultados.innerHTML = '<div role="status" style="padding: 10px 12px; color: var(--text-muted); font-size: 13px;">Nenhum material encontrado.</div>';
+    dom.receitaItemResultados.innerHTML = '<div role="status" style="padding: 10px 12px; color: var(--color-text-muted); font-size: 13px;">Nenhum material encontrado.</div>';
   } else {
     dom.receitaItemResultados.innerHTML = options.map(option => {
       const group = option.parentElement?.tagName === 'OPTGROUP'
         ? option.parentElement.label
         : 'Material';
-      return `<button type="button" role="option" aria-selected="false" data-recipe-material-value="${escapeHtml(option.value)}" style="display: block; width: 100%; padding: 9px 12px; border: 0; border-bottom: 1px solid var(--border-color); background: #fff; color: var(--text-primary); text-align: left; cursor: pointer;">
-        <span style="display: block; color: var(--text-muted); font-size: 10px;">${escapeHtml(group)}</span>
+      return `<button type="button" role="option" aria-selected="false" data-recipe-material-value="${escapeHtml(option.value)}" style="display: block; width: 100%; padding: 9px 12px; border: 0; border-bottom: 1px solid var(--color-border); background: var(--color-card); color: var(--color-text-primary); text-align: left; cursor: pointer;">
+        <span style="display: block; color: var(--color-text-muted); font-size: 10px;">${escapeHtml(group)}</span>
         <span style="font-size: 13px;">${escapeHtml(option.textContent || '')}</span>
       </button>`;
     }).join('');
@@ -299,7 +299,7 @@ export function prepararNovoGrupoModelo() {
 
 export function renderizarItensGrupoModelo() {
   if (!itensGrupoModeloEmEdicao.length) {
-    dom.recipeGroupTemplateItems.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 12px;">Nenhum material no grupo.</td></tr>';
+    dom.recipeGroupTemplateItems.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 12px;">Nenhum material no grupo.</td></tr>';
     return;
   }
   dom.recipeGroupTemplateItems.innerHTML = itensGrupoModeloEmEdicao.map((item, index) => `
@@ -757,7 +757,7 @@ export function renderizarItensReceitaEmElaboracao() {
   if (itensReceitaEmElaboracao.length === 0) {
     dom.tbodyDraftReceitaItens.innerHTML = `
       <tr>
-        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 12px;">
+        <td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 12px;">
           Nenhum ingrediente ou embalagem adicionado ainda.
         </td>
       </tr>
@@ -850,7 +850,7 @@ export function gerarHtmlListaComprasReceita(itens, receitas, insumos) {
         <span class="shopping-list-item-total">
           Comprar: ${item.pacotesNecessarios} ${item.pacotesNecessarios === 1 ? 'pacote' : 'pacotes'}
           • ${formatarMoeda(item.custoCompra, 2)}
-          <span style="font-weight: 500; color: var(--text-secondary);">
+          <span style="font-weight: 500; color: var(--color-text-secondary);">
             (custo proporcional usado: ${formatarMoeda(item.custoProporcional, 2)})
           </span>
         </span>
@@ -1591,7 +1591,7 @@ export function renderizarReceitas() {
             </span>
             <span class="receita-category-badge">${categoriaNome}</span>
             <h3 class="receita-nome">${escapeHtml(rec.nome)}</h3>
-            ${rec.descricao ? `<span style="font-size: 12px; color: var(--text-secondary);">${escapeHtml(rec.descricao)}</span>` : ''}
+            ${rec.descricao ? `<span style="font-size: 12px; color: var(--color-text-secondary);">${escapeHtml(rec.descricao)}</span>` : ''}
           </div>
           <div class="item-card-actions">
             <button
@@ -1697,7 +1697,7 @@ export function renderizarReceitas() {
         </div>
         <div class="receita-items-preview">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <strong style="font-size: 11px; text-transform: uppercase; color: var(--text-secondary); letter-spacing: 0.5px;">
+            <strong style="font-size: 11px; text-transform: uppercase; color: var(--color-text-secondary); letter-spacing: 0.5px;">
               Itens da Receita (${itens.length}):
             </strong>
             <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px;">
@@ -1776,7 +1776,7 @@ export function renderizarReceitas() {
           </div>
           <div class="profit-sim-controls">
             <div class="profit-input-wrap">
-              <span style="font-size: 12px; font-weight: 700; color: #065F46; margin-right: 4px;">R$</span>
+              <span style="font-size: 12px; font-weight: 700; color: var(--color-green-dark); margin-right: 4px;">R$</span>
               <input
                 type="number"
                 step="0.50"

@@ -66,10 +66,10 @@
             Problemas com a janela? Continuar com Google
           </button>
 
-          <div style="display: flex; align-items: center; gap: 10px; width: 100%; margin: 4px 0; color: var(--text-muted); font-size: 12px;">
-            <span style="height: 1px; flex: 1; background: var(--border-color);"></span>
+          <div style="display: flex; align-items: center; gap: 10px; width: 100%; margin: 4px 0; color: var(--color-text-muted); font-size: 12px;">
+            <span style="height: 1px; flex: 1; background: var(--color-border);"></span>
             <span>ou entre com usuário e senha</span>
-            <span style="height: 1px; flex: 1; background: var(--border-color);"></span>
+            <span style="height: 1px; flex: 1; background: var(--color-border);"></span>
           </div>
           <form id="form-login-password" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
             <label for="login-identifier" class="form-label">Usuário ou e-mail</label>
@@ -129,7 +129,7 @@
         <!-- Faixa de Sincronização da Padaria -->
         <div class="bakery-badge-strip">
           <span><i class="sync-dot"></i> <strong id="sync-status-label">Firestore em Tempo Real</strong></span>
-          <span id="provider-badge-label" style="font-size: 11px; background: #FFF; padding: 2px 8px; border-radius: 99px; border: 1px solid var(--border-color);">Padaria Ativa</span>
+          <span id="provider-badge-label" style="font-size: 11px; background: var(--color-card); padding: 2px 8px; border-radius: 99px; border: 1px solid var(--color-border);">Padaria Ativa</span>
         </div>
 
         <main class="app-content">
@@ -448,7 +448,7 @@
 
             <!-- Grupos para Filtrar Diferentes Insumos e Ingredientes -->
             <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
-              <span style="font-size: 11px; font-weight: 700; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">
+              <span style="font-size: 11px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">
                 Filtrar por Grupo:
               </span>
               <div class="category-pills-bar" id="category-pills-container" role="group" aria-label="Filtrar insumos por grupo">
@@ -619,7 +619,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
                 Nova Receita com Custos e Lucro
               </h2>
-                <span style="font-size: 12px; color: var(--text-muted);">Cálculo automático de custos e precificação</span>
+                <span style="font-size: 12px; color: var(--color-text-muted);">Cálculo automático de custos e precificação</span>
               </div>
 
               <!-- Nome da Receita -->
@@ -766,7 +766,7 @@
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                     Grupos e ingredientes da receita:
                   </strong>
-                  <span style="font-size: 11px; color: var(--text-muted);">
+                  <span style="font-size: 11px; color: var(--color-text-muted);">
                     Grupos reutilizáveis; ingredientes e custos pertencem a esta receita
                   </span>
                 </div>
@@ -826,7 +826,7 @@
                     placeholder="Digite para buscar um material..."
                     autocomplete="off"
                   />
-                  <div id="receita-item-resultados" class="hidden" role="listbox" aria-label="Materiais disponíveis" style="max-height: 220px; overflow-y: auto; margin-top: 4px; border: 1px solid var(--border-color); border-radius: 8px; background: #fff;"></div>
+                  <div id="receita-item-resultados" class="hidden" role="listbox" aria-label="Materiais disponíveis" style="max-height: 220px; overflow-y: auto; margin-top: 4px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-card);"></div>
                   <select id="receita-item-insumo" class="hidden" aria-hidden="true" tabindex="-1">
                     <option value="">Selecione um insumo cadastrado...</option>
                   </select>
@@ -889,7 +889,7 @@
                     </thead>
                     <tbody id="tbody-draft-receita-itens">
                       <tr>
-                        <td colspan="6" style="text-align: center; color: var(--text-muted); padding: 12px;">
+                        <td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 12px;">
                           Nenhum ingrediente ou embalagem adicionado ainda.
                         </td>
                       </tr>
@@ -979,7 +979,7 @@
 
                 <!-- Seletor de Margem de Lucro Desejada -->
                 <div class="form-group">
-                  <label for="input-margem-lucro" class="form-label" style="font-size: 12px; color: #065F46;">
+                  <label for="input-margem-lucro" class="form-label" style="font-size: 12px; color: var(--color-green-dark);">
                     Acréscimo desejado sobre o custo (%):
                   </label>
                   <div style="display: flex; gap: 6px; align-items: center;">
@@ -990,13 +990,13 @@
                       max="1000"
                       step="5"
                       value="100"
-                      style="height: 38px; width: 90px; text-align: center; font-weight: 700; color: #065F46;"
+                      style="height: 38px; width: 90px; text-align: center; font-weight: 700; color: var(--color-green-dark);"
                     />
                     <div style="display: flex; gap: 4px; overflow-x: auto;">
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="50" style="padding: 6px 8px; font-size: 11px;">50%</button>
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="60" style="padding: 6px 8px; font-size: 11px;">60%</button>
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="80" style="padding: 6px 8px; font-size: 11px;">80%</button>
-                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="100" style="padding: 6px 8px; font-size: 11px; background: #FEF3C7; font-weight: 800;">100%</button>
+                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="100" style="padding: 6px 8px; font-size: 11px; background: var(--color-green-dark); font-weight: 800;">100%</button>
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="150" style="padding: 6px 8px; font-size: 11px;">150%</button>
                       <button type="button" class="btn-secondary btn-profit-preset" data-margin="200" style="padding: 6px 8px; font-size: 11px;">200%</button>
                     </div>
@@ -1005,19 +1005,19 @@
 
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; color: #065F46;">
+                    <label class="form-label" style="font-size: 12px; color: var(--color-green-dark);">
                       Preço de Venda Sugerido:
                     </label>
-                    <div style="font-size: 15px; font-weight: 800; color: #065F46; padding-top: 4px;" id="text-preco-sugerido">
+                    <div style="font-size: 15px; font-weight: 800; color: var(--color-green-dark); padding-top: 4px;" id="text-preco-sugerido">
                       R$ 0,00
                     </div>
                   </div>
                   <div class="form-group">
-                    <label for="input-preco-praticado" class="form-label" style="font-size: 12px; color: #065F46;">
+                    <label for="input-preco-praticado" class="form-label" style="font-size: 12px; color: var(--color-green-dark);">
                       Preço Praticado (R$) <span class="req">*</span>:
                     </label>
                     <div class="input-wrapper">
-                      <span class="input-prefix" style="color: #065F46;">R$</span>
+                      <span class="input-prefix" style="color: var(--color-green-dark);">R$</span>
                       <input
                         id="input-preco-praticado"
                         class="has-prefix"
@@ -1025,7 +1025,7 @@
                         step="0.10"
                         min="0.10"
                         placeholder="0,00"
-                        style="color: #065F46; font-weight: 800;"
+                        style="color: var(--color-green-dark); font-weight: 800;"
                       />
                     </div>
                   </div>
@@ -1034,12 +1034,12 @@
                 <p id="recipe-price-warning" class="price-warning hidden" role="status" aria-live="polite"></p>
 
                 <!-- Resumo de Lucro -->
-                <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 12px; color: #065F46;">
+                <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 12px; color: var(--color-green-dark);">
                   <div>
-                    Lucro Líquido por Pão: <strong id="text-lucro-liquido-un" style="font-size: 14px; color: #047857;">R$ 0,00</strong>
+                    Lucro Líquido por Pão: <strong id="text-lucro-liquido-un" style="font-size: 14px; color: var(--color-green-dark-hover);">R$ 0,00</strong>
                   </div>
                   <div>
-                    Lucro da Fornada: <strong id="text-lucro-total-lote" style="font-size: 14px; color: #047857;">R$ 0,00</strong>
+                    Lucro da Fornada: <strong id="text-lucro-total-lote" style="font-size: 14px; color: var(--color-green-dark-hover);">R$ 0,00</strong>
                   </div>
                 </div>
               </div>
@@ -1160,7 +1160,7 @@
                     <table class="recipe-draft-table">
                       <thead><tr><th>Material</th><th>Tipo</th><th>Quantidade</th><th>Custo estimado</th><th></th></tr></thead>
                       <tbody id="recipe-group-template-items">
-                        <tr><td colspan="5" style="text-align: center; color: var(--text-muted); padding: 12px;">Nenhum material no grupo.</td></tr>
+                        <tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 12px;">Nenhum material no grupo.</td></tr>
                       </tbody>
                     </table>
                   </div>
