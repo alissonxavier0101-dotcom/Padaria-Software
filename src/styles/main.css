@@ -128,18 +128,28 @@ summary:focus-visible,
   transform: scale(0.98);
 }
 
+.btn-primary:focus-visible {
+  outline: 3px solid rgba(5, 150, 105, 0.5);
+  outline-offset: 2px;
+}
+
 .btn-secondary {
-  background: var(--color-card);
-  color: var(--color-text-primary);
-  border: 1px solid var(--color-border);
+  background: var(--color-blue-dark);
+  color: #FFFFFF;
+  border: 1px solid var(--color-blue-dark-active);
   padding: 14px 16px;
   font-size: 14px;
 }
 
 .btn-secondary:hover:not(:disabled),
 .btn-secondary:active:not(:disabled) {
-  background: var(--color-card-elevated);
-  border-color: var(--color-border-hover);
+  background: var(--color-blue-dark-hover);
+  border-color: var(--color-blue-dark-active);
+}
+
+.btn-secondary:focus-visible {
+  outline: 3px solid rgba(30, 41, 59, 0.5);
+  outline-offset: 2px;
 }
 
 .btn-ghost {
@@ -150,12 +160,48 @@ summary:focus-visible,
 }
 
 .btn-ghost:hover:not(:disabled) {
-  background: var(--color-card);
-  color: var(--color-text-primary);
+  background: var(--color-blue-dark);
+  color: #FFFFFF;
+}
+
+.btn-ghost:focus-visible {
+  outline: 3px solid rgba(30, 41, 59, 0.5);
+  outline-offset: 2px;
 }
 
 .btn-icon {
   padding: 10px;
+  min-height: 44px;
+  min-width: 44px;
+}
+
+.btn-icon:focus-visible {
+  outline: 3px solid rgba(5, 150, 105, 0.5);
+  outline-offset: 2px;
+}
+
+.btn-blue {
+  background: var(--color-blue-dark);
+  color: #FFFFFF;
+  border: 1px solid var(--color-blue-dark-active);
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  min-height: 48px;
+}
+
+.btn-blue:hover:not(:disabled),
+.btn-blue:active:not(:disabled) {
+  background: var(--color-blue-dark-hover);
+  border-color: var(--color-blue-dark-active);
+}
+
+.btn-blue:focus-visible {
+  outline: 3px solid rgba(30, 41, 59, 0.5);
+  outline-offset: 2px;
 }
 
 .btn-danger {
@@ -885,33 +931,47 @@ textarea {
 }
 
 .btn-modal-cancel {
-  background: var(--color-surface);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  padding: 10px 18px;
+  background: var(--color-blue-dark);
+  border: 1px solid var(--color-blue-dark-active);
+  color: #FFFFFF;
+  padding: 12px 20px;
   border-radius: var(--radius-sm);
   font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
   transition: all var(--transition-fast);
+  min-height: 44px;
 }
 
 .btn-modal-cancel:hover {
-  background: var(--color-card-elevated);
-  color: var(--color-text-primary);
+  background: var(--color-blue-dark-hover);
+  border-color: var(--color-blue-dark-active);
+}
+
+.btn-modal-cancel:focus-visible {
+  outline: 3px solid rgba(30, 41, 59, 0.5);
+  outline-offset: 2px;
 }
 
 .btn-modal-danger {
   background: #DC2626;
   border: none;
   color: #FFFFFF;
-  padding: 10px 18px;
+  padding: 12px 20px;
   border-radius: var(--radius-sm);
   font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
+  min-height: 44px;
 }
 
 .btn-modal-danger:hover {
   background: #B91C1C;
+}
+
+.btn-modal-danger:focus-visible {
+  outline: 3px solid rgba(220, 38, 38, 0.5);
+  outline-offset: 2px;
 }
 
 /* ============================================================
@@ -994,10 +1054,10 @@ textarea {
 .app-nav-tabs {
   display: flex;
   gap: 4px;
-  background: var(--color-surface);
+  background: var(--color-blue-dark);
   padding: 4px;
   border-radius: var(--radius-md);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-blue-dark-active);
   margin-bottom: 14px;
   width: 100%;
   max-width: 100%;
@@ -1019,11 +1079,11 @@ textarea {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 12px;
+  padding: 10px 14px;
   border: none;
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--color-text-secondary);
+  color: rgba(255, 255, 255, 0.7);
   font-weight: 700;
   font-size: 13px;
   cursor: pointer;
@@ -1032,8 +1092,8 @@ textarea {
 }
 
 .nav-tab-btn:hover {
-  background: var(--color-card);
-  color: var(--color-text-primary);
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
 }
 
 .nav-tab-btn.active {
@@ -1042,18 +1102,25 @@ textarea {
   box-shadow: var(--shadow-sm);
 }
 
+.nav-tab-btn:focus-visible {
+  outline: 3px solid rgba(5, 150, 105, 0.5);
+  outline-offset: 2px;
+}
+
 .nav-tab-badge {
-  background: var(--color-surface);
+  background: rgba(255, 255, 255, 0.15);
   color: var(--color-green-dark);
   font-size: 11px;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 99px;
+  border: 1px solid rgba(5, 150, 105, 0.3);
 }
 
 .nav-tab-btn.active .nav-tab-badge {
   background: rgba(255, 255, 255, 0.2);
   color: #FFFFFF;
+  border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* Bottom Navigation para Mobile */
@@ -1063,10 +1130,11 @@ textarea {
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--color-card);
-  border-top: 1px solid var(--color-border);
+  background: var(--color-blue-dark);
+  border-top: 1px solid var(--color-blue-dark-active);
   padding: 8px 0 env(safe-area-inset-bottom) 0;
   z-index: 50;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
   box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
 }
 
@@ -1091,24 +1159,28 @@ textarea {
   align-items: center;
   justify-content: center;
   gap: 4px;
-  padding: 8px 4px;
+  padding: 10px 4px;
   background: transparent;
   border: none;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.5);
   font-size: 11px;
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast);
   min-height: 56px;
+  border-radius: var(--radius-sm);
+  margin: 0 4px;
 }
 
 .bottom-nav-item:hover,
 .bottom-nav-item:active {
-  color: var(--color-text-secondary);
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.08);
 }
 
 .bottom-nav-item.active {
   color: var(--color-green-dark);
+  background: rgba(5, 150, 105, 0.15);
 }
 
 .bottom-nav-item svg {
@@ -1454,17 +1526,29 @@ textarea {
 
 .recipe-draft-table th {
   text-align: left;
-  color: var(--color-text-muted);
+  color: var(--color-text-primary);
   font-size: 11px;
   font-weight: 700;
-  padding: 4px 6px;
-  border-bottom: 1px solid var(--color-border);
+  padding: 10px 12px;
+  background: var(--color-blue-dark);
+  border-bottom: 2px solid var(--color-green-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .recipe-draft-table td {
-  padding: 6px;
+  padding: 10px 12px;
   border-bottom: 1px solid var(--color-border);
   vertical-align: middle;
+  color: var(--color-text-primary);
+}
+
+.recipe-draft-table tbody tr:nth-child(even) {
+  background: var(--color-surface);
+}
+
+.recipe-draft-table tbody tr:hover {
+  background: rgba(5, 150, 105, 0.08);
 }
 
 .recipe-groups-list {
@@ -1591,13 +1675,13 @@ textarea {
    RECIPE TOTALS BANNER
    ============================================================ */
 .recipe-totals-banner {
-  background: linear-gradient(135deg, rgba(15, 23, 42, 0.3), rgba(5, 150, 105, 0.1));
-  border: 1px solid rgba(5, 150, 105, 0.3);
+  background: linear-gradient(135deg, var(--color-blue-dark), rgba(5, 150, 105, 0.15));
+  border: 1px solid var(--color-green-dark);
   border-radius: var(--radius-sm);
-  padding: 12px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 
 .totals-banner-row {
@@ -1605,19 +1689,49 @@ textarea {
   justify-content: space-between;
   align-items: center;
   font-size: 13px;
-  color: var(--color-text-secondary);
+  padding: 4px 0;
+  color: var(--color-text-primary);
 }
 
 .totals-banner-row.main-total {
-  border-top: 1px dashed rgba(5, 150, 105, 0.3);
-  padding-top: 6px;
-  font-size: 15px;
+  border-top: 1px solid rgba(255, 255, 255, 0.15);
+  padding-top: 10px;
+  margin-top: 4px;
+  font-size: 16px;
   font-weight: 800;
-  color: var(--color-text-primary);
+  color: #FFFFFF;
 }
 
 .totals-banner-row strong {
-  color: var(--color-text-primary);
+  color: #FFFFFF;
+}
+
+.totals-banner-row span {
+  color: rgba(255, 255, 255, 0.9);
+}
+
+/* Cost split rows */
+.cost-split-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  background: var(--color-surface);
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--color-border);
+}
+
+.cost-split-tag {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 600;
+  color: var(--color-text-secondary);
+}
+
+.cost-split-tag strong {
+  color: var(--color-green-dark);
 }
 
 /* ============================================================
@@ -1764,11 +1878,17 @@ textarea {
   grid-template-columns: minmax(0, 1fr) auto;
   gap: 10px;
   align-items: center;
-  padding: 14px 16px;
+  padding: 16px;
   background: var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-sm);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.production-record:hover {
+  border-color: var(--color-green-dark);
+  box-shadow: var(--shadow-md);
 }
 
 .production-record-list { display: grid; gap: 10px; }
@@ -1779,12 +1899,14 @@ textarea {
 .production-record-profit { margin-top: 7px; color: var(--color-green-dark); font-size: 13px; font-weight: 800; }
 .production-record-profit.loss { color: #F87171; }
 .production-record-actions { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
-.production-record-edit { padding: 6px 10px; font-size: 12px; }
-.production-record-delete { padding: 6px 10px; font-size: 12px; color: #F87171; }
+.production-record-edit { padding: 8px 12px; font-size: 12px; min-height: 40px; }
+.production-record-delete { padding: 8px 12px; font-size: 12px; color: #F87171; min-height: 40px; }
 
 @media (max-width: 480px) {
   .production-record { grid-template-columns: 1fr; }
   .production-record-cost { text-align: left; }
+  .production-record-actions { width: 100%; justify-content: stretch; }
+  .production-record-actions .btn { flex: 1; }
 }
 
 .stock-mode-switch {
@@ -2000,7 +2122,45 @@ textarea {
   }
 }
 
-.module-metric-card,
+.module-metric-card {
+  min-width: 0;
+  padding: 18px 16px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: linear-gradient(135deg, var(--color-blue-dark), var(--color-card));
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.module-metric-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, var(--color-green-dark), var(--color-blue-dark));
+}
+
+.module-metric-card span {
+  display: block;
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+.module-metric-card strong {
+  display: block;
+  margin-top: 6px;
+  color: #FFFFFF;
+  font-size: 24px;
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+}
+
 .module-record-card,
 .customer-card {
   min-width: 0;
@@ -2009,20 +2169,6 @@ textarea {
   border-radius: var(--radius-md);
   background: var(--color-card);
   box-shadow: var(--shadow-sm);
-}
-
-.module-metric-card span {
-  display: block;
-  color: var(--color-text-secondary);
-  font-size: 12px;
-}
-
-.module-metric-card strong {
-  display: block;
-  margin-top: 5px;
-  color: var(--color-text-primary);
-  font-size: 22px;
-  font-family: 'Fraunces', serif;
 }
 
 .module-record-list,
@@ -2106,17 +2252,23 @@ textarea {
 .finance-ranking {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 6px;
 }
 
 .finance-ranking-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 10px 12px;
-  background: var(--color-card);
+  padding: 12px 14px;
+  background: linear-gradient(135deg, var(--color-blue-dark), var(--color-card));
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
+  transition: border-color var(--transition-fast), transform var(--transition-fast);
+}
+
+.finance-ranking-item:hover {
+  border-color: var(--color-green-dark);
+  transform: translateX(2px);
 }
 
 .finance-ranking-info {
@@ -2129,7 +2281,7 @@ textarea {
 .finance-ranking-name {
   font-size: 14px;
   font-weight: 700;
-  color: var(--color-text-primary);
+  color: #FFFFFF;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -2137,7 +2289,7 @@ textarea {
 
 .finance-ranking-meta {
   font-size: 11px;
-  color: var(--color-text-muted);
+  color: rgba(255, 255, 255, 0.6);
 }
 
 .finance-ranking-value {
@@ -2145,6 +2297,10 @@ textarea {
   font-weight: 800;
   color: var(--color-green-dark);
   white-space: nowrap;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  border: 1px solid rgba(5, 150, 105, 0.3);
 }
 
 /* ============================================================
