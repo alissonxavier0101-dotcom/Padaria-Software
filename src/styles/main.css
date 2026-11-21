@@ -48,7 +48,7 @@ select:focus-visible,
 textarea:focus-visible,
 summary:focus-visible,
 [tabindex]:focus-visible {
-  outline: 3px solid rgba(5, 150, 105, 0.5);
+  outline: 3px solid rgba(110, 231, 183, 0.5);
   outline-offset: 2px;
 }
 
@@ -114,14 +114,14 @@ summary:focus-visible,
   color: #FFFFFF;
   padding: 14px 20px;
   font-size: 15px;
-  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+  box-shadow: 0 4px 14px rgba(11, 36, 27, 0.3);
 }
 
 .btn-primary:hover:not(:disabled),
 .btn-primary:active:not(:disabled) {
   background: var(--color-green-dark-hover);
   transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+  box-shadow: 0 6px 20px rgba(11, 36, 27, 0.4);
 }
 
 .btn-primary:active:not(:disabled) {
@@ -129,7 +129,7 @@ summary:focus-visible,
 }
 
 .btn-primary:focus-visible {
-  outline: 3px solid rgba(5, 150, 105, 0.5);
+  outline: 3px solid rgba(110, 231, 183, 0.5);
   outline-offset: 2px;
 }
 
@@ -176,7 +176,7 @@ summary:focus-visible,
 }
 
 .btn-icon:focus-visible {
-  outline: 3px solid rgba(5, 150, 105, 0.5);
+  outline: 3px solid rgba(110, 231, 183, 0.5);
   outline-offset: 2px;
 }
 
@@ -286,7 +286,7 @@ select:focus,
 textarea:focus {
   border-color: var(--color-green-dark);
   background: var(--color-card-elevated);
-  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+  box-shadow: 0 0 0 3px rgba(11, 36, 27, 0.15);
 }
 
 input::placeholder,
@@ -368,7 +368,7 @@ textarea {
    AUTO CALC PREVIEW
    ============================================================ */
 .auto-calc-preview {
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(15, 23, 42, 0.15));
+  background: linear-gradient(135deg, rgba(11, 36, 27, 0.1), rgba(15, 23, 42, 0.15));
   border: 1px dashed var(--color-green-dark);
   border-radius: var(--radius-sm);
   padding: 14px;
@@ -419,12 +419,23 @@ textarea {
   position: relative;
   display: flex;
   align-items: center;
+  width: 100%;
+}
+
+.search-icon {
+  position: absolute;
+  left: 14px;
+  color: var(--color-text-muted);
+  pointer-events: none;
+  width: 18px;
+  height: 18px;
+  z-index: 2;
 }
 
 .search-input {
   width: 100%;
   height: 48px;
-  padding: 10px 42px 10px 44px;
+  padding: 10px 46px 10px 46px;
   background: var(--color-card);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-full);
@@ -433,13 +444,8 @@ textarea {
   box-shadow: var(--shadow-sm);
 }
 
-.search-icon {
-  position: absolute;
-  left: 14px;
+.search-input::placeholder {
   color: var(--color-text-muted);
-  pointer-events: none;
-  width: 20px;
-  height: 20px;
 }
 
 .btn-clear-search {
@@ -571,7 +577,7 @@ textarea {
   flex-shrink: 0;
   border: 1px solid var(--color-green-dark);
   color: #FFFFFF;
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+  box-shadow: 0 4px 12px rgba(11, 36, 27, 0.3);
 }
 
 .insumo-name-wrap {
@@ -614,21 +620,21 @@ textarea {
   justify-content: center;
   cursor: pointer;
   transition: all var(--transition-fast);
-  box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+  box-shadow: 0 4px 12px rgba(11, 36, 27, 0.25);
 }
 
 .btn-edit-item:hover,
 .btn-edit-item:active {
   background: var(--color-green-dark-hover);
   border-color: var(--color-green-dark-hover);
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+  box-shadow: 0 6px 20px rgba(11, 36, 27, 0.4);
 }
 
 .btn-delete-item:hover,
 .btn-delete-item:active {
   background: var(--color-green-dark-hover);
   border-color: var(--color-green-dark-hover);
-  box-shadow: 0 6px 20px rgba(5, 150, 105, 0.4);
+  box-shadow: 0 6px 20px rgba(11, 36, 27, 0.4);
 }
 
 .insumo-values {
@@ -659,6 +665,10 @@ textarea {
   font-size: 14px;
   font-weight: 600;
   color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .insumo-unit-badge {
@@ -669,12 +679,14 @@ textarea {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-width: 0;
 }
 
 .unit-badge-label {
   font-size: 12px;
   font-weight: 700;
   color: var(--color-green-dark);
+  white-space: nowrap;
 }
 
 .unit-badge-price {
@@ -682,6 +694,10 @@ textarea {
   font-weight: 800;
   font-family: 'Fraunces', serif;
   color: #FFFFFF;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .unit-badge-recipe-sub {
@@ -766,12 +782,12 @@ textarea {
   height: 80px;
   border-radius: 50%;
   background: linear-gradient(135deg, var(--color-green-dark), var(--color-green-dark-hover));
-  border: 3px solid rgba(5, 150, 105, 0.4);
+  border: 3px solid rgba(11, 36, 27, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 36px;
-  box-shadow: 0 8px 24px rgba(5, 150, 105, 0.25);
+  box-shadow: 0 8px 24px rgba(11, 36, 27, 0.25);
 }
 
 .auth-title {
@@ -864,7 +880,7 @@ textarea {
 }
 
 .btn-demo-login:hover {
-  background: rgba(5, 150, 105, 0.1);
+  background: rgba(11, 36, 27, 0.1);
 }
 
 .auth-footer-notice {
@@ -1104,24 +1120,25 @@ textarea {
 }
 
 .nav-tab-btn.active {
-  background: var(--color-green-dark);
+  background: var(--color-blue-dark);
   color: #FFFFFF;
+  border: 1px solid var(--color-blue-dark-active);
   box-shadow: var(--shadow-sm);
 }
 
 .nav-tab-btn:focus-visible {
-  outline: 3px solid rgba(5, 150, 105, 0.5);
+  outline: 3px solid rgba(117, 211, 252, 0.5);
   outline-offset: 2px;
 }
 
 .nav-tab-badge {
-  background: rgba(255, 255, 255, 0.15);
-  color: var(--color-green-dark);
+  background: rgba(117, 211, 252, 0.15);
+  color: var(--color-blue-highlight);
   font-size: 11px;
   font-weight: 800;
   padding: 2px 7px;
   border-radius: 99px;
-  border: 1px solid rgba(5, 150, 105, 0.3);
+  border: 1px solid rgba(117, 211, 252, 0.3);
 }
 
 .nav-tab-btn.active .nav-tab-badge {
@@ -1137,12 +1154,11 @@ textarea {
   bottom: 0;
   left: 0;
   right: 0;
-  background: var(--color-blue-dark);
-  border-top: 1px solid var(--color-blue-dark-active);
+  background: #0B0F17;
+  border-top: 1px solid #233044;
   padding: 8px 0 env(safe-area-inset-bottom) 0;
-  z-index: 50;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.4);
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.3);
+  z-index: 1000;
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.6);
 }
 
 @media (max-width: 768px) {
@@ -1155,7 +1171,7 @@ textarea {
   }
   
   .app-content {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
   }
 }
 
@@ -1186,13 +1202,24 @@ textarea {
 }
 
 .bottom-nav-item.active {
-  color: var(--color-green-dark);
-  background: rgba(5, 150, 105, 0.15);
+  color: var(--color-blue-highlight);
+  background: rgba(16, 36, 62, 0.4);
 }
 
 .bottom-nav-item svg {
-  width: 24px;
-  height: 24px;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.bottom-nav-item span {
+  font-size: 10px;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.bottom-nav-item.active svg {
+  color: var(--color-blue-highlight);
 }
 
 /* ============================================================
@@ -1213,8 +1240,8 @@ textarea {
 }
 
 .category-pill {
-  background: rgba(5, 150, 105, 0.05);
-  border: 1px solid rgba(5, 150, 105, 0.3);
+  background: rgba(11, 36, 27, 0.05);
+  border: 1px solid rgba(11, 36, 27, 0.3);
   border-radius: var(--radius-full);
   padding: 8px 14px;
   font-size: 12px;
@@ -1263,9 +1290,9 @@ textarea {
 }
 
 .badge-cat-ingrediente {
-  background: rgba(5, 150, 105, 0.15);
+  background: rgba(11, 36, 27, 0.15);
   color: var(--color-green-dark);
-  border: 1px solid rgba(5, 150, 105, 0.3);
+  border: 1px solid rgba(11, 36, 27, 0.3);
 }
 
 .badge-cat-embalagem {
@@ -1415,8 +1442,8 @@ textarea {
    CARD PROFIT SIMULATOR
    ============================================================ */
 .card-profit-simulator {
-  background: linear-gradient(135deg, rgba(5, 150, 105, 0.1), rgba(15, 23, 42, 0.15));
-  border: 1px solid rgba(5, 150, 105, 0.3);
+  background: linear-gradient(135deg, rgba(11, 36, 27, 0.1), rgba(15, 23, 42, 0.15));
+  border: 1px solid rgba(11, 36, 27, 0.3);
   border-radius: var(--radius-sm);
   padding: 12px;
   display: flex;
@@ -1445,7 +1472,7 @@ textarea {
   color: var(--color-green-dark);
   padding: 2px 8px;
   border-radius: 99px;
-  border: 1px solid rgba(5, 150, 105, 0.3);
+  border: 1px solid rgba(11, 36, 27, 0.3);
 }
 
 .price-warning {
@@ -1556,7 +1583,7 @@ textarea {
 }
 
 .recipe-draft-table tbody tr:hover {
-  background: rgba(5, 150, 105, 0.08);
+  background: rgba(11, 36, 27, 0.08);
 }
 
 .recipe-groups-list {
@@ -1683,7 +1710,7 @@ textarea {
    RECIPE TOTALS BANNER
    ============================================================ */
 .recipe-totals-banner {
-  background: linear-gradient(135deg, var(--color-blue-dark), rgba(5, 150, 105, 0.15));
+  background: linear-gradient(135deg, var(--color-blue-dark), rgba(11, 36, 27, 0.15));
   border: 1px solid var(--color-green-dark);
   border-radius: var(--radius-sm);
   padding: 16px;
@@ -1766,7 +1793,7 @@ textarea {
   margin: 12px 0;
   padding: 11px 14px;
   color: #FFFFFF;
-  background: rgba(5, 150, 105, 0.2);
+  background: rgba(11, 36, 27, 0.2);
   border: 1px solid var(--color-green-dark);
   border-radius: var(--radius-sm);
   font-size: 12px;
@@ -2071,7 +2098,7 @@ textarea {
   border-radius: 50%;
   background: var(--color-green-dark);
   display: inline-block;
-  box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.2);
+  box-shadow: 0 0 0 2px rgba(11, 36, 27, 0.2);
   animation: pulse 2s infinite;
 }
 
@@ -2170,6 +2197,10 @@ textarea {
   font-size: 24px;
   font-family: 'Fraunces', serif;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  min-width: 0;
 }
 
 .module-record-card,
@@ -2311,7 +2342,7 @@ textarea {
   background: rgba(255, 255, 255, 0.1);
   padding: 4px 10px;
   border-radius: var(--radius-full);
-  border: 1px solid rgba(5, 150, 105, 0.3);
+  border: 1px solid rgba(11, 36, 27, 0.3);
 }
 
 /* ============================================================
@@ -2353,6 +2384,7 @@ textarea {
   position: relative;
   overflow: hidden;
   border: 1px solid var(--color-border);
+  min-width: 0;
 }
 
 .metrics-card::after {
@@ -2362,13 +2394,14 @@ textarea {
   bottom: -20px;
   width: 100px;
   height: 100px;
-  background: radial-gradient(circle, rgba(5, 150, 105, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(117, 211, 252, 0.1) 0%, transparent 70%);
   pointer-events: none;
 }
 
 .metric-box {
   display: flex;
   flex-direction: column;
+  min-width: 0;
 }
 
 .metric-label {
@@ -2384,12 +2417,29 @@ textarea {
   font-size: 22px;
   font-weight: 700;
   font-family: 'Fraunces', serif;
+  color: #FFFFFF;
+  min-width: 0;
 }
 
 .metric-sub {
   font-size: 11px;
   color: rgba(255, 255, 255, 0.4);
   margin-top: 2px;
+}
+
+@media (max-width: 480px) {
+  .metrics-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 14px;
+  }
+  
+  .metric-value {
+    font-size: 20px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
 }
 
 /* ============================================================
@@ -2560,8 +2610,8 @@ textarea {
    ============================================================ */
 .recipe-technical-sheet {
   padding: 10px 12px;
-  background: rgba(5, 150, 105, 0.05);
-  border: 1px solid rgba(5, 150, 105, 0.15);
+  background: rgba(11, 36, 27, 0.05);
+  border: 1px solid rgba(11, 36, 27, 0.15);
   border-radius: var(--radius-sm);
   color: var(--color-text-secondary);
   font-size: 12px;
