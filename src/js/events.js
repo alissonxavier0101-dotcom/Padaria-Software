@@ -159,13 +159,13 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
         if (isHidden) {
           dom.formInsumo.classList.remove('hidden');
           dom.toggleFormText.textContent = 'Recolher Formulário';
-          dom.toggleFormIcon.textContent = '▲';
+          dom.toggleFormIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
           dom.btnToggleForm.setAttribute('aria-expanded', 'true');
           dom.inputNome.focus();
         } else {
           dom.formInsumo.classList.add('hidden');
           dom.toggleFormText.textContent = 'Cadastrar Novo Insumo ou Embalagem';
-          dom.toggleFormIcon.textContent = '➕';
+          dom.toggleFormIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>';
           dom.btnToggleForm.setAttribute('aria-expanded', 'false');
         }
       });
@@ -173,7 +173,7 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       dom.btnEmptyAdd.addEventListener('click', () => {
         dom.formInsumo.classList.remove('hidden');
         dom.toggleFormText.textContent = 'Recolher Formulário';
-        dom.toggleFormIcon.textContent = '▲';
+        dom.toggleFormIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
         dom.btnToggleForm.setAttribute('aria-expanded', 'true');
         dom.inputNome.focus();
         dom.formInsumo.scrollIntoView({ behavior: 'smooth' });
@@ -278,13 +278,13 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
         if (isHidden) {
           dom.formReceita.classList.remove('hidden');
           dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
-          dom.toggleFormReceitaIcon.textContent = '▲';
+          dom.toggleFormReceitaIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
           dom.btnToggleFormReceita.setAttribute('aria-expanded', 'true');
           dom.inputReceitaNome.focus();
         } else {
           dom.formReceita.classList.add('hidden');
           dom.toggleFormReceitaText.textContent = 'Criar Nova Receita';
-          dom.toggleFormReceitaIcon.textContent = '➕';
+          dom.toggleFormReceitaIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>';
           dom.btnToggleFormReceita.setAttribute('aria-expanded', 'false');
         }
       });
@@ -292,7 +292,7 @@ dom.btnLoginGoogle.addEventListener('click', handleLoginGoogle);
       dom.btnEmptyAddReceita.addEventListener('click', () => {
         dom.formReceita.classList.remove('hidden');
         dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
-        dom.toggleFormReceitaIcon.textContent = '▲';
+        dom.toggleFormReceitaIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
         dom.btnToggleFormReceita.setAttribute('aria-expanded', 'true');
         dom.inputReceitaNome.focus();
         dom.formReceita.scrollIntoView({ behavior: 'smooth' });

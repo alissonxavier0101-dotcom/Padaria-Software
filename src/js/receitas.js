@@ -173,7 +173,7 @@ export function atualizarSelectsInsumosParaReceitas() {
   };
 
   if (grupos.ingrediente.length > 0) {
-    optionsHtml += '<optgroup label="🌾 Ingredientes">';
+    optionsHtml += '<optgroup label="Ingredientes">';
     grupos.ingrediente.forEach(i => {
       optionsHtml += criarOpcaoInsumo(i);
     });
@@ -181,7 +181,7 @@ export function atualizarSelectsInsumosParaReceitas() {
   }
 
   if (grupos.embalagem.length > 0) {
-    optionsHtml += '<optgroup label="🛍️ Embalagens & Formas Descartáveis">';
+    optionsHtml += '<optgroup label="Embalagens & Formas Descartáveis">';
     grupos.embalagem.forEach(i => {
       optionsHtml += criarOpcaoInsumo(i);
     });
@@ -189,7 +189,7 @@ export function atualizarSelectsInsumosParaReceitas() {
   }
 
   if (grupos.outro.length > 0) {
-    optionsHtml += '<optgroup label="📦 Outros">';
+    optionsHtml += '<optgroup label="Outros">';
     grupos.outro.forEach(i => {
       optionsHtml += criarOpcaoInsumo(i);
     });
@@ -197,7 +197,7 @@ export function atualizarSelectsInsumosParaReceitas() {
   }
 
   if (receitasDisponiveis.length > 0) {
-    optionsHtml += '<optgroup label="🍞 Massas e receitas-base">';
+    optionsHtml += '<optgroup label="Massas e receitas-base">';
     receitasDisponiveis.forEach(receita => {
       if (receita.id === editingReceitaId) return;
       const unidade = normalizarUnidadeRendimento(receita.rendimentoUnidade);
@@ -766,10 +766,19 @@ export function renderizarItensReceitaEmElaboracao() {
     dom.tbodyDraftReceitaItens.innerHTML = itensReceitaEmElaboracao.map((item, idx) => {
       const group = gruposReceitaEmElaboracao.find(grupo => grupo.id === item.grupoId);
       const badge = item.sourceType === 'receita'
-        ? '<span class="badge-category badge-cat-outro">🍞 Receita-base</span>'
+        ? `<span class="badge-category badge-cat-outro">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 3px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            Receita-base
+          </span>`
         : item.categoria === 'embalagem'
-        ? '<span class="badge-category badge-cat-embalagem">🛍️ Emb.</span>' 
-        : '<span class="badge-category badge-cat-ingrediente">🌾 Ingr.</span>';
+        ? `<span class="badge-category badge-cat-embalagem">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 3px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+            Emb.
+          </span>`
+        : `<span class="badge-category badge-cat-ingrediente">
+            <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 3px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            Ingr.
+          </span>`;
 
       return `
         <tr>
@@ -974,12 +983,15 @@ export function prepararNovaReceita() {
   dom.recipeTechDetails.open = false;
   renderizarOpcoesCategoriaReceita();
   atualizarPreviewFotoReceita(null);
-  dom.formReceitaTitle.textContent = '📖 Nova Receita com Custos e Lucro';
-  dom.btnSubmitReceita.innerHTML = '<span>Salvar Receita no Firestore</span>';
-  dom.btnCancelEditReceita.classList.add('hidden');
-  dom.formReceita.classList.add('hidden');
-  dom.toggleFormReceitaIcon.textContent = '➕';
-  dom.toggleFormReceitaText.textContent = 'Criar Nova Receita';
+dom.formReceitaTitle.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                Nova Receita com Custos e Lucro
+              `;
+   dom.btnSubmitReceita.innerHTML = '<span>Salvar Receita no Firestore</span>';
+   dom.btnCancelEditReceita.classList.add('hidden');
+   dom.formReceita.classList.add('hidden');
+   dom.toggleFormReceitaIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>';
+   dom.toggleFormReceitaText.textContent = 'Criar Nova Receita';
   dom.btnToggleFormReceita.setAttribute('aria-expanded', 'false');
   renderizarGruposReceitaEmElaboracao();
   renderizarItensReceitaEmElaboracao();
@@ -1019,12 +1031,15 @@ export function abrirEdicaoReceita(id) {
   setGruposReceitaEmElaboracao(gruposEItens.grupos);
   setItensReceitaEmElaboracao(gruposEItens.itens);
   setGrupoReceitaSelecionadoId('');
-  dom.formReceitaTitle.textContent = '✏️ Editar Receita';
-  dom.btnSubmitReceita.innerHTML = '<span>Salvar alterações</span>';
-  dom.btnCancelEditReceita.classList.remove('hidden');
-  dom.formReceita.classList.remove('hidden');
-  dom.toggleFormReceitaIcon.textContent = '▲';
-  dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
+dom.formReceitaTitle.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></svg>
+                Editar Receita
+              `;
+   dom.btnSubmitReceita.innerHTML = '<span>Salvar alterações</span>';
+   dom.btnCancelEditReceita.classList.remove('hidden');
+   dom.formReceita.classList.remove('hidden');
+   dom.toggleFormReceitaIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+   dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
   dom.btnToggleFormReceita.setAttribute('aria-expanded', 'true');
   atualizarSelectsInsumosParaReceitas();
   renderizarGruposReceitaEmElaboracao();
@@ -1066,12 +1081,15 @@ export function duplicarReceita(id) {
   setGruposReceitaEmElaboracao(gruposEItens.grupos.map(grupo => ({ ...grupo })));
   setItensReceitaEmElaboracao(gruposEItens.itens);
   setGrupoReceitaSelecionadoId('');
-  dom.formReceitaTitle.textContent = `📖 Variação de ${receita.nome}`;
-  dom.btnSubmitReceita.innerHTML = '<span>Salvar nova receita</span>';
-  dom.btnCancelEditReceita.classList.remove('hidden');
-  dom.formReceita.classList.remove('hidden');
-  dom.toggleFormReceitaIcon.textContent = '▲';
-  dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
+dom.formReceitaTitle.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                Variação de ${escapeHtml(receita.nome)}
+              `;
+   dom.btnSubmitReceita.innerHTML = '<span>Salvar nova receita</span>';
+   dom.btnCancelEditReceita.classList.remove('hidden');
+   dom.formReceita.classList.remove('hidden');
+   dom.toggleFormReceitaIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
+   dom.toggleFormReceitaText.textContent = 'Recolher Formulário';
   dom.btnToggleFormReceita.setAttribute('aria-expanded', 'true');
   atualizarSelectsInsumosParaReceitas();
   renderizarGruposReceitaEmElaboracao();
@@ -1517,14 +1535,18 @@ export function renderizarReceitas() {
     const renderizarLinhasItens = itensDoGrupo => itensDoGrupo.map(it => {
       const isRecipe = it.sourceType === 'receita' || Boolean(it.receitaId);
       const isEmb = it.categoria === 'embalagem';
-      const iconTag = isRecipe ? '🍞' : isEmb ? '🛍️' : '🌾';
+      const iconSvg = isRecipe
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>'
+        : isEmb
+        ? '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>'
+        : '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>';
       const detail = isRecipe
         ? `Receita-base • ${it.quantidadeUsada} ${it.unidadeUsada}`
         : `${it.quantidadeUsada} ${it.unidadeUsada}`;
       return `
         <div class="receita-item-row">
           <div class="receita-item-info">
-            <span>${iconTag}</span>
+            <span>${iconSvg}</span>
             <span><strong>${escapeHtml(it.insumoNome)}</strong> (${detail})</span>
           </div>
           <span class="receita-item-cost">${formatarMoeda(it.custoItem, 2)}</span>
@@ -1563,7 +1585,10 @@ export function renderizarReceitas() {
       <article class="receita-card" data-receita-id="${rec.id}">
         <div class="receita-header">
           <div class="receita-title-wrap">
-            <span class="receita-rendimento-badge">🥖 ${rendimentoTexto}</span>
+            <span class="receita-rendimento-badge">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              ${rendimentoTexto}
+            </span>
             <span class="receita-category-badge">${categoriaNome}</span>
             <h3 class="receita-nome">${escapeHtml(rec.nome)}</h3>
             ${rec.descricao ? `<span style="font-size: 12px; color: var(--text-secondary);">${escapeHtml(rec.descricao)}</span>` : ''}
@@ -1628,22 +1653,46 @@ export function renderizarReceitas() {
           : ''}
         <div class="cost-split-row">
           <div class="cost-split-tag">
-            <span>🌾 ${countIngredientes} Ingr:</span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              ${countIngredientes} Ingr:
+            </span>
             <strong>${formatarMoeda(rec.custoIngredientes || 0, 2)}</strong>
           </div>
           <div class="cost-split-tag">
-            <span>🛍️ ${countEmbalagens} Emb:</span>
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              ${countEmbalagens} Emb:
+            </span>
             <strong>${formatarMoeda(rec.custoEmbalagens || 0, 2)}</strong>
           </div>
           <div class="cost-split-tag">
             <span>Total:</span>
-            <strong style="color: var(--wheat-deep);">${formatarMoeda(rec.custoTotal, 2)}</strong>
+            <strong style="color: var(--color-green-dark);">${formatarMoeda(rec.custoTotal, 2)}</strong>
           </div>
         </div>
         <div class="cost-split-row" style="flex-wrap: wrap; gap: 8px;">
-          <div class="cost-split-tag"><span>🔥 Energia:</span><strong>${formatarMoeda(custoEnergia, 2)}</strong></div>
-          <div class="cost-split-tag"><span>👩‍🍳 Mão de obra:</span><strong>${formatarMoeda(custoMaoDeObra, 2)}</strong></div>
-          <div class="cost-split-tag"><span>💧 Água:</span><strong>${formatarMoeda(custoAgua, 2)}</strong></div>
+          <div class="cost-split-tag">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><path d="M7 12h10"></path><path d="M12 7v10"></path></svg>
+              Energia:
+            </span>
+            <strong>${formatarMoeda(custoEnergia, 2)}</strong>
+          </div>
+          <div class="cost-split-tag">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              Mão de obra:
+            </span>
+            <strong>${formatarMoeda(custoMaoDeObra, 2)}</strong>
+          </div>
+          <div class="cost-split-tag">
+            <span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+              Água:
+            </span>
+            <strong>${formatarMoeda(custoAgua, 2)}</strong>
+          </div>
           <div class="cost-split-tag"><span>Vendáveis:</span><strong>${unidadesVendaveis} ${escapeHtml(rec.rendimentoUnidade || 'unidades')}</strong></div>
         </div>
         <div class="receita-items-preview">
@@ -1670,7 +1719,8 @@ export function renderizarReceitas() {
                 data-add-item-rec-name="${escapeHtml(rec.nome)}"
                 style="padding: 4px 8px; font-size: 11px; font-weight: 700;"
               >
-                ➕ Adicionar Novo Item
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Adicionar Novo Item
               </button>
             </div>
           </div>
@@ -1712,12 +1762,16 @@ export function renderizarReceitas() {
         </section>
         <div class="production-action-row">
           <button type="button" class="btn-primary" data-produce-receita-id="${escapeHtml(rec.id)}">
-            🍞 Registrar produção e baixar insumos
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><path d="M7 12h10"></path><path d="M12 7v10"></path></svg>
+            Registrar produção e baixar insumos
           </button>
         </div>
         <div class="card-profit-simulator">
           <div class="profit-sim-header">
-            <span class="profit-sim-title">⚡ Calculadora Rápida de Precificação</span>
+            <span class="profit-sim-title">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+              Calculadora Rápida de Precificação
+            </span>
             <span class="profit-sim-badge">Lucro Fornada: ${formatarMoeda(lucroUn * unidadesVendaveis, 2)}</span>
           </div>
           <div class="profit-sim-controls">

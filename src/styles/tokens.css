@@ -1,0 +1,60 @@
+:root {
+  color-scheme: dark;
+
+  --color-black: #000000;
+  --color-surface: #0A0A0A;
+  --color-card: #111827;
+  --color-card-elevated: #1F2937;
+
+  --color-blue-dark: #0F172A;
+  --color-blue-dark-hover: #1E293B;
+  --color-blue-dark-active: #334155;
+
+  --color-green-dark: #059669;
+  --color-green-dark-hover: #047857;
+  --color-green-dark-active: #064E3B;
+
+  --color-text-primary: #FFFFFF;
+  --color-text-secondary: #94A3B8;
+  --color-text-muted: #64748B;
+
+  --color-border: rgba(255, 255, 255, 0.08);
+  --color-border-hover: rgba(255, 255, 255, 0.15);
+
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 20px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.35);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.5);
+
+  --transition-fast: 150ms ease;
+  --transition-base: 250ms ease;
+  --transition-slow: 350ms ease;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    --color-black: #000000;
+    --color-surface: #F8FAFC;
+    --color-card: #FFFFFF;
+    --color-card-elevated: #F1F5F9;
+
+    --color-blue-dark: #0F172A;
+    --color-blue-dark-hover: #1E293B;
+    --color-blue-dark-active: #334155;
+
+    --color-green-dark: #059669;
+    --color-green-dark-hover: #047857;
+    --color-green-dark-active: #064E3B;
+
+    --color-text-primary: #0F172A;
+    --color-text-secondary: #475569;
+    --color-text-muted: #64748B;
+
+    --color-border: rgba(15, 23, 42, 0.12);
+    --color-border-hover: rgba(15, 23, 42, 0.25);
+  }
+}

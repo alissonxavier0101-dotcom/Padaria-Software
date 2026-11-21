@@ -465,10 +465,12 @@ export function renderizarProducoes(resultadoPronto) {
           </div>
           <div class="production-record-actions">
             <button type="button" class="btn-secondary production-record-edit" data-edit-production-id="${escapeHtml(producao.id)}">
-              ✏️ Editar produção
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></svg>
+              Editar produção
             </button>
             <button type="button" class="btn-secondary production-record-delete" data-delete-production-id="${escapeHtml(producao.id)}">
-              🗑️ Excluir
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path></svg>
+              Excluir
             </button>
           </div>
         </div>

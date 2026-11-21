@@ -80,7 +80,10 @@ export function prepararNovoInsumo() {
         dom.inputEstoqueMinimo.value = '0';
         atualizarRotulosUnidadeEstoque();
         preencherConversoesDoFormulario(null);
-        dom.formInsumoTitle.textContent = '🌾 Novo Insumo ou Embalagem';
+        dom.formInsumoTitle.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Novo Insumo ou Embalagem
+              `;
         dom.btnSubmitInsumo.innerHTML = '<span>Salvar no Firestore</span>';
         dom.btnCancelEditInsumo.classList.add('hidden');
         atualizarPreviewCalculo();
@@ -115,12 +118,15 @@ export function abrirEdicaoInsumo(id) {
         atualizarRotulosUnidadeEstoque();
         preencherConversoesDoFormulario(insumo.conversoes);
         dom.inputPreco.valorNumerico = insumo.preco ?? 0;
-        dom.formInsumoTitle.textContent = '✏️ Editar Insumo ou Material';
+        dom.formInsumoTitle.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></svg>
+                Editar Insumo ou Material
+              `;
         dom.btnSubmitInsumo.innerHTML = '<span>Salvar alterações</span>';
         dom.btnCancelEditInsumo.classList.remove('hidden');
         dom.formInsumo.classList.remove('hidden');
         dom.toggleFormText.textContent = 'Recolher Formulário';
-        dom.toggleFormIcon.textContent = '▲';
+        dom.toggleFormIcon.innerHTML = '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="18 15 12 9 6 15"></polyline></svg>';
         dom.btnToggleForm.setAttribute('aria-expanded', 'true');
         atualizarPreviewCalculo();
         dom.formInsumo.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -435,7 +441,10 @@ export function renderizarInsumos() {
         const estoqueBaixo = cachedInsumos.filter(isBelowMinimum);
         if (estoqueBaixo.length) {
           dom.stockAlertBanner.innerHTML = `
-            <strong>⚠️ ${estoqueBaixo.length} ${estoqueBaixo.length === 1 ? 'insumo precisa' : 'insumos precisam'} de reposição</strong>
+            <strong>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+              ${estoqueBaixo.length} ${estoqueBaixo.length === 1 ? 'insumo precisa' : 'insumos precisam'} de reposição
+            </strong>
             <span>${estoqueBaixo.slice(0, 4).map(item =>
               `${escapeHtml(item.nome)} (${formatarQuantidadeEstoque(obterEstoqueAtual(item))} ${escapeHtml(item.unidade)})`
             ).join(' · ')}${estoqueBaixo.length > 4 ? ` · e mais ${estoqueBaixo.length - 4}` : ''}</span>`;
@@ -484,26 +493,35 @@ export function renderizarInsumos() {
         dom.emptyState.classList.add('hidden');
 
         function obterIcone(nome, cat) {
-          if (cat === 'embalagem') return '🛍️';
-          if (cat === 'outro') return '📦';
+          if (cat === 'embalagem') return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>';
+          if (cat === 'outro') return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>';
           const n = (nome || '').toLowerCase();
-          if (n.includes('farinha') || n.includes('centeio') || n.includes('trigo')) return '🌾';
-          if (n.includes('fermento') || n.includes('levain')) return '🧪';
-          if (n.includes('sal')) return '🧂';
-          if (n.includes('manteiga') || n.includes('leite') || n.includes('queijo')) return '🧈';
-          if (n.includes('sacola')) return '🛍️';
-          if (n.includes('forma')) return '📦';
-          return '🥖';
+          if (n.includes('farinha') || n.includes('centeio') || n.includes('trigo')) return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>';
+          if (n.includes('fermento') || n.includes('levain')) return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+          if (n.includes('sal')) return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line></svg>';
+          if (n.includes('manteiga') || n.includes('leite') || n.includes('queijo')) return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><path d="M9 12h6"></path></svg>';
+          if (n.includes('sacola')) return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>';
+          if (n.includes('forma')) return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>';
+          return '<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>';
         }
 
         function obterBadgeCategoria(cat) {
           if (cat === 'embalagem') {
-            return `<span class="badge-category badge-cat-embalagem">🛍️ Embalagem / Forma</span>`;
+            return `<span class="badge-category badge-cat-embalagem">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 3px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              Embalagem / Forma
+            </span>`;
           }
           if (cat === 'outro') {
-            return `<span class="badge-category badge-cat-outro">📦 Outro Insumo</span>`;
+            return `<span class="badge-category badge-cat-outro">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 3px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              Outro Insumo
+            </span>`;
           }
-          return `<span class="badge-category badge-cat-ingrediente">🌾 Ingrediente</span>`;
+          return `<span class="badge-category badge-cat-ingrediente">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 3px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+            Ingrediente
+          </span>`;
         }
 
         const html = filtrados.map(item => {
@@ -586,7 +604,9 @@ export function renderizarInsumos() {
                   <span class="value-caption">Mínimo</span>
                   <strong>${formatarQuantidadeEstoque(estoqueMinimo)} ${escapeHtml(item.unidade)}</strong>
                 </div>
-                <span class="stock-level-status">${estoqueBaixo ? '⚠ Repor' : '✓ Em dia'}</span>
+                <span class="stock-level-status">${estoqueBaixo
+              ? '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg> Repor'
+              : '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><polyline points="20 6 9 17 4 12"></polyline></svg> Em dia'}</span>
               </div>
 
               <!-- DESTAQUE DO CUSTO UNITÁRIO CALCULADO AUTOMATICAMENTE -->

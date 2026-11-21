@@ -22,7 +22,9 @@
       <!-- ================= TELA DE LOGIN ================= -->
       <section id="auth-screen" class="auth-container">
         <div class="auth-card">
-          <div class="bakery-logo-badge" aria-hidden="true">🥖</div>
+          <div class="bakery-logo-badge" aria-hidden="true">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          </div>
           <h1 class="auth-title">PanisCustos</h1>
           <p class="auth-subtitle">
             Gestão de Custos e Insumos para Padaria Artesanal.<br/>
@@ -31,15 +33,21 @@
 
           <div class="auth-features-box">
             <div class="auth-feature-item">
-              <span class="auth-feature-icon">✨</span>
+              <span class="auth-feature-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+              </span>
               <span>Cálculo automático do <strong>Custo Unitário</strong></span>
             </div>
             <div class="auth-feature-item">
-              <span class="auth-feature-icon">🌾</span>
+              <span class="auth-feature-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </span>
               <span>Sincronização em tempo real (Firestore)</span>
             </div>
             <div class="auth-feature-item">
-              <span class="auth-feature-icon">👥</span>
+              <span class="auth-feature-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+              </span>
               <span>Acesso seguro com sua conta Google</span>
             </div>
           </div>
@@ -73,21 +81,24 @@
 
           <div style="display: flex; gap: 8px; width: 100%;">
             <button id="btn-open-config" class="btn-secondary" style="flex: 1; font-size: 12px; padding: 10px;" type="button">
-              ⚙️ Conexão Firebase
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+              Conexão Firebase
             </button>
             <button id="btn-help-domain" class="btn-secondary" style="flex: 1; font-size: 12px; padding: 10px;" type="button">
-              🌐 Ajuda para entrar
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+              Ajuda para entrar
             </button>
           </div>
 
           <!-- Identificador de domínio atual para o Firebase -->
-          <div id="domain-helper-box" style="font-size: 11px; color: var(--text-muted); background: #FAF5ED; border: 1px solid #EBDAC5; border-radius: 8px; padding: 6px 10px; width: 100%; display: flex; align-items: center; justify-content: space-between;">
-            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px;">Domínio: <code id="label-current-domain" style="font-weight: 600; color: var(--wheat-deep);">...</code></span>
-            <button id="btn-copy-quick-domain" type="button" style="background: none; border: none; color: var(--wheat-gold); font-weight: 700; cursor: pointer; font-size: 11px; flex-shrink: 0;">Copiar</button>
+          <div id="domain-helper-box" style="font-size: 11px; color: var(--color-text-muted); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 6px 10px; width: 100%; display: flex; align-items: center; justify-content: space-between;">
+            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px;">Domínio: <code id="label-current-domain" style="font-weight: 600; color: var(--color-green-dark);">...</code></span>
+            <button id="btn-copy-quick-domain" type="button" style="background: none; border: none; color: var(--color-green-dark); font-weight: 700; cursor: pointer; font-size: 11px; flex-shrink: 0;">Copiar</button>
           </div>
 
           <p class="auth-footer-notice">
-            🔒 O painel e os insumos só podem ser acessados após login.
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+            O painel e os insumos só podem ser acessados após login.
           </p>
         </div>
         </section>
@@ -125,10 +136,12 @@
           <div class="stock-mode-switch" role="group" aria-label="Modo de estoque">
             <span class="stock-mode-label">Estoque:</span>
             <button id="btn-stock-mode-real" class="btn-secondary stock-mode-button" type="button" aria-pressed="true">
-              📦 Real
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+              Real
             </button>
             <button id="btn-stock-mode-test" class="btn-secondary stock-mode-button" type="button" aria-pressed="false">
-              🧪 Testes
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path></svg>
+              Testes
             </button>
             <span id="stock-mode-description" class="stock-mode-description">Dados sincronizados da padaria.</span>
           </div>
@@ -136,35 +149,59 @@
           <!-- Navegação em Abas do Painel Principal -->
           <nav class="app-nav-tabs" role="tablist">
             <button id="tab-nav-insumos" class="nav-tab-btn active" type="button" role="tab" aria-selected="true" aria-controls="view-insumos">
-              <span>📦 Estoque & Insumos</span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Estoque & Insumos
+              </span>
               <span id="tab-badge-insumos" class="nav-tab-badge">0</span>
             </button>
             <button id="tab-nav-fornecedores" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-fornecedores">
-              <span>🏷️ Fornecedores & preços</span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                Fornecedores & preços
+              </span>
               <span id="tab-badge-fornecedores" class="nav-tab-badge">0</span>
             </button>
             <button id="tab-nav-receitas" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-receitas">
-              <span>🥖 Receitas & Lucro</span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                Receitas & Lucro
+              </span>
               <span id="tab-badge-receitas" class="nav-tab-badge">0</span>
             </button>
             <button id="tab-nav-producoes" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-producoes">
-              <span>🔥 Produção</span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><path d="M7 12h10"></path><path d="M12 7v10"></path></svg>
+                Produção
+              </span>
               <span id="tab-badge-producoes" class="nav-tab-badge">0</span>
             </button>
             <button id="tab-nav-vendas" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-vendas">
-              <span>💰 Vendas</span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                Vendas
+              </span>
               <span id="tab-badge-vendas" class="nav-tab-badge">0</span>
             </button>
             <button id="tab-nav-pedidos" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-pedidos">
-              <span>🧾 Encomendas</span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                Encomendas
+              </span>
               <span id="tab-badge-pedidos" class="nav-tab-badge">0</span>
             </button>
             <button id="tab-nav-clientes" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-clientes">
-              <span>👥 Clientes</span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Clientes
+              </span>
               <span id="tab-badge-clientes" class="nav-tab-badge">0</span>
             </button>
             <button id="tab-nav-financeiro" class="nav-tab-btn" type="button" role="tab" aria-selected="false" aria-controls="view-financeiro">
-              <span>📊 Financeiro</span>
+              <span>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+                Financeiro
+              </span>
             </button>
           </nav>
 
@@ -188,7 +225,9 @@
             <!-- Botão para Expandir / Recolher Formulário de Insumos -->
             <div class="action-row">
               <button id="btn-toggle-form" class="btn-primary" type="button" aria-expanded="false" aria-controls="form-insumo">
-                <span id="toggle-form-icon">➕</span>
+                <span id="toggle-form-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </span>
                 <span id="toggle-form-text">Cadastrar Novo Insumo ou Embalagem</span>
               </button>
             </div>
@@ -196,8 +235,11 @@
             <!-- Formulário de Cadastro de Matéria-Prima & Embalagem -->
             <form id="form-insumo" class="card-form hidden" autocomplete="off" novalidate>
               <div class="card-header">
-                <h2 id="form-insumo-title" class="card-title">🌾 Novo Insumo ou Embalagem</h2>
-                <span style="font-size: 12px; color: var(--text-muted);">Campos obrigatórios <span style="color:var(--wheat-accent);">*</span></span>
+                <h2 id="form-insumo-title" class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                Novo Insumo ou Embalagem
+              </h2>
+                <span style="font-size: 12px; color: var(--color-text-muted);">Campos obrigatórios <span style="color:var(--color-green-dark);">*</span></span>
               </div>
 
               <!-- Grupo / Categoria do Insumo (Requisito: grupos para filtrar diferentes insumos) -->
@@ -206,9 +248,18 @@
                   Grupo / Categoria do Material <span class="req">*</span>
                 </label>
                 <select id="select-categoria-insumo" required>
-                  <option value="ingrediente" selected>🌾 Ingrediente (Farinhas, Fermentos, Manteiga, Sal, etc.)</option>
-                  <option value="embalagem">🛍️ Embalagem Descartável (Sacolas kraft/plásticas, Formas de pão, etc.)</option>
-                  <option value="outro">📦 Outros Insumos (Gás proporcional, papel manteiga, etiquetas)</option>
+                  <option value="ingrediente" selected>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Ingrediente (Farinhas, Fermentos, Manteiga, Sal, etc.)
+                  </option>
+                  <option value="embalagem">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    Embalagem Descartável (Sacolas kraft/plásticas, Formas de pão, etc.)
+                  </option>
+                  <option value="outro">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    Outros Insumos (Gás proporcional, papel manteiga, etiquetas)
+                  </option>
                 </select>
               </div>
 
@@ -377,11 +428,16 @@
               <!-- CÁLCULO AUTOMÁTICO EM TEMPO REAL -->
               <div class="auto-calc-preview" id="auto-calc-box">
                 <div class="calc-info">
-                  <span class="calc-tag">⚡ Cálculo Automático de Custo</span>
+                  <span class="calc-tag">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
+                Cálculo Automático de Custo
+              </span>
                   <span id="preview-unit-cost" class="calc-display">R$ 0,00 / kg</span>
                   <span id="preview-recipe-cost" class="calc-detail">Preencha a quantidade e o preço acima</span>
                 </div>
-                <div class="calc-icon">⚖️</div>
+                <div class="calc-icon">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+              </div>
               </div>
 
               <button id="btn-submit-insumo" class="btn-primary" type="submit">
@@ -400,13 +456,16 @@
                   Todos (<span id="count-group-todos">0</span>)
                 </button>
                 <button class="category-pill" data-group-filter="ingrediente" type="button" aria-pressed="false">
-                  🌾 Ingredientes (<span id="count-group-ingrediente">0</span>)
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                  Ingredientes (<span id="count-group-ingrediente">0</span>)
                 </button>
                 <button class="category-pill" data-group-filter="embalagem" type="button" aria-pressed="false">
-                  🛍️ Embalagens & Formas (<span id="count-group-embalagem">0</span>)
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                  Embalagens & Formas (<span id="count-group-embalagem">0</span>)
                 </button>
                 <button class="category-pill" data-group-filter="outro" type="button" aria-pressed="false">
-                  📦 Outros (<span id="count-group-outro">0</span>)
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                  Outros (<span id="count-group-outro">0</span>)
                 </button>
               </div>
             </div>
@@ -424,7 +483,9 @@
                 placeholder="Buscar insumo ou fornecedor..."
                 aria-label="Buscar insumo ou fornecedor"
               />
-              <button id="btn-clear-search" class="btn-clear-search" type="button" aria-label="Limpar busca">✕</button>
+              <button id="btn-clear-search" class="btn-clear-search" type="button" aria-label="Limpar busca">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
             </div>
 
             <!-- Cabeçalho da Listagem -->
@@ -440,7 +501,9 @@
 
             <!-- Estado Vazio (quando não há insumos) -->
             <div id="empty-state" class="empty-state hidden">
-              <div class="empty-icon">🌾</div>
+              <div class="empty-icon">
+                <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+              </div>
               <h4 id="empty-title" class="empty-title">Nenhum insumo cadastrado</h4>
               <p id="empty-desc" class="empty-desc">
                 Comece cadastrando suas farinhas, fermentos, sacolas e formas para calcular o custo das receitas.
@@ -464,7 +527,10 @@
 
             <form id="form-fornecedor" class="card-form" autocomplete="off">
               <div class="card-header">
-                <h3 id="supplier-form-title" class="card-title">🏷️ Cadastrar fornecedor</h3>
+                <h3 id="supplier-form-title" class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                Cadastrar fornecedor
+              </h3>
                 <span class="calc-detail">Fornecedores antigos aparecem na lista; cadastre-os para incluir contatos.</span>
               </div>
               <div class="form-grid-2">
@@ -539,7 +605,9 @@
             <!-- Botão Expandir / Recolher Formulário de Receita -->
             <div class="action-row">
               <button id="btn-toggle-form-receita" class="btn-primary" type="button" aria-expanded="false" aria-controls="form-receita">
-                <span id="toggle-form-receita-icon">➕</span>
+                <span id="toggle-form-receita-icon">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+              </span>
                 <span id="toggle-form-receita-text">Criar Nova Receita</span>
               </button>
             </div>
@@ -547,7 +615,10 @@
             <!-- Formulário Completo de Receita com Ingredientes, Embalagens e Lucro -->
             <form id="form-receita" class="card-form hidden" autocomplete="off">
               <div class="card-header">
-                <h2 id="form-receita-title" class="card-title">📖 Nova Receita com Custos e Lucro</h2>
+                <h2 id="form-receita-title" class="card-title">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                Nova Receita com Custos e Lucro
+              </h2>
                 <span style="font-size: 12px; color: var(--text-muted);">Cálculo automático de custos e precificação</span>
               </div>
 
@@ -618,7 +689,7 @@
                   <small>Energia, água, mão de obra e quebras</small>
                 </summary>
                 <div class="recipe-builder-box indirect-costs-box">
-                  <strong style="font-size: 13px; color: var(--wheat-deep);">Custos indiretos da fornada</strong>
+                  <strong style="font-size: 13px; color: var(--color-green-dark);">Custos indiretos da fornada</strong>
                   <span class="calc-detail">Energia e água são valores por fornada. A mão de obra usa o tempo de preparo informado na ficha técnica.</span>
                   <div class="form-grid-2">
                     <div class="form-group">
@@ -691,8 +762,9 @@
               <!-- Construtor de Itens da Receita (Ingredientes + Sacolas + Formas descartáveis) -->
               <div class="recipe-builder-box">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <strong style="font-size: 13px; color: var(--wheat-deep);">
-                    🥣 Grupos e ingredientes da receita:
+                  <strong style="font-size: 13px; color: var(--color-green-dark);">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Grupos e ingredientes da receita:
                   </strong>
                   <span style="font-size: 11px; color: var(--text-muted);">
                     Grupos reutilizáveis; ingredientes e custos pertencem a esta receita
@@ -793,11 +865,12 @@
 
                 <!-- Prévia do Custo deste Item e Botão de Adicionar -->
                 <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                  <div style="font-size: 12px; color: var(--text-secondary);">
-                    Custo deste item: <strong id="receita-item-cost-preview" style="color: var(--wheat-deep); font-size: 14px;">R$ 0,00</strong>
+                  <div style="font-size: 12px; color: var(--color-text-secondary);">
+                    Custo deste item: <strong id="receita-item-cost-preview" style="color: var(--color-green-dark); font-size: 14px;">R$ 0,00</strong>
                   </div>
                   <button id="btn-add-item-to-receita" class="btn-secondary" type="button" style="padding: 8px 12px; font-size: 12px; font-weight: 700;">
-                    ➕ Incluir na Receita
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Incluir na Receita
                   </button>
                 </div>
 
@@ -828,7 +901,10 @@
               <section class="shopping-list-panel" aria-labelledby="shopping-list-title">
                 <div class="shopping-list-heading">
                   <div>
-                    <h3 id="shopping-list-title">🛒 Lista de compras</h3>
+                    <h3 id="shopping-list-title">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                Lista de compras
+              </h3>
                     <p>Pacotes e preços do cadastro para produzir uma receita. Não desconta o estoque atual.</p>
                   </div>
                 </div>
@@ -840,23 +916,38 @@
               <!-- Banner de Totais e Discriminação de Custos -->
               <div class="recipe-totals-banner">
                 <div class="totals-banner-row">
-                  <span>🌾 Custo dos Ingredientes:</span>
+                  <span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Custo dos Ingredientes:
+                  </span>
                   <strong id="banner-custo-ingredientes">R$ 0,00</strong>
                 </div>
                 <div class="totals-banner-row">
-                  <span>🛍️ Custo das Embalagens (Sacolas + Formas):</span>
+                  <span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                    Custo das Embalagens (Sacolas + Formas):
+                  </span>
                   <strong id="banner-custo-embalagens">R$ 0,00</strong>
                 </div>
                 <div class="totals-banner-row">
-                  <span>🔥 Gás / energia:</span>
+                  <span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><path d="M7 12h10"></path><path d="M12 7v10"></path></svg>
+                    Gás / energia:
+                  </span>
                   <strong id="banner-custo-energia">R$ 0,00</strong>
                 </div>
                 <div class="totals-banner-row">
-                  <span>👩‍🍳 Mão de obra:</span>
+                  <span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    Mão de obra:
+                  </span>
                   <strong id="banner-custo-mao-de-obra">R$ 0,00</strong>
                 </div>
                 <div class="totals-banner-row">
-                  <span>💧 Água:</span>
+                  <span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"></path></svg>
+                    Água:
+                  </span>
                   <strong id="banner-custo-agua">R$ 0,00</strong>
                 </div>
                 <div class="totals-banner-row">
@@ -864,10 +955,13 @@
                   <strong id="banner-unidades-vendaveis">0</strong>
                 </div>
                 <div class="totals-banner-row main-total">
-                  <span>🍞 Custo Total da Produção:</span>
+                  <span>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                    Custo Total da Produção:
+                  </span>
                   <strong id="banner-custo-total">R$ 0,00</strong>
                 </div>
-                <div class="totals-banner-row" style="color: var(--wheat-dark); font-weight: 700; font-size: 14px;">
+                <div class="totals-banner-row" style="color: var(--color-green-dark); font-weight: 700; font-size: 14px;">
                   <span>Custo por Unidade Produzida:</span>
                   <strong id="banner-custo-unitario">R$ 0,00 / pão</strong>
                 </div>
@@ -876,7 +970,10 @@
               <!-- Calculadora de Custos e Lucro -->
               <div class="card-profit-simulator">
                 <div class="profit-sim-header">
-                  <span class="profit-sim-title">💰 Calculadora de Precificação e Lucro</span>
+                  <span class="profit-sim-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><path d="M12 6v6l4 2"></path></svg>
+                    Calculadora de Precificação e Lucro
+                  </span>
                   <span id="badge-profit-preview" class="profit-sim-badge">Margem: 100%</span>
                 </div>
 
@@ -966,7 +1063,9 @@
                 placeholder="Buscar receita, ingrediente ou preparo..."
                 aria-label="Buscar receita, ingrediente, observação ou modo de preparo"
               />
-              <button id="btn-clear-search-receitas" class="btn-clear-search" type="button" aria-label="Limpar busca">✕</button>
+              <button id="btn-clear-search-receitas" class="btn-clear-search" type="button" aria-label="Limpar busca">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+              </button>
             </div>
 
             <div class="category-pills-bar" id="recipe-category-pills" role="group" aria-label="Filtrar receitas por categoria">
@@ -986,7 +1085,9 @@
 
             <!-- Estado Vazio de Receitas -->
             <div id="empty-state-receitas" class="empty-state hidden">
-              <div class="empty-icon">📖</div>
+              <div class="empty-icon">
+                <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted);"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+              </div>
               <h4 id="empty-title-receitas" class="empty-title">Nenhuma receita cadastrada</h4>
               <p id="empty-desc-receitas" class="empty-desc">
                 Crie receitas personalizadas combinando seus ingredientes e sacolas/formas para calcular custos e margem de lucro.
@@ -1024,7 +1125,7 @@
                 </div>
 
                 <div class="recipe-builder-box">
-                  <strong style="font-size: 13px; color: var(--wheat-deep);">Materiais do grupo</strong>
+                  <strong style="font-size: 13px; color: var(--color-green-dark);">Materiais do grupo</strong>
                   <div class="form-grid-2">
                     <div class="form-group">
                       <label class="form-label" for="recipe-group-template-material">Insumo, embalagem ou material</label>
@@ -1073,7 +1174,9 @@
 
               <div id="recipe-group-templates-list" class="insumos-list"></div>
               <div id="recipe-group-templates-empty" class="empty-state">
-                <div class="empty-icon">🧺</div>
+                <div class="empty-icon">
+                  <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted);"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+                </div>
                 <h3 class="empty-title">Nenhum grupo cadastrado</h3>
                 <p class="empty-desc">Crie um grupo com seus materiais para reutilizá-lo em diferentes receitas.</p>
               </div>
@@ -1091,7 +1194,9 @@
             <div id="producoes-filters" class="filtro-lista-container"></div>
             <div id="producoes-container" class="production-record-list"></div>
             <div id="empty-state-producoes" class="empty-state hidden">
-              <div class="empty-icon">🔥</div>
+              <div class="empty-icon">
+                <svg width="54" height="54" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-text-muted);"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><path d="M7 12h10"></path><path d="M12 7v10"></path></svg>
+              </div>
               <h4 class="empty-title">Nenhuma produção registrada</h4>
               <p class="empty-desc">Registre uma fornada pela aba de receitas para acompanhar a baixa de estoque e o custo real.</p>
               <button id="btn-producoes-ver-receitas" class="btn-primary" type="button">Ir para receitas</button>
@@ -1328,15 +1433,24 @@
 
             <div class="module-metrics">
               <section class="module-record-card finance-section">
-                <h3>🏆 Produtos mais lucrativos</h3>
+                <h3>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                  Produtos mais lucrativos
+                </h3>
                 <div id="finance-top-profitable" class="finance-ranking"></div>
               </section>
               <section class="module-record-card finance-section">
-                <h3>🔥 Produtos mais vendidos</h3>
+                <h3>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><path d="M7 12h10"></path><path d="M12 7v10"></path></svg>
+                  Produtos mais vendidos
+                </h3>
                 <div id="finance-top-selling" class="finance-ranking"></div>
               </section>
               <section class="module-record-card finance-section">
-                <h3>🌾 Insumos que mais pesam no custo</h3>
+                <h3>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                Insumos que mais pesam no custo
+              </h3>
                 <div id="finance-top-ingredients" class="finance-ranking"></div>
               </section>
             </div>
@@ -1412,13 +1526,39 @@
           </section>
 
         </main>
+
+      <!-- Bottom Navigation (Mobile) -->
+      <nav class="bottom-nav" role="navigation" aria-label="Navegação principal">
+        <button class="bottom-nav-item active" data-tab="insumos" type="button" aria-label="Estoque e Insumos" aria-selected="true">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
+          <span>Insumos</span>
+        </button>
+        <button class="bottom-nav-item" data-tab="fornecedores" type="button" aria-label="Fornecedores" aria-selected="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
+          <span>Fornecedores</span>
+        </button>
+        <button class="bottom-nav-item" data-tab="receitas" type="button" aria-label="Receitas" aria-selected="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+          <span>Receitas</span>
+        </button>
+        <button class="bottom-nav-item" data-tab="producoes" type="button" aria-label="Produção" aria-selected="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path><path d="M7 12h10"></path><path d="M12 7v10"></path></svg>
+          <span>Produção</span>
+        </button>
+        <button class="bottom-nav-item" data-tab="vendas" type="button" aria-label="Vendas" aria-selected="false">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><polyline points="19 12 12 19 5 12"></polyline></svg>
+          <span>Vendas</span>
+        </button>
+      </nav>
+
       </section>
 
       <!-- ================= MODAL DE ADICIONAR ITEM A RECEITA EXISTENTE ================= -->
       <div id="modal-add-item-receita" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-add-item-title">
         <div class="modal-box" style="max-width: 440px;">
-          <h3 id="modal-add-item-title" class="modal-title" style="color: var(--wheat-deep);">
-            ➕ Adicionar Item à Receita
+          <h3 id="modal-add-item-title" class="modal-title" style="color: var(--color-text-primary);">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+            Adicionar Item à Receita
           </h3>
           <p class="modal-desc" style="font-size: 13px;">
             Acrescente um ingrediente ou embalagem descartável a <strong id="modal-add-item-receita-name">esta receita</strong>. Os custos e o lucro serão recalculados e salvos automaticamente.
@@ -1457,9 +1597,9 @@
             </div>
           </div>
 
-          <div style="background: #FAF5EE; border-radius: 6px; padding: 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+          <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
             <span>Custo a somar na receita:</span>
-            <strong id="modal-add-cost-preview" style="color: var(--wheat-deep); font-size: 15px;">R$ 0,00</strong>
+            <strong id="modal-add-cost-preview" style="color: var(--color-green-dark); font-size: 15px;">R$ 0,00</strong>
           </div>
 
           <div class="modal-actions" style="margin-top: 6px;">
@@ -1594,7 +1734,10 @@
       <!-- ================= MODAL DE CONFIGURAÇÃO FIREBASE ================= -->
       <div id="config-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-config-title">
         <div class="modal-box" style="max-width: 440px;">
-          <h3 id="modal-config-title" class="modal-title">⚙️ Conexão Firebase</h3>
+          <h3 id="modal-config-title" class="modal-title">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+            Conexão Firebase
+          </h3>
           <p class="modal-desc" style="font-size: 13px;">
             Insira suas credenciais do Firebase Console (ou deixe vazio para usar o modo de teste rápido):
           </p>
@@ -1624,42 +1767,47 @@
       <!-- ================= MODAL DE DOMÍNIO NÃO AUTORIZADO NO FIREBASE ================= -->
       <div id="unauthorized-domain-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-unauth-title">
         <div class="modal-box" style="max-width: 440px;">
-          <div style="font-size: 38px; text-align: center;" aria-hidden="true">🔐</div>
-          <h3 id="modal-unauth-title" class="modal-title" style="text-align: center; color: var(--wheat-deep);">
+          <div style="font-size: 38px; text-align: center;" aria-hidden="true">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-green-dark);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <h3 id="modal-unauth-title" class="modal-title" style="text-align: center; color: var(--color-text-primary);">
             Configuração do login Google
           </h3>
           <p class="modal-desc" style="font-size: 13px; text-align: left; line-height: 1.5;">
             Para entrar com Google neste site, habilite o provedor Google e cadastre o domínio abaixo em <strong>Domínios autorizados</strong> no Firebase Console. No GitHub Pages, use apenas o domínio, sem protocolo ou caminho do repositório.
           </p>
           
-          <div style="background: #FDF6EC; border: 1.5px dashed var(--wheat-gold); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
-            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--wheat-dark);">Domínio para Autorizar:</span>
+          <div style="background: var(--color-surface); border: 1.5px dashed var(--color-green-dark); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
+            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-green-dark);">Domínio para Autorizar:</span>
             <div style="display: flex; gap: 6px;">
-              <input id="input-unauth-domain" type="text" readonly style="height: 38px; font-size: 12px; font-weight: 600; background: #FFF; border: 1px solid var(--border-color); flex: 1;" />
+              <input id="input-unauth-domain" type="text" readonly style="height: 38px; font-size: 12px; font-weight: 600; background: var(--color-card); border: 1px solid var(--color-border); color: var(--color-text-primary); flex: 1;" />
               <button id="btn-copy-unauth-domain" class="btn-primary" style="padding: 0 14px; font-size: 12px; white-space: nowrap;" type="button">
-                📋 Copiar
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                Copiar
               </button>
             </div>
           </div>
 
-          <div style="background: #FFFDF9; border: 1px solid var(--border-color); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--text-secondary); text-align: left; display: flex; flex-direction: column; gap: 6px;">
-            <strong style="color: var(--wheat-deep);">Como liberar o acesso:</strong>
+          <div style="background: var(--color-card); border: 1px solid var(--color-border); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--color-text-secondary); text-align: left; display: flex; flex-direction: column; gap: 6px;">
+            <strong style="color: var(--color-text-primary);">Como liberar o acesso:</strong>
             <span>1. Em <strong>Authentication</strong> &gt; <strong>Sign-in method</strong>, habilite o provedor <strong>Google</strong>.</span>
             <span>2. Em <strong>Authentication</strong> &gt; <strong>Settings</strong> &gt; <strong>Authorized domains</strong>, adicione <strong>alissonxavier0101-dotcom.github.io</strong>.</span>
             <span>3. O domínio não inclui <strong>https://</strong> nem <strong>/Padaria-Software/</strong>. Salve e tente entrar novamente.</span>
           </div>
 
-          <div role="note" style="background: #FFF8E9; border: 1px solid #E8D6B6; border-radius: 8px; padding: 12px; font-size: 12px; color: var(--text-secondary); text-align: left; line-height: 1.5;">
-            <strong style="color: var(--wheat-deep);">Só uma conta consegue entrar?</strong>
+          <div role="note" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--color-text-secondary); text-align: left; line-height: 1.5;">
+            <strong style="color: var(--color-text-primary);">Só uma conta consegue entrar?</strong>
             <span>Isso normalmente depende do público do app OAuth, não do domínio do site. No Google Cloud Console, abra <strong>Google Auth Platform &gt; Público-alvo</strong>. Se o app estiver em <strong>Teste</strong>, somente os e-mails cadastrados como usuários de teste podem autenticar. Adicione os usuários autorizados ou publique o app. Em contas Google Workspace, o administrador da organização também pode precisar permitir o app.</span>
           </div>
 
           <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
             <a id="link-firebase-console" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/authentication/settings" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 13px; text-decoration: none; padding: 11px; text-align: center; font-weight: 700;">
-              🔗 Abrir Configurações do Firebase Console ↗
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              Abrir Configurações do Firebase Console
             </a>
             <a href="https://console.cloud.google.com/auth/audience?project=padaria-sistema-6a6b4" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 13px; text-decoration: none; padding: 11px; text-align: center; font-weight: 700;">
-              🔗 Ver público-alvo do OAuth no Google Cloud ↗
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+              Ver público-alvo do OAuth no Google Cloud
             </a>
             <button id="btn-close-unauth-modal" class="btn-modal-cancel" style="width: 100%; text-align: center;" type="button">
               Fechar
@@ -1671,15 +1819,17 @@
       <!-- ================= MODAL DE REGRAS DO FIRESTORE ================= -->
       <div id="firestore-rules-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-rules-title">
         <div class="modal-box" style="max-width: 440px;">
-          <div style="font-size: 38px; text-align: center;" aria-hidden="true">🔒</div>
-          <h3 id="modal-rules-title" class="modal-title" style="text-align: center; color: var(--wheat-deep);">
+          <div style="font-size: 38px; text-align: center;" aria-hidden="true">
+            <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-green-dark);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+          </div>
+          <h3 id="modal-rules-title" class="modal-title" style="text-align: center; color: var(--color-text-primary);">
             Permissão do Firestore
           </h3>
           <p class="modal-desc" style="font-size: 13px; text-align: left; line-height: 1.5;">
             Publique o arquivo <code>firestore.rules</code> deste projeto no Firebase Console. Ele contém regras autenticadas e validações para insumos, receitas, grupos de ingredientes e registros de produção.
           </p>
 
-          <div role="note" style="background: #F2F8F5; border: 1px solid #D4E8DE; border-radius: 8px; padding: 10px 12px; color: #245345; font-size: 12px;">
+          <div role="note" style="background: rgba(5, 150, 105, 0.1); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 8px; padding: 10px 12px; color: var(--color-green-dark); font-size: 12px;">
             Não substitua as regras por acesso público. Depois de publicar, tente novamente.
           </div>
 

@@ -494,7 +494,10 @@ export function prepararNovoFornecedor(nome = '') {
         setEditingFornecedorId(null);
         dom.formFornecedor.reset();
         dom.inputNomeFornecedor.value = nome;
-        dom.supplierFormTitle.textContent = '🏷️ Cadastrar fornecedor';
+        dom.supplierFormTitle.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+                Cadastrar fornecedor
+              `;
         dom.btnSubmitSupplier.textContent = 'Salvar fornecedor';
         dom.btnCancelEditSupplier.classList.add('hidden');
       }
@@ -507,7 +510,10 @@ export function abrirEdicaoFornecedor(id) {
         dom.inputTelefoneFornecedor.valorTelefone = fornecedor.telefone || '';
         dom.inputEmailFornecedor.value = fornecedor.email || '';
         dom.inputObservacaoFornecedor.value = fornecedor.observacoes || '';
-        dom.supplierFormTitle.textContent = '✏️ Editar fornecedor';
+        dom.supplierFormTitle.innerHTML = `
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"></path></svg>
+                Editar fornecedor
+              `;
         dom.btnSubmitSupplier.textContent = 'Salvar alterações';
         dom.btnCancelEditSupplier.classList.remove('hidden');
         dom.inputNomeFornecedor.focus();
