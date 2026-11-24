@@ -584,11 +584,18 @@ textarea {
   display: flex;
   flex-direction: column;
   gap: 12px;
-  background: linear-gradient(135deg, var(--color-blue-dark), var(--color-blue-dark-hover));
+  background: var(--color-blue-dark);
   color: var(--color-text-on-accent);
   border: 1px solid var(--color-blue-dark-active);
   border-radius: var(--radius-md);
   box-shadow: var(--shadow-md);
+}
+
+.insumo-card .insumo-values,
+.insumo-card .stock-level-card,
+.insumo-card .insumo-unit-badge,
+.insumo-card .insumo-footer {
+  border-top: 1px solid var(--color-blue-border);
 }
 
 .insumo-top {
