@@ -62,38 +62,38 @@
             </svg>
             <span id="login-google-text">Entrar com Google</span>
           </button>
-          <button id="btn-login-google-redirect" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px;" type="button">
+          <button id="btn-login-google-redirect" class="btn-secondary btn-block" style="font-size: 13px;" type="button">
             Problemas com a janela? Continuar com Google
           </button>
 
-          <div style="display: flex; align-items: center; gap: 10px; width: 100%; margin: 4px 0; color: var(--color-text-muted); font-size: 12px;">
-            <span style="height: 1px; flex: 1; background: var(--color-border);"></span>
+          <div class="form-divider">
+            <span class="divider-line"></span>
             <span>ou entre com usuário e senha</span>
-            <span style="height: 1px; flex: 1; background: var(--color-border);"></span>
+            <span class="divider-line"></span>
           </div>
-          <form id="form-login-password" style="display: flex; flex-direction: column; gap: 10px; width: 100%;">
+          <form id="form-login-password" class="form-login" autocomplete="off">
             <label for="login-identifier" class="form-label">Usuário ou e-mail</label>
             <input id="login-identifier" name="username" type="text" autocomplete="username" placeholder="robakery ou seu e-mail" required />
             <label for="login-password" class="form-label">Senha</label>
             <input id="login-password" name="password" type="password" autocomplete="current-password" required />
-            <button id="btn-login-password" class="btn-primary" style="width: 100%; padding: 12px;" type="submit">Entrar</button>
+            <button id="btn-login-password" class="btn-primary btn-block" type="submit">Entrar</button>
           </form>
 
-          <div style="display: flex; gap: 8px; width: 100%;">
-            <button id="btn-open-config" class="btn-secondary" style="flex: 1; font-size: 12px; padding: 10px;" type="button">
+          <div class="form-actions-flex">
+            <button id="btn-open-config" class="btn-secondary btn-flex-1" type="button">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
               Conexão Firebase
             </button>
-            <button id="btn-help-domain" class="btn-secondary" style="flex: 1; font-size: 12px; padding: 10px;" type="button">
+            <button id="btn-help-domain" class="btn-secondary btn-flex-1" type="button">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
               Ajuda para entrar
             </button>
           </div>
 
           <!-- Identificador de domínio atual para o Firebase -->
-          <div id="domain-helper-box" style="font-size: 11px; color: var(--color-text-muted); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 6px 10px; width: 100%; display: flex; align-items: center; justify-content: space-between;">
-            <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 280px;">Domínio: <code id="label-current-domain" style="font-weight: 600; color: var(--color-green-dark);">...</code></span>
-            <button id="btn-copy-quick-domain" type="button" style="background: none; border: none; color: var(--color-green-dark); font-weight: 700; cursor: pointer; font-size: 11px; flex-shrink: 0;">Copiar</button>
+          <div id="domain-helper-box" class="domain-helper-box">
+            <span class="truncate" style="max-width: 280px;">Domínio: <code id="label-current-domain" style="font-weight: 600; color: var(--color-green-dark);">...</code></span>
+            <button id="btn-copy-quick-domain" class="btn-copy" type="button">Copiar</button>
           </div>
 
           <p class="auth-footer-notice">
@@ -129,7 +129,7 @@
         <!-- Faixa de Sincronização da Padaria -->
         <div class="bakery-badge-strip">
           <span><i class="sync-dot"></i> <strong id="sync-status-label">Firestore em Tempo Real</strong></span>
-          <span id="provider-badge-label" style="font-size: 11px; background: var(--color-card); padding: 2px 8px; border-radius: 99px; border: 1px solid var(--color-border);">Padaria Ativa</span>
+          <span id="provider-badge-label" class="provider-badge">Padaria Ativa</span>
         </div>
 
         <main class="app-content">
@@ -239,7 +239,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path><polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline><line x1="12" y1="22.08" x2="12" y2="12"></line></svg>
                 Novo Insumo ou Embalagem
               </h2>
-                <span style="font-size: 12px; color: var(--color-text-muted);">Campos obrigatórios <span style="color:var(--color-green-dark);">*</span></span>
+                <span class="required-field">Campos obrigatórios <span class="req">*</span></span>
               </div>
 
               <!-- Grupo / Categoria do Insumo (Requisito: grupos para filtrar diferentes insumos) -->
@@ -573,9 +573,9 @@
                   <p class="section-subtitle">Pesquise o ingrediente que deseja comparar. Os produtos são comparados quando compartilham o mesmo ingrediente equivalente e unidade compatível.</p>
                 </div>
               </div>
-              <div style="margin-bottom: 16px;">
+              <div class="form-group mt-8">
                 <label for="price-comparison-search"><strong>Pesquisar ingrediente</strong></label>
-                <input id="price-comparison-search" type="search" placeholder="Digite o nome do ingrediente..." style="margin-top: 8px;">
+                <input id="price-comparison-search" type="search" placeholder="Digite o nome do ingrediente..." class="search-input">
               </div>
               <div id="price-comparison-container"></div>
             </section>
