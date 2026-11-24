@@ -137,9 +137,17 @@ export function iniciarListenerReceitas() {
             });
 
             setCachedReceitas(receitas);
-            atualizarSelectsInsumosParaReceitas();
-            atualizarSelectProdutos();
-            renderizarReceitas();
+            try {
+              atualizarSelectsInsumosParaReceitas();
+              atualizarSelectProdutos();
+            } catch (selectError) {
+              console.error('Falha ao atualizar selects de receitas:', selectError);
+            }
+            try {
+              renderizarReceitas();
+            } catch (renderError) {
+              console.error('Falha ao renderizar lista de receitas:', renderError);
+            }
             renderizarFinanceiro();
             if (dom.syncStatusLabel) {
               dom.syncStatusLabel.textContent = `Firestore: ${cachedInsumos.length} insumos • ${receitas.length} receitas`;

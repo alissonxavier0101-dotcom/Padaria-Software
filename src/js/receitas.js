@@ -1490,7 +1490,9 @@ export function renderizarReceitas() {
 
   dom.emptyStateReceitas.classList.add('hidden');
 
-  const html = filtradas.map(rec => {
+  let html = '';
+  try {
+    html = filtradas.map(rec => {
     const rendimentoTexto = `Rende ${rec.rendimento} ${rec.rendimentoUnidade || 'pães'}`;
     const categoriaNome = obterNomeCategoria(categorias, rec.categoria);
     const gruposEItens = obterGruposEItensReceita(rec);
@@ -1800,10 +1802,19 @@ export function renderizarReceitas() {
           <span>${rec.createdAt ? (new Date(rec.createdAt?.toDate ? rec.createdAt.toDate() : rec.createdAt)).toLocaleDateString('pt-BR') : 'Hoje'}</span>
         </div>
       </article>
-    `;
+      `;
   }).join('');
+  } catch (error) {
+    console.error('Erro ao renderizar lista de receitas:', error);
+    html = `<div class="receita-card" style="grid-column: 1 / -1; text-align: center; padding: 24px; color: var(--color-text-primary); border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-card);"><strong>Erro ao renderizar as receitas.</strong> <button type="button" id="btn-retry-render-receitas" class="btn-primary mt-3">Tentar novamente</button></div>`;
+  }
 
   dom.receitasContainer.innerHTML = html;
+
+  const btnRetry = document.getElementById('btn-retry-render-receitas');
+  if (btnRetry) {
+    btnRetry.addEventListener('click', renderizarReceitas);
+  }
 }
 
 export async function salvarNovoPrecoReceita(receitaId, novoPreco) {
