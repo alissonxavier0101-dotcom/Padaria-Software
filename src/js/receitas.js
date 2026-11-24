@@ -1668,7 +1668,7 @@ export function renderizarReceitas() {
           </div>
           <div class="cost-split-tag">
             <span>Total:</span>
-            <strong style="color: var(--color-green-dark);">${formatarMoeda(rec.custoTotal, 2)}</strong>
+            <strong style="color: var(--color-green-text);">${formatarMoeda(rec.custoTotal, 2)}</strong>
           </div>
         </div>
         <div class="cost-split-row" style="flex-wrap: wrap; gap: 8px;">
