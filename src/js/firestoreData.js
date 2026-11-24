@@ -476,7 +476,7 @@ export function renderizarComparativoIngredientes() {
             ${group.offers.map((entry, index) => {
               const offer = entry.offer;
               const supplier = obterFornecedorDoInsumo(offer);
-              return `<div class="insumo-values" style="margin-top: 8px; ${index === 0 ? 'border: 1px solid var(--color-green-dark);' : ''}">
+              return `<div class="insumo-values mt-2 ${index === 0 ? 'border border-green-dark' : ''}">`;
                 <div class="value-item">
                   <span class="value-caption">${index === 0 ? '⭐ Menor custo' : 'Oferta'}</span>
                   <span class="value-text">${escapeHtml(offer.nome)}${offer.marca ? ` · ${escapeHtml(offer.marca)}` : ''}</span>

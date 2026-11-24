@@ -121,15 +121,15 @@ export function renderizarResultadosBuscaInsumosReceita() {
     .filter(option => correspondeBusca(consulta, [option.textContent || '']));
 
   if (options.length === 0) {
-    dom.receitaItemResultados.innerHTML = '<div role="status" style="padding: 10px 12px; color: var(--color-text-muted); font-size: 13px;">Nenhum material encontrado.</div>';
+    dom.receitaItemResultados.innerHTML = '<div role="status" class="p-3 text-muted text-sm">Nenhum material encontrado.</div>';
   } else {
     dom.receitaItemResultados.innerHTML = options.map(option => {
       const group = option.parentElement?.tagName === 'OPTGROUP'
         ? option.parentElement.label
         : 'Material';
-      return `<button type="button" role="option" aria-selected="false" data-recipe-material-value="${escapeHtml(option.value)}" style="display: block; width: 100%; padding: 9px 12px; border: 0; border-bottom: 1px solid var(--color-border); background: var(--color-card); color: var(--color-text-primary); text-align: left; cursor: pointer;">
-        <span style="display: block; color: var(--color-text-muted); font-size: 10px;">${escapeHtml(group)}</span>
-        <span style="font-size: 13px;">${escapeHtml(option.textContent || '')}</span>
+      return `<button type="button" role="option" aria-selected="false" data-recipe-material-value="${escapeHtml(option.value)}" class="w-full px-3 py-2 text-left cursor-pointer border-0 border-b border-border bg-card text-primary text-sm">
+        <span class="block text-muted text-xs">${escapeHtml(group)}</span>
+        <span class="text-sm">${escapeHtml(option.textContent || "")}</span>
       </button>`;
     }).join('');
   }
@@ -299,7 +299,7 @@ export function prepararNovoGrupoModelo() {
 
 export function renderizarItensGrupoModelo() {
   if (!itensGrupoModeloEmEdicao.length) {
-    dom.recipeGroupTemplateItems.innerHTML = '<tr><td colspan="5" style="text-align: center; color: var(--color-text-muted); padding: 12px;">Nenhum material no grupo.</td></tr>';
+    dom.recipeGroupTemplateItems.innerHTML = '<tr><td colspan="5" class="text-center text-muted py-3">Nenhum material no grupo.</td></tr>';
     return;
   }
   dom.recipeGroupTemplateItems.innerHTML = itensGrupoModeloEmEdicao.map((item, index) => `
@@ -757,7 +757,7 @@ export function renderizarItensReceitaEmElaboracao() {
   if (itensReceitaEmElaboracao.length === 0) {
     dom.tbodyDraftReceitaItens.innerHTML = `
       <tr>
-        <td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 12px;">
+        <td colspan="6" class="text-center text-muted py-3">
           Nenhum ingrediente ou embalagem adicionado ainda.
         </td>
       </tr>
@@ -850,7 +850,7 @@ export function gerarHtmlListaComprasReceita(itens, receitas, insumos) {
         <span class="shopping-list-item-total">
           Comprar: ${item.pacotesNecessarios} ${item.pacotesNecessarios === 1 ? 'pacote' : 'pacotes'}
           • ${formatarMoeda(item.custoCompra, 2)}
-          <span style="font-weight: 500; color: var(--color-text-secondary);">
+          <span class="font-medium text-secondary">
             (custo proporcional usado: ${formatarMoeda(item.custoProporcional, 2)})
           </span>
         </span>
@@ -1697,7 +1697,7 @@ export function renderizarReceitas() {
         </div>
         <div class="receita-items-preview">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <strong style="font-size: 11px; text-transform: uppercase; color: var(--color-text-secondary); letter-spacing: 0.5px;">
+            <strong class="text-xs uppercase text-secondary tracking-wider">
               Itens da Receita (${itens.length}):
             </strong>
             <div style="display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px;">
@@ -1708,7 +1708,7 @@ export function renderizarReceitas() {
                 data-recipe-id="${escapeHtml(rec.id)}"
                 aria-controls="recipe-ingredients-${escapeHtml(rec.id)}"
                 aria-expanded="${!ingredientesRecolhidos}"
-                style="padding: 4px 8px; font-size: 11px; font-weight: 700;"
+                class="px-2 py-1 text-xs font-bold"
               >
                 ${ingredientesRecolhidos ? '＋ Maximizar' : '− Minimizar'}
               </button>
@@ -1717,7 +1717,7 @@ export function renderizarReceitas() {
                 class="btn-secondary"
                 data-add-item-rec-id="${rec.id}"
                 data-add-item-rec-name="${escapeHtml(rec.nome)}"
-                style="padding: 4px 8px; font-size: 11px; font-weight: 700;"
+                class="px-2 py-1 text-xs font-bold"
               >
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                 Adicionar Novo Item
@@ -1745,7 +1745,7 @@ export function renderizarReceitas() {
               data-recipe-id="${escapeHtml(rec.id)}"
               aria-controls="recipe-shopping-${escapeHtml(rec.id)}"
               aria-expanded="${!comprasRecolhidas}"
-              style="padding: 4px 8px; font-size: 11px; font-weight: 700; flex-shrink: 0;"
+              class="px-2 py-1 text-xs font-bold flex-shrink-0"
             >
               ${comprasRecolhidas ? '＋ Maximizar' : '− Minimizar'}
             </button>
@@ -1776,7 +1776,7 @@ export function renderizarReceitas() {
           </div>
           <div class="profit-sim-controls">
             <div class="profit-input-wrap">
-              <span style="font-size: 12px; font-weight: 700; color: var(--color-green-dark); margin-right: 4px;">R$</span>
+              <span class="text-sm font-bold text-green-dark mr-2">R$</span>
               <input
                 type="number"
                 step="0.50"

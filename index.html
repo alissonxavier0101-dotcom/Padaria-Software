@@ -62,7 +62,7 @@
             </svg>
             <span id="login-google-text">Entrar com Google</span>
           </button>
-          <button id="btn-login-google-redirect" class="btn-secondary btn-block" style="font-size: 13px;" type="button">
+          <button id="btn-login-google-redirect" class="btn-secondary btn-block text-sm" type="button">
             Problemas com a janela? Continuar com Google
           </button>
 
@@ -92,7 +92,7 @@
 
           <!-- Identificador de domínio atual para o Firebase -->
           <div id="domain-helper-box" class="domain-helper-box">
-            <span class="truncate" style="max-width: 280px;">Domínio: <code id="label-current-domain" style="font-weight: 600; color: var(--color-green-dark);">...</code></span>
+            <span class="truncate max-w-[280px]">Domínio: <code id="label-current-domain" class="font-semibold text-green-dark">...</code></span>
             <button id="btn-copy-quick-domain" class="btn-copy" type="button">Copiar</button>
           </div>
 
@@ -324,9 +324,7 @@
                   <select id="input-fornecedor" required>
                     <option value="">Cadastre ou selecione um fornecedor...</option>
                   </select>
-                  <button id="btn-manage-suppliers" class="btn-secondary" type="button" style="margin-top: 6px; padding: 7px 10px; font-size: 12px;">
-                    Gerenciar fornecedores e contatos
-                  </button>
+                  <button id="btn-manage-suppliers" class="btn-secondary btn-sm" type="button">Gerenciar fornecedores e contatos</button>
                 </div>
               </div>
 
@@ -447,10 +445,8 @@
             </form>
 
             <!-- Grupos para Filtrar Diferentes Insumos e Ingredientes -->
-            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
-              <span style="font-size: 11px; font-weight: 700; color: var(--color-text-secondary); text-transform: uppercase; letter-spacing: 0.5px;">
-                Filtrar por Grupo:
-              </span>
+            <div class="form-group mb-8">
+                <label class="text-secondary text-sm font-bold uppercase tracking-wider">Filtrar por Grupo:</label>
               <div class="category-pills-bar" id="category-pills-container" role="group" aria-label="Filtrar insumos por grupo">
                 <button class="category-pill active" data-group-filter="todos" type="button" aria-pressed="true">
                   Todos (<span id="count-group-todos">0</span>)
@@ -508,9 +504,7 @@
               <p id="empty-desc" class="empty-desc">
                 Comece cadastrando suas farinhas, fermentos, sacolas e formas para calcular o custo das receitas.
               </p>
-              <button id="btn-empty-add" class="btn-primary" type="button" style="margin-top: 6px;">
-                Cadastrar Primeiro Insumo
-              </button>
+              <button id="btn-empty-add" class="btn-primary mt-6" type="button">Cadastrar Primeiro Insumo</button>
               <button id="btn-empty-clear-filters" class="btn-secondary hidden" type="button">Limpar filtros</button>
             </div>
           </div>
@@ -619,7 +613,7 @@
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
                 Nova Receita com Custos e Lucro
               </h2>
-                <span style="font-size: 12px; color: var(--color-text-muted);">Cálculo automático de custos e precificação</span>
+                <span class="text-muted text-sm">Cálculo automático de custos e precificação</span>
               </div>
 
               <!-- Nome da Receita -->
@@ -689,8 +683,8 @@
                   <small>Energia, água, mão de obra e quebras</small>
                 </summary>
                 <div class="recipe-builder-box indirect-costs-box">
-                  <strong style="font-size: 13px; color: var(--color-green-dark);">Custos indiretos da fornada</strong>
-                  <span class="calc-detail">Energia e água são valores por fornada. A mão de obra usa o tempo de preparo informado na ficha técnica.</span>
+                  <strong class="text-green-dark text-sm">Custos indiretos da fornada</strong>
+                  <span class="calc-detail">Energia e água são valores por fornada. A mão de obra usa o tempo de preparo informado na ficha técnica.</span>span>
                   <div class="form-grid-2">
                     <div class="form-group">
                       <label for="input-custo-energia" class="form-label">Gás / energia por fornada (R$)</label>
@@ -761,14 +755,12 @@
 
               <!-- Construtor de Itens da Receita (Ingredientes + Sacolas + Formas descartáveis) -->
               <div class="recipe-builder-box">
-                <div style="display: flex; align-items: center; justify-content: space-between;">
-                  <strong style="font-size: 13px; color: var(--color-green-dark);">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 6px;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
+                <div class="flex items-center justify-between gap-4">
+                  <strong class="text-green-dark text-sm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>
                     Grupos e ingredientes da receita:
                   </strong>
-                  <span style="font-size: 11px; color: var(--color-text-muted);">
-                    Grupos reutilizáveis; ingredientes e custos pertencem a esta receita
-                  </span>
+                  <span class="text-muted text-xs">Grupos reutilizáveis; ingredientes e custos pertencem a esta receita</span>
                 </div>
 
                 <fieldset class="recipe-group-choice">
@@ -788,24 +780,24 @@
                     </label>
                   </div>
                   <div id="recipe-group-existing-panel" class="form-group hidden">
-                    <label for="select-grupo-catalogo-receita" class="form-label" style="font-size: 12px;">Grupo cadastrado</label>
-                    <div style="display: flex; gap: 8px;">
-                      <select id="select-grupo-catalogo-receita" style="min-width: 0; flex: 1;">
+                    <label for="select-grupo-catalogo-receita" class="form-label text-sm">Grupo cadastrado</label>
+                    <div class="flex gap-2">
+                      <select id="select-grupo-catalogo-receita" class="flex-1 min-w-0">
                         <option value="">Selecione um grupo cadastrado...</option>
                       </select>
-                      <button id="btn-usar-grupo-receita" class="btn-secondary" type="button" style="padding: 8px 12px; white-space: nowrap;">Usar grupo</button>
+                      <button id="btn-usar-grupo-receita" class="btn-secondary whitespace-nowrap" type="button">Usar grupo</button>
                     </div>
                   </div>
                   <div id="recipe-group-new-panel" class="form-group hidden">
-                    <label for="input-novo-grupo-receita" class="form-label" style="font-size: 12px;">Nome do novo grupo</label>
-                    <div style="display: flex; gap: 8px;">
+                    <label for="input-novo-grupo-receita" class="form-label text-sm">Nome do novo grupo</label>
+                    <div class="flex gap-2">
                       <input id="input-novo-grupo-receita" type="text" maxlength="60" placeholder="Ex: Massa base, Recheio de frango..." />
-                      <button id="btn-add-grupo-receita" class="btn-secondary" type="button" style="padding: 8px 12px; white-space: nowrap;">Criar grupo</button>
+                      <button id="btn-add-grupo-receita" class="btn-secondary whitespace-nowrap" type="button">Criar grupo</button>
                     </div>
                   </div>
                 </fieldset>
                 <div class="form-group">
-                  <label for="receita-item-grupo" class="form-label" style="font-size: 12px;">Destino do próximo ingrediente</label>
+                  <label for="receita-item-grupo" class="form-label text-sm">Destino do próximo ingrediente</label>
                   <select id="receita-item-grupo"></select>
                 </div>
                 <span class="calc-detail">Os grupos reutilizam apenas o nome; ingredientes e custos são exclusivos de cada receita. Itens avulsos ficam separados.</span>
@@ -813,7 +805,7 @@
 
                 <!-- Seletor de Insumo Cadastrado -->
                 <div class="form-group">
-                  <label for="receita-item-busca" class="form-label" style="font-size: 12px;">
+                  <label for="receita-item-busca" class="form-label text-sm">Escolha a Matéria-Prima ou Embalagem:</label>
                     Escolha a Matéria-Prima ou Embalagem:
                   </label>
                   <input
@@ -826,7 +818,7 @@
                     placeholder="Digite para buscar um material..."
                     autocomplete="off"
                   />
-                  <div id="receita-item-resultados" class="hidden" role="listbox" aria-label="Materiais disponíveis" style="max-height: 220px; overflow-y: auto; margin-top: 4px; border: 1px solid var(--color-border); border-radius: 8px; background: var(--color-card);"></div>
+                  <div id="receita-item-resultados" class="hidden" role="listbox" aria-label="Materiais disponíveis" class="max-h-56 overflow-y-auto border border-border rounded-lg bg-card mt-2">
                   <select id="receita-item-insumo" class="hidden" aria-hidden="true" tabindex="-1">
                     <option value="">Selecione um insumo cadastrado...</option>
                   </select>
@@ -835,7 +827,7 @@
                 <!-- Quantidade e Unidade de Uso -->
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label for="receita-item-quantidade" class="form-label" style="font-size: 12px;">
+                    <label for="receita-item-quantidade" class="form-label text-sm">Quantidade Usada:</label>
                       Quantidade Usada:
                     </label>
                     <input
@@ -847,7 +839,7 @@
                     />
                   </div>
                   <div class="form-group">
-                    <label for="receita-item-unidade" class="form-label" style="font-size: 12px;">
+                    <label for="receita-item-unidade" class="form-label text-sm">Unidade Usada:</label>
                       Unidade Usada:
                     </label>
                     <select id="receita-item-unidade">
@@ -864,18 +856,18 @@
                 </div>
 
                 <!-- Prévia do Custo deste Item e Botão de Adicionar -->
-                <div style="display: flex; align-items: center; justify-content: space-between; gap: 8px;">
-                  <div style="font-size: 12px; color: var(--color-text-secondary);">
-                    Custo deste item: <strong id="receita-item-cost-preview" style="color: var(--color-green-dark); font-size: 14px;">R$ 0,00</strong>
+                <div class="flex items-center justify-between gap-2">
+                  <div class="text-secondary text-sm">
+                    Custo deste item: <strong id="receita-item-cost-preview" class="text-green-dark text-lg">R$ 0,00</strong>
                   </div>
-                  <button id="btn-add-item-to-receita" class="btn-secondary" type="button" style="padding: 8px 12px; font-size: 12px; font-weight: 700;">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  <button id="btn-add-item-to-receita" class="btn-secondary" type="button">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
                     Incluir na Receita
                   </button>
                 </div>
 
                 <!-- Tabela de Itens Adicionados -->
-                <div style="margin-top: 4px; overflow-x: auto;">
+                <div class="overflow-x-auto">
                   <table class="recipe-draft-table" id="table-draft-receita-itens">
                     <thead>
                       <tr>
@@ -884,14 +876,12 @@
                         <th>Tipo</th>
                         <th>Qtd.</th>
                         <th>Custo</th>
-                        <th style="width: 28px;"></th>
+                        <th class="w-7"></th>
                       </tr>
                     </thead>
                     <tbody id="tbody-draft-receita-itens">
                       <tr>
-                        <td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 12px;">
-                          Nenhum ingrediente ou embalagem adicionado ainda.
-                        </td>
+                        <td colspan="6" class="text-center text-muted py-3">Nenhum ingrediente ou embalagem adicionado ainda.</td>
                       </tr>
                     </tbody>
                   </table>
@@ -961,7 +951,7 @@
                   </span>
                   <strong id="banner-custo-total">R$ 0,00</strong>
                 </div>
-                <div class="totals-banner-row" style="color: var(--color-green-dark); font-weight: 700; font-size: 14px;">
+                <div class="totals-banner-row" class="text-green-dark font-bold text-lg">
                   <span>Custo por Unidade Produzida:</span>
                   <strong id="banner-custo-unitario">R$ 0,00 / pão</strong>
                 </div>
@@ -979,10 +969,8 @@
 
                 <!-- Seletor de Margem de Lucro Desejada -->
                 <div class="form-group">
-                  <label for="input-margem-lucro" class="form-label" style="font-size: 12px; color: var(--color-green-dark);">
-                    Acréscimo desejado sobre o custo (%):
-                  </label>
-                  <div style="display: flex; gap: 6px; align-items: center;">
+                  <label for="input-margem-lucro" class="form-label text-sm text-green-dark">Acréscimo desejado sobre o custo (%):</label>
+                  <div class="flex gap-2 items-center">
                     <input
                       id="input-margem-lucro"
                       type="number"
@@ -990,34 +978,28 @@
                       max="1000"
                       step="5"
                       value="100"
-                      style="height: 38px; width: 90px; text-align: center; font-weight: 700; color: var(--color-green-dark);"
+                      class="w-20 h-9 text-center font-bold text-green-dark"
                     />
-                    <div style="display: flex; gap: 4px; overflow-x: auto;">
-                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="50" style="padding: 6px 8px; font-size: 11px;">50%</button>
-                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="60" style="padding: 6px 8px; font-size: 11px;">60%</button>
-                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="80" style="padding: 6px 8px; font-size: 11px;">80%</button>
-                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="100" style="padding: 6px 8px; font-size: 11px; background: var(--color-green-dark); font-weight: 800;">100%</button>
-                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="150" style="padding: 6px 8px; font-size: 11px;">150%</button>
-                      <button type="button" class="btn-secondary btn-profit-preset" data-margin="200" style="padding: 6px 8px; font-size: 11px;">200%</button>
+                    <div class="flex gap-2 overflow-x-auto">
+                      <button type="button" class="btn-secondary btn-profit-preset text-xs px-2 py-1" data-margin="50">50%</button>
+                      <button type="button" class="btn-secondary btn-profit-preset text-xs px-2 py-1" data-margin="60">60%</button>
+                      <button type="button" class="btn-secondary btn-profit-preset text-xs px-2 py-1" data-margin="80">80%</button>
+                      <button type="button" class="btn-secondary btn-profit-preset text-xs font-extrabold px-2 py-1 bg-green-dark" data-margin="100">100%</button>
+                      <button type="button" class="btn-secondary btn-profit-preset text-xs px-2 py-1" data-margin="150">150%</button>
+                      <button type="button" class="btn-secondary btn-profit-preset text-xs px-2 py-1" data-margin="200">200%</button>
                     </div>
                   </div>
                 </div>
 
                 <div class="form-grid-2">
                   <div class="form-group">
-                    <label class="form-label" style="font-size: 12px; color: var(--color-green-dark);">
-                      Preço de Venda Sugerido:
-                    </label>
-                    <div style="font-size: 15px; font-weight: 800; color: var(--color-green-dark); padding-top: 4px;" id="text-preco-sugerido">
-                      R$ 0,00
-                    </div>
+                    <label class="form-label text-sm text-green-dark">Preço de Venda Sugerido:</label>
+                    <div id="text-preco-sugerido" class="text-lg font-extrabold text-green-dark pt-1">R$ 0,00</div>
                   </div>
                   <div class="form-group">
-                    <label for="input-preco-praticado" class="form-label" style="font-size: 12px; color: var(--color-green-dark);">
-                      Preço Praticado (R$) <span class="req">*</span>:
-                    </label>
+                    <label for="input-preco-praticado" class="form-label text-sm text-green-dark">Preço Praticado (R$) <span class="req">*</span>:</label>
                     <div class="input-wrapper">
-                      <span class="input-prefix" style="color: var(--color-green-dark);">R$</span>
+                      <span class="input-prefix text-green-dark">R$</span>
                       <input
                         id="input-preco-praticado"
                         class="has-prefix"
@@ -1025,7 +1007,7 @@
                         step="0.10"
                         min="0.10"
                         placeholder="0,00"
-                        style="color: var(--color-green-dark); font-weight: 800;"
+                        class="text-green-dark font-extrabold"
                       />
                     </div>
                   </div>
@@ -1034,19 +1016,17 @@
                 <p id="recipe-price-warning" class="price-warning hidden" role="status" aria-live="polite"></p>
 
                 <!-- Resumo de Lucro -->
-                <div style="background: rgba(255,255,255,0.7); border-radius: 6px; padding: 8px 10px; display: flex; justify-content: space-between; font-size: 12px; color: var(--color-green-dark);">
+                <div class="bg-green-100 dark:bg-green-900/20 border border-green-dark/30 rounded-md p-3 flex justify-between text-sm text-green-dark">
                   <div>
-                    Lucro Líquido por Pão: <strong id="text-lucro-liquido-un" style="font-size: 14px; color: var(--color-green-dark-hover);">R$ 0,00</strong>
+                    Lucro Líquido por Pão: <strong id="text-lucro-liquido-un" class="text-lg text-green-dark-hover">R$ 0,00</strong>
                   </div>
                   <div>
-                    Lucro da Fornada: <strong id="text-lucro-total-lote" style="font-size: 14px; color: var(--color-green-dark-hover);">R$ 0,00</strong>
+                    Lucro da Fornada: <strong id="text-lucro-total-lote" class="text-lg text-green-dark-hover">R$ 0,00</strong>
                   </div>
                 </div>
               </div>
 
-              <button id="btn-submit-receita" class="btn-primary" type="submit" style="margin-top: 4px;">
-                <span>Salvar Receita no Firestore</span>
-              </button>
+              <button id="btn-submit-receita" class="btn-primary mt-4" type="submit"><span>Salvar Receita no Firestore</span></button>
               <button id="btn-cancel-edit-receita" class="btn-secondary hidden" type="button">Cancelar edição</button>
             </form>
 
@@ -1092,7 +1072,7 @@
               <p id="empty-desc-receitas" class="empty-desc">
                 Crie receitas personalizadas combinando seus ingredientes e sacolas/formas para calcular custos e margem de lucro.
               </p>
-              <button id="btn-empty-add-receita" class="btn-primary" type="button" style="margin-top: 6px;">
+              <button id="btn-empty-add-receita" class="btn-primary mt-6" type="button">Criar Primeira Receita</button>
                 Criar Primeira Receita
               </button>
               <button id="btn-empty-clear-filters-receitas" class="btn-secondary hidden" type="button">Limpar filtros</button>
@@ -1125,7 +1105,7 @@
                 </div>
 
                 <div class="recipe-builder-box">
-                  <strong style="font-size: 13px; color: var(--color-green-dark);">Materiais do grupo</strong>
+                  <strong class="text-green-dark text-sm">Materiais do grupo</strong>
                   <div class="form-grid-2">
                     <div class="form-group">
                       <label class="form-label" for="recipe-group-template-material">Insumo, embalagem ou material</label>
@@ -1555,36 +1535,36 @@
 
       <!-- ================= MODAL DE ADICIONAR ITEM A RECEITA EXISTENTE ================= -->
       <div id="modal-add-item-receita" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-add-item-title">
-        <div class="modal-box" style="max-width: 440px;">
-          <h3 id="modal-add-item-title" class="modal-title" style="color: var(--color-text-primary);">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        <div class="modal-box max-w-[440px]">
+<h3 id="modal-add-item-title" class="modal-title text-primary">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
             Adicionar Item à Receita
           </h3>
-          <p class="modal-desc" style="font-size: 13px;">
+          <p class="modal-desc text-sm">
             Acrescente um ingrediente ou embalagem descartável a <strong id="modal-add-item-receita-name">esta receita</strong>. Os custos e o lucro serão recalculados e salvos automaticamente.
           </p>
 
           <div class="form-group">
-            <label for="select-modal-add-insumo" class="form-label" style="font-size: 12px;">
+            <label for="select-modal-add-insumo" class="form-label text-sm">Matéria-prima, embalagem ou receita-base:</label>
               Matéria-prima, embalagem ou receita-base:
             </label>
-            <select id="select-modal-add-insumo" style="font-size: 13px;">
+            <select id="select-modal-add-insumo" class="text-sm">
               <option value="">Selecione...</option>
             </select>
           </div>
 
           <div class="form-grid-2">
             <div class="form-group">
-              <label for="input-modal-add-qtd" class="form-label" style="font-size: 12px;">
+              <label for="input-modal-add-qtd" class="form-label text-sm">Quantidade:</label>
                 Quantidade:
               </label>
-              <input id="input-modal-add-qtd" type="number" step="any" min="0.001" placeholder="Ex: 200 ou 1" style="font-size: 13px;" />
+              <input id="input-modal-add-qtd" type="number" step="any" min="0.001" placeholder="Ex: 200 ou 1" class="text-sm" />
             </div>
             <div class="form-group">
-              <label for="select-modal-add-un" class="form-label" style="font-size: 12px;">
+              <label for="select-modal-add-un" class="form-label text-sm">Unidade:</label>
                 Unidade:
               </label>
-              <select id="select-modal-add-un" style="font-size: 13px;">
+              <select id="select-modal-add-un" class="text-sm">
                 <option value="g">g (Gramas)</option>
                 <option value="kg">kg (Quilos)</option>
                 <option value="ml">ml (Mililitros)</option>
@@ -1597,16 +1577,14 @@
             </div>
           </div>
 
-          <div style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 6px; padding: 10px; font-size: 13px; display: flex; justify-content: space-between; align-items: center;">
+          <div class="bg-surface border border-border rounded-md p-3 text-sm flex justify-between items-center">
             <span>Custo a somar na receita:</span>
-            <strong id="modal-add-cost-preview" style="color: var(--color-green-dark); font-size: 15px;">R$ 0,00</strong>
+            <strong id="modal-add-cost-preview" class="text-green-dark text-lg">R$ 0,00</strong>
           </div>
 
-          <div class="modal-actions" style="margin-top: 6px;">
+          <div class="modal-actions mt-4">
             <button id="btn-cancel-modal-add-item" class="btn-modal-cancel" type="button">Cancelar</button>
-            <button id="btn-confirm-modal-add-item" class="btn-primary" style="padding: 10px 16px; font-size: 13px;" type="button">
-              Gravar na Receita
-            </button>
+            <button id="btn-confirm-modal-add-item" class="btn-primary" type="button">Gravar na Receita</button>
           </div>
         </div>
       </div>
@@ -1733,115 +1711,109 @@
 
       <!-- ================= MODAL DE CONFIGURAÇÃO FIREBASE ================= -->
       <div id="config-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-config-title">
-        <div class="modal-box" style="max-width: 440px;">
-          <h3 id="modal-config-title" class="modal-title">
+        <div class="modal-box max-w-[440px]">
+          <h3 id="modal-config-title" class="modal-title flex items-center gap-2">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-right: 8px;"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
             Conexão Firebase
           </h3>
-          <p class="modal-desc" style="font-size: 13px;">
+          <p class="modal-desc text-sm">
             Insira suas credenciais do Firebase Console (ou deixe vazio para usar o modo de teste rápido):
           </p>
           <div class="form-group">
             <label class="form-label" for="cfg-api-key">API Key:</label>
-            <input id="cfg-api-key" type="text" placeholder="AIzaSy..." style="height: 40px; font-size: 13px;" />
+            <input id="cfg-api-key" type="text" placeholder="AIzaSy..." class="h-10 text-sm" />
           </div>
           <div class="form-group">
             <label class="form-label" for="cfg-auth-domain">Auth Domain:</label>
-            <input id="cfg-auth-domain" type="text" placeholder="sua-padaria.firebaseapp.com" style="height: 40px; font-size: 13px;" />
+            <input id="cfg-auth-domain" type="text" placeholder="sua-padaria.firebaseapp.com" class="h-10 text-sm" />
           </div>
           <div class="form-group">
             <label class="form-label" for="cfg-project-id">Project ID:</label>
-            <input id="cfg-project-id" type="text" placeholder="sua-padaria" style="height: 40px; font-size: 13px;" />
+            <input id="cfg-project-id" type="text" placeholder="sua-padaria" class="h-10 text-sm" />
           </div>
           <div class="form-group">
             <label class="form-label" for="cfg-db-id">Database ID (opcional):</label>
-            <input id="cfg-db-id" type="text" placeholder="(default)" style="height: 40px; font-size: 13px;" />
+            <input id="cfg-db-id" type="text" placeholder="(default)" class="h-10 text-sm" />
           </div>
-          <div class="modal-actions" style="margin-top: 6px;">
+          <div class="modal-actions mt-4">
             <button id="btn-cancel-config" class="btn-modal-cancel" type="button">Fechar</button>
-            <button id="btn-save-config" class="btn-primary" style="padding: 10px 16px; font-size: 13px;" type="button">Salvar e Conectar</button>
+            <button id="btn-save-config" class="btn-primary" type="button">Salvar e Conectar</button>
           </div>
         </div>
       </div>
 
       <!-- ================= MODAL DE DOMÍNIO NÃO AUTORIZADO NO FIREBASE ================= -->
       <div id="unauthorized-domain-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-unauth-title">
-        <div class="modal-box" style="max-width: 440px;">
+        <div class="modal-box max-w-[440px]">
           <div style="font-size: 38px; text-align: center;" aria-hidden="true">
             <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-green-dark);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           </div>
-          <h3 id="modal-unauth-title" class="modal-title" style="text-align: center; color: var(--color-text-primary);">
+          <h3 id="modal-unauth-title" class="modal-title text-center text-primary">
             Configuração do login Google
           </h3>
-          <p class="modal-desc" style="font-size: 13px; text-align: left; line-height: 1.5;">
+          <p class="modal-desc text-sm text-left leading-relaxed">
             Para entrar com Google neste site, habilite o provedor Google e cadastre o domínio abaixo em <strong>Domínios autorizados</strong> no Firebase Console. No GitHub Pages, use apenas o domínio, sem protocolo ou caminho do repositório.
           </p>
           
-          <div style="background: var(--color-surface); border: 1.5px dashed var(--color-green-dark); border-radius: 8px; padding: 12px; display: flex; flex-direction: column; gap: 6px;">
-            <span style="font-size: 11px; font-weight: 700; text-transform: uppercase; color: var(--color-green-dark);">Domínio para Autorizar:</span>
-            <div style="display: flex; gap: 6px;">
-              <input id="input-unauth-domain" type="text" readonly style="height: 38px; font-size: 12px; font-weight: 600; background: var(--color-card); border: 1px solid var(--color-border); color: var(--color-text-primary); flex: 1;" />
-              <button id="btn-copy-unauth-domain" class="btn-primary" style="padding: 0 14px; font-size: 12px; white-space: nowrap;" type="button">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 4px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+          <div class="bg-surface border-2 border-dashed border-green-dark rounded-lg p-3 flex flex-col gap-2">
+            <span class="text-xs font-bold uppercase text-green-dark">Domínio para Autorizar:</span>
+            <div class="flex gap-2">
+              <input id="input-unauth-domain" type="text" readonly class="h-9 text-sm font-semibold bg-card border border-border text-primary flex-1" />
+              <button id="btn-copy-unauth-domain" class="btn-primary whitespace-nowrap text-sm" type="button">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                 Copiar
               </button>
             </div>
           </div>
 
-          <div style="background: var(--color-card); border: 1px solid var(--color-border); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--color-text-secondary); text-align: left; display: flex; flex-direction: column; gap: 6px;">
-            <strong style="color: var(--color-text-primary);">Como liberar o acesso:</strong>
-            <span>1. Em <strong>Authentication</strong> &gt; <strong>Sign-in method</strong>, habilite o provedor <strong>Google</strong>.</span>
-            <span>2. Em <strong>Authentication</strong> &gt; <strong>Settings</strong> &gt; <strong>Authorized domains</strong>, adicione <strong>alissonxavier0101-dotcom.github.io</strong>.</span>
+<div class="bg-card border border-border rounded-lg p-3 text-sm text-secondary flex flex-col gap-2">
+            <strong class="text-primary">Como liberar o acesso:</strong>
+            <span>1. Em <strong>Authentication</strong> > <strong>Sign-in method</strong>, habilite o provedor <strong>Google</strong>.</span>
+            <span>2. Em <strong>Authentication</strong> > <strong>Settings</strong> > <strong>Authorized domains</strong>, adicione <strong>alissonxavier0101-dotcom.github.io</strong>.</span>
             <span>3. O domínio não inclui <strong>https://</strong> nem <strong>/Padaria-Software/</strong>. Salve e tente entrar novamente.</span>
           </div>
 
-          <div role="note" style="background: var(--color-surface); border: 1px solid var(--color-border); border-radius: 8px; padding: 12px; font-size: 12px; color: var(--color-text-secondary); text-align: left; line-height: 1.5;">
-            <strong style="color: var(--color-text-primary);">Só uma conta consegue entrar?</strong>
-            <span>Isso normalmente depende do público do app OAuth, não do domínio do site. No Google Cloud Console, abra <strong>Google Auth Platform &gt; Público-alvo</strong>. Se o app estiver em <strong>Teste</strong>, somente os e-mails cadastrados como usuários de teste podem autenticar. Adicione os usuários autorizados ou publique o app. Em contas Google Workspace, o administrador da organização também pode precisar permitir o app.</span>
+<div role="note" class="bg-surface border border-border rounded-lg p-3 text-sm text-secondary flex flex-col gap-2">
+            <strong class="text-primary">Só uma conta consegue entrar?</strong>
+            <span>Isso normalmente depende do público do app OAuth, não do domínio do site. No Google Cloud Console, abra <strong>Google Auth Platform > Público-alvo</strong>. Se o app estiver em <strong>Teste</strong>, somente os e-mails cadastrados como usuários de teste podem autenticar. Adicione os usuários autorizados ou publique o app. Em contas Google Workspace, o administrador da organização também pode precisar permitir o app.</span>
           </div>
 
-          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 4px;">
-            <a id="link-firebase-console" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/authentication/settings" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 13px; text-decoration: none; padding: 11px; text-align: center; font-weight: 700;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+          <div class="flex flex-col gap-3 mt-4">
+            <a id="link-firebase-console" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/authentication/settings" target="_blank" rel="noopener noreferrer" class="btn-secondary text-center py-3 text-sm font-semibold">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
               Abrir Configurações do Firebase Console
             </a>
-            <a href="https://console.cloud.google.com/auth/audience?project=padaria-sistema-6a6b4" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="font-size: 13px; text-decoration: none; padding: 11px; text-align: center; font-weight: 700;">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+            <a href="https://console.cloud.google.com/auth/audience?project=padaria-sistema-6a6b4" target="_blank" rel="noopener noreferrer" class="btn-secondary text-center py-3 text-sm font-semibold">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
               Ver público-alvo do OAuth no Google Cloud
             </a>
-            <button id="btn-close-unauth-modal" class="btn-modal-cancel" style="width: 100%; text-align: center;" type="button">
-              Fechar
-            </button>
+            <button id="btn-close-unauth-modal" class="btn-modal-cancel w-full text-center" type="button">Fechar</button>
           </div>
         </div>
       </div>
 
       <!-- ================= MODAL DE REGRAS DO FIRESTORE ================= -->
       <div id="firestore-rules-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-rules-title">
-        <div class="modal-box" style="max-width: 440px;">
+<div class="modal-box max-w-[440px]">
           <div style="font-size: 38px; text-align: center;" aria-hidden="true">
             <svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: var(--color-green-dark);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
           </div>
-          <h3 id="modal-rules-title" class="modal-title" style="text-align: center; color: var(--color-text-primary);">
+          <h3 id="modal-rules-title" class="modal-title text-center text-primary">
             Permissão do Firestore
           </h3>
-          <p class="modal-desc" style="font-size: 13px; text-align: left; line-height: 1.5;">
+          <p class="modal-desc text-sm text-left leading-relaxed">
             Publique o arquivo <code>firestore.rules</code> deste projeto no Firebase Console. Ele contém regras autenticadas e validações para insumos, receitas, grupos de ingredientes e registros de produção.
           </p>
 
-          <div role="note" style="background: rgba(5, 150, 105, 0.1); border: 1px solid rgba(5, 150, 105, 0.3); border-radius: 8px; padding: 10px 12px; color: var(--color-green-dark); font-size: 12px;">
+          <div role="note" class="bg-green-100 dark:bg-green-900/20 border border-green-dark/30 rounded-lg p-3 text-sm text-green-dark">
             Não substitua as regras por acesso público. Depois de publicar, tente novamente.
           </div>
 
-          <div style="display: flex; gap: 8px;">
-            <a id="link-firestore-rules" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/firestore/rules" target="_blank" rel="noopener noreferrer" class="btn-secondary" style="width: 100%; padding: 10px; font-size: 13px; text-align: center; text-decoration: none;">
-              Abrir Regras ↗
-            </a>
+          <div class="flex gap-2">
+            <a id="link-firestore-rules" href="https://console.firebase.google.com/project/padaria-sistema-6a6b4/firestore/rules" target="_blank" rel="noopener noreferrer" class="btn-secondary w-full py-2.5 text-sm text-center">Abrir Regras</a>
           </div>
 
-          <button id="btn-close-rules-modal" class="btn-modal-cancel" style="width: 100%; text-align: center; margin-top: 4px;" type="button">
-            Fechar
-          </button>
+          <button id="btn-close-rules-modal" class="btn-modal-cancel w-full text-center mt-2" type="button">Fechar</button>
         </div>
       </div>
 
@@ -1853,36 +1825,36 @@
     </div>
 
     <div id="categoria-receita-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-categoria-receita-title">
-      <div class="modal-box" style="max-width: 440px;">
+      <div class="modal-box max-w-[440px]">
         <h3 id="modal-categoria-receita-title" class="modal-title">Categoria da receita</h3>
         <p class="modal-desc">Informe o nome da categoria (de 1 a 40 caracteres).</p>
-        <div class="form-group" style="margin: 12px 0 6px 0;">
+        <div class="form-group mt-3">
           <label for="input-nome-categoria-receita" class="form-label">Nome da categoria</label>
           <input id="input-nome-categoria-receita" type="text" maxlength="40" placeholder="Ex: Doces" />
         </div>
         <input type="hidden" id="categoria-editando-id" />
-        <div class="modal-actions" style="margin-top: 10px;">
+        <div class="modal-actions mt-3">
           <button id="btn-cancelar-categoria-receita" class="btn-modal-cancel" type="button">Cancelar</button>
-          <button id="btn-salvar-categoria-receita" class="btn-primary" type="button">Salvar</button>
+<button id="btn-salvar-categoria-receita" class="btn-primary" type="button">Salvar</button>
+          </div>
         </div>
       </div>
-    </div>
 
-    <div id="excluir-categoria-receita-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-excluir-categoria-title">
-      <div class="modal-box" style="max-width: 440px;">
-        <h3 id="modal-excluir-categoria-title" class="modal-title">Excluir categoria?</h3>
-        <p id="texto-excluir-categoria" class="modal-desc"></p>
-        <div class="form-group" style="margin: 12px 0 6px 0;">
-          <label for="select-destino-categoria-receita" class="form-label">Mover receitas para</label>
-          <select id="select-destino-categoria-receita"></select>
-        </div>
-        <input type="hidden" id="categoria-excluindo-id" />
-        <div class="modal-actions" style="margin-top: 10px;">
-          <button id="btn-cancelar-excluir-categoria" class="btn-modal-cancel" type="button">Cancelar</button>
-          <button id="btn-confirmar-excluir-categoria" class="btn-modal-danger" type="button">Excluir categoria</button>
+<div id="excluir-categoria-receita-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="modal-excluir-categoria-title">
+        <div class="modal-box max-w-[440px]">
+          <h3 id="modal-excluir-categoria-title" class="modal-title">Excluir categoria?</h3>
+          <p id="texto-excluir-categoria" class="modal-desc"></p>
+          <div class="form-group mt-3">
+            <label for="select-destino-categoria-receita" class="form-label">Mover receitas para</label>
+            <select id="select-destino-categoria-receita"></select>
+          </div>
+          <input type="hidden" id="categoria-excluindo-id" />
+          <div class="modal-actions mt-3">
+            <button id="btn-cancelar-excluir-categoria" class="btn-modal-cancel" type="button">Cancelar</button>
+            <button id="btn-confirmar-excluir-categoria" class="btn-modal-danger" type="button">Excluir categoria</button>
+          </div>
         </div>
       </div>
-    </div>
 
     <!-- ================= SCRIPT MODULAR FIREBASE V10 VIA CDN ================= -->
     <script type="module" src="src/js/main.js"></script>  </body>

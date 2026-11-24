@@ -340,7 +340,7 @@ export function renderizarFinanceiro(resultadoPronto) {
         <strong class="${movimento.tipo === 'entrada' ? 'finance-positive' : 'finance-negative'}">${movimento.tipo === 'entrada' ? '+' : '−'} ${dinheiro(Number(movimento.valor || 0))}</strong>
       </div>
       <div class="module-record-meta"><span>${formatarNomeCategoriaFinanceira(movimento.categoria)}</span><span>${formatarDataModulo(movimento.data)}</span></div>
-      ${movimento.origem === 'venda' ? '' : `<button type="button" class="btn-secondary" data-delete-cashflow="${escapeHtml(movimento.id)}" style="margin-top:10px;padding:8px 12px;font-size:12px">Excluir movimentação</button>`}
+      ${movimento.origem === 'venda' ? '' : `<button type="button" class="btn-secondary mt-2 px-3 py-1 text-xs" data-delete-cashflow="${escapeHtml(movimento.id)}">Excluir movimentação</button>`}
     </article>
   `).join('');
   dom.fixedExpensesEmpty.classList.toggle('hidden', cachedFixedExpenses.length > 0);
@@ -350,7 +350,7 @@ export function renderizarFinanceiro(resultadoPronto) {
         <h3>${escapeHtml(despesa.nome)}</h3><strong>${dinheiro(Number(despesa.valorMensal || 0))} / mês</strong>
       </div>
       <div class="module-record-meta"><span>Vencimento: dia ${Number(despesa.diaVencimento || 1)}</span>
-        <button type="button" class="btn-secondary" data-delete-fixed-expense="${escapeHtml(despesa.id)}" style="padding:8px 12px;font-size:12px">Excluir</button>
+        <button type="button" class="btn-secondary px-3 py-1 text-xs" data-delete-fixed-expense="${escapeHtml(despesa.id)}">Excluir</button>
       </div>
     </article>
   `).join('');
